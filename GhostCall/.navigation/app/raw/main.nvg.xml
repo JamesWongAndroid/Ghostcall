@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigationModel
+  ns = "http://schemas.android.com?import=com.android.tools.idea.editors.navigation.model.*">
+  <locations  
+    class = "java.util.ArrayList">
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.tapfury.ghostcall.VerificationScreen"/>
+      <point      
+        x = "4925"      
+        y = "849"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.VerificationScreen"/>
+      <point      
+        x = "3092"      
+        y = "1056"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.tapfury.ghostcall.StartScreen"/>
+      <point      
+        x = "1768"      
+        y = "104"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.StartScreen"/>
+      <point      
+        x = "2055"      
+        y = "38"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.tapfury.ghostcall.TourScreen"/>
+      <point      
+        x = "2788"      
+        y = "108"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.TourScreen"/>
+      <point      
+        x = "798"      
+        y = "1140"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.tapfury.ghostcall.CodeVerificationScreen"/>
+      <point      
+        x = "1768"      
+        y = "1480"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.CodeVerificationScreen"/>
+      <point      
+        x = "4135"      
+        y = "1062"/>
+    </statePointEntry>
+  </locations>
+</navigationModel>
