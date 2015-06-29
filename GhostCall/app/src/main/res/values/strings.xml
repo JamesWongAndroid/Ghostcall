@@ -9,5 +9,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_code_verification_screen">CodeVerificationScreen</string>
+    <string name="take_tour">Take Tour</string>
+    <string name="get_started">Get Started</string>
 
 </resources>
