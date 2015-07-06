@@ -13,5 +13,12 @@
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
+    <string name="verify_number">Verify your number</string>
+    <string name="numbers_only">*US &amp; Canada numbers only.</string>
+    <string name="done">Done</string>
+    <string name="route_text">Ghost Call routes calls to your number while keeping it private. You can also send calls from your real number if you want.</string>
+    <string name="code_verification">Code Verification</string>
+    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="your_number">Your Number</string>
 
 </resources>

@@ -1,15 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
     tools:context="com.tapfury.ghostcall.VerificationScreen">
 
-    <TextView android:text="Verify your number" android:layout_width="wrap_content"
+    <TextView android:text="@string/verify_number"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:background="#22FFFFFF"
+        android:padding="20dp"
+        android:gravity="center"
+        android:textSize="18sp"
         android:id="@+id/textView" />
 
     <EditText
@@ -17,30 +21,51 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="15"
+        android:padding="15dp"
+        android:layout_margin="20dp"
         android:id="@+id/editText"
+        android:hint="(888) 888-8888"
+        android:ellipsize="start"
+        android:gravity="center"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="82dp"
-        android:background="#FFFFFF"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/edittext_rectangle"
          />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="US &amp; Canada numbers only."
+        android:text="@string/numbers_only"
         android:id="@+id/textView2"
+        android:textColor="@color/white"
         android:layout_below="@+id/editText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp"
-        android:textSize="15sp" />
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/route_text"
+        android:id="@+id/textView3"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:textAlignment="center"
+        android:paddingTop="5dp"
+        android:layout_below="@id/textView2"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText"
+        android:layout_alignRight="@+id/editText"
+        android:layout_alignEnd="@+id/editText" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:text="@string/done"
         android:id="@+id/button3"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/textView3"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

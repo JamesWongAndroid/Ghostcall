@@ -11,10 +11,10 @@ public class CodeVerificationScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_verification_screen);
-        findViewById(R.id.button6).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CodeVerificationScreen.this, VerificationScreen.class));
+                startActivity(new Intent(CodeVerificationScreen.this, HomeScreen.class));
             }
         });
     }

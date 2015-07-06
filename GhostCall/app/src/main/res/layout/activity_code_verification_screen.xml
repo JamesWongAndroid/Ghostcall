@@ -1,54 +1,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
     tools:context="com.tapfury.ghostcall.CodeVerificationScreen">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+    <TextView android:text="@string/code_verification"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp"
+        android:background="#22FFFFFF"
+        android:textColor="@color/white"
+        android:padding="20dp"
+        android:gravity="center"
+        android:textSize="18sp"
         android:id="@+id/textView3" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="15"
+        android:padding="15dp"
+        android:layout_margin="20dp"
         android:id="@+id/editText2"
+        android:hint="8888"
+        android:ellipsize="start"
+        android:gravity="center"
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="25dp"
+        android:background="@drawable/edittext_rectangle" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Resend Code"
+        android:background="#22FFFFFF"
+        android:textColor="@color/white"
         android:id="@+id/button4"
+        android:textAllCaps="false"
         android:layout_below="@+id/editText2"
+        android:layout_alignLeft="@+id/textView4"
+        android:layout_alignStart="@+id/textView4"
+        android:layout_alignRight="@+id/textView4"
+        android:layout_alignEnd="@+id/textView4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Didn't get a code? Hit resend and we'll send you another one."
+        android:layout_below="@id/button4"
+        android:textColor="@color/white"
+        android:paddingTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp" />
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_alignStart="@+id/editText2"
+        android:layout_alignRight="@+id/editText2"
+        android:layout_alignEnd="@+id/editText2"
+
+        android:id="@+id/textView4" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Verify"
         android:id="@+id/button5"
+        android:textAllCaps="false"
         android:layout_below="@+id/button4"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="51dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/button6"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button4"
-        android:layout_toStartOf="@+id/button4" />
 
 </RelativeLayout>

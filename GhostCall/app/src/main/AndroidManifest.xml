@@ -20,13 +20,13 @@
             android:name=".TourScreen"
             android:label="@string/title_activity_tour_screen" >
         </activity>
-        <activity
-            android:name=".VerificationScreen"
-            android:label="@string/title_activity_verification_screen" >
+        <activity android:name=".VerificationScreen" >
+        </activity>
+        <activity android:name=".CodeVerificationScreen" >
         </activity>
         <activity
-            android:name=".CodeVerificationScreen"
-            android:label="@string/title_activity_code_verification_screen" >
+            android:name=".HomeScreen"
+            android:label="@string/title_activity_home_screen" >
         </activity>
     </application>
 
