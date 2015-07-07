@@ -8,25 +8,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-public class HomeScreen extends AppCompatActivity {
+public class GetGhostNumberScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_screen);
+        setContentView(R.layout.activity_get_ghost_number_screen);
 
-        Button getGhostNumbers = (Button) findViewById(R.id.getGhostButton);
-        getGhostNumbers.setOnClickListener(new View.OnClickListener() {
+        Button continueButton = (Button) findViewById(R.id.continueButton);
+        continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeScreen.this, GetGhostNumberScreen.class));
+                startActivity(new Intent(GetGhostNumberScreen.this, SelectPackageScreen.class));
             }
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home_screen, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_get_ghost_number_screen, menu);
         return true;
     }
 

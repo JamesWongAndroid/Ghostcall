@@ -28,6 +28,14 @@
             android:name=".HomeScreen"
             android:label="@string/title_activity_home_screen" >
         </activity>
+        <activity
+            android:name=".GetGhostNumberScreen"
+            android:label="@string/title_activity_get_ghost_number_screen" >
+        </activity>
+        <activity
+            android:name=".SelectPackageScreen"
+            android:label="@string/title_activity_select_package_screen" >
+        </activity>
     </application>
 
 </manifest>

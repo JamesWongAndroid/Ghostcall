@@ -16,8 +16,8 @@
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
         className = "com.tapfury.ghostcall.VerificationScreen"/>
       <point      
-        x = "3172"      
-        y = "1060"/>
+        x = "3160"      
+        y = "1041"/>
     </statePointEntry>
     <statePointEntry>
       <state      
@@ -37,6 +37,14 @@
     </statePointEntry>
     <statePointEntry>
       <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.GetGhostNumberScreen"/>
+      <point      
+        x = "4613"      
+        y = "2366"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
         class = "com.android.tools.idea.editors.navigation.model.MenuState"      
         className = "com.tapfury.ghostcall.TourScreen"/>
       <point      
@@ -50,6 +58,14 @@
       <point      
         x = "1159"      
         y = "989"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.tapfury.ghostcall.SelectPackageScreen"/>
+      <point      
+        x = "6434"      
+        y = "1339"/>
     </statePointEntry>
     <statePointEntry>
       <state      

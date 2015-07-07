@@ -20,5 +20,7 @@
     <string name="code_verification">Code Verification</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="your_number">Your Number</string>
+    <string name="title_activity_get_ghost_number_screen">GetGhostNumberScreen</string>
+    <string name="title_activity_select_package_screen">SelectPackageScreen</string>
 
 </resources>
