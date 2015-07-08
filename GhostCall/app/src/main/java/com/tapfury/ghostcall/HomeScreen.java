@@ -7,13 +7,42 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeScreen extends AppCompatActivity {
+
+    ListView ghostNumberListView;
+    GhostNumbersAdapter gNumberAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+
+        ghostNumberListView = (ListView) findViewById(R.id.ghostNumberList);
+
+        GhostNumbers gNumber = new GhostNumbers();
+        gNumber.setGhostNumber("201-124-0984");
+        gNumber.setGhostTitle("Trial Number");
+
+        GhostNumbers gNumberTwo = new GhostNumbers();
+        gNumberTwo.setGhostNumber("123-234-5678");
+        gNumberTwo.setGhostTitle("Awesome Number");
+
+        GhostNumbers gNumberThree = new GhostNumbers();
+        gNumberThree.setGhostNumber("212-842-1122");
+        gNumberThree.setGhostTitle("Manhattan Number");
+
+        List<GhostNumbers> numbersList = new ArrayList<>();
+        numbersList.add(gNumber);
+        numbersList.add(gNumberTwo);
+        numbersList.add(gNumberThree);
+
+        gNumberAdapter = new GhostNumbersAdapter(this, numbersList);
+        ghostNumberListView.setAdapter(gNumberAdapter);
 
         Button getGhostNumbers = (Button) findViewById(R.id.getGhostButton);
         getGhostNumbers.setOnClickListener(new View.OnClickListener() {

@@ -22,5 +22,7 @@
     <string name="your_number">Your Number</string>
     <string name="title_activity_get_ghost_number_screen">GetGhostNumberScreen</string>
     <string name="title_activity_select_package_screen">SelectPackageScreen</string>
+    <string name="title_activity_call_history_screen">CallHistoryScreen</string>
+    <string name="title_activity_history_screen">HistoryScreen</string>
 
 </resources>

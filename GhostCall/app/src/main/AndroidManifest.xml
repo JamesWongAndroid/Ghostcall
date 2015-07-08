@@ -36,6 +36,14 @@
             android:name=".SelectPackageScreen"
             android:label="@string/title_activity_select_package_screen" >
         </activity>
+        <activity
+            android:name=".CallHistoryScreen"
+            android:label="@string/title_activity_call_history_screen" >
+        </activity>
+        <activity
+            android:name=".HistoryScreen"
+            android:label="@string/title_activity_history_screen" >
+        </activity>
     </application>
 
 </manifest>
