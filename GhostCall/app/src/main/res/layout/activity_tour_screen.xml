@@ -24,27 +24,28 @@
         android:layout_gravity="bottom">
 
         <Button
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:text="@string/skip"
+            android:text="Get Started"
             android:id="@+id/skipButton"
             android:textColor="@color/white"
-            android:background="#22FFFFFF"
+            android:background="#44FFFFFF"
+            android:visibility="invisible"
             />
 
         <View android:layout_width="0dp" android:layout_height="1dp"
             android:layout_weight="0.1" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:text="@string/next"
-            android:textColor="@color/white"
-            android:id="@+id/actionButton"
-            android:layout_weight="1"
-            android:background="#22FFFFFF"
-            />
+        <!--<Button-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:text="@string/next"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:id="@+id/actionButton"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="#22FFFFFF"-->
+            <!--/>-->
 
     </LinearLayout>
 

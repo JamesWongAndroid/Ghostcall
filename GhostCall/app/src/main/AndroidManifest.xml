@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tapfury.ghostcall" >
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/app_icon"
@@ -43,6 +45,14 @@
         <activity
             android:name=".HistoryScreen"
             android:label="@string/title_activity_history_screen" >
+        </activity>
+        <activity
+            android:name=".CallScreen"
+            android:label="@string/title_activity_call_screen" >
+        </activity>
+        <activity
+            android:name=".HistorySettingsScreen"
+            android:label="@string/title_activity_history_settings_screen" >
         </activity>
     </application>
 

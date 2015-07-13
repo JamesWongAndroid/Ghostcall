@@ -7,11 +7,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.Button;
 
 public class TourScreen extends FragmentActivity {
 
     private ViewPager viewPager;
     private TutorialAdapter adapter;
+
+    Button skipButton;
 
     protected ViewPagerIndicator ratingBar;
 
@@ -31,7 +34,9 @@ public class TourScreen extends FragmentActivity {
         ratingBar.setFocusable(false);
 
 
-        findViewById(R.id.skipButton).setOnClickListener(new View.OnClickListener() {
+        skipButton = (Button) findViewById(R.id.skipButton);
+
+        skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(TourScreen.this, VerificationScreen.class));
@@ -49,6 +54,11 @@ public class TourScreen extends FragmentActivity {
         public void onPageSelected(int position) {
 
             ratingBar.setProgress(position + 1);
+            if(position == 4) {
+                skipButton.setVisibility(View.VISIBLE);
+            } else {
+                skipButton.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -68,6 +78,7 @@ public class TourScreen extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
+
                     return TutorialImageFragment.newInstance(R.drawable.tutorial_page_one);
                 case 1:
                     return TutorialImageFragment.newInstance(R.drawable.tutorial_page_two);

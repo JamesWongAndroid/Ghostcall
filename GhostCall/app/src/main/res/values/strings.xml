@@ -24,5 +24,7 @@
     <string name="title_activity_select_package_screen">SelectPackageScreen</string>
     <string name="title_activity_call_history_screen">CallHistoryScreen</string>
     <string name="title_activity_history_screen">HistoryScreen</string>
+    <string name="title_activity_call_screen">CallScreen</string>
+    <string name="title_activity_history_settings_screen">HistorySettingsScreen</string>
 
 </resources>

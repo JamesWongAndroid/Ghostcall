@@ -36,7 +36,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Resend Code"
-        android:background="#22FFFFFF"
         android:textColor="@color/white"
         android:id="@+id/button4"
         android:textAllCaps="false"
@@ -44,13 +43,16 @@
         android:layout_alignLeft="@+id/textView4"
         android:layout_alignStart="@+id/textView4"
         android:layout_alignRight="@+id/textView4"
-        android:layout_alignEnd="@+id/textView4" />
+        android:layout_alignEnd="@+id/textView4"
+        android:background="@drawable/dialer_rectangle"
+        android:textSize="17sp"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Didn't get a code? Hit resend and we'll send you another one."
+        android:text="Didn't get a code? Hit resend and we'll send"
         android:layout_below="@id/button4"
         android:textColor="@color/white"
         android:paddingTop="5dp"
@@ -59,18 +61,30 @@
         android:layout_alignStart="@+id/editText2"
         android:layout_alignRight="@+id/editText2"
         android:layout_alignEnd="@+id/editText2"
-
         android:id="@+id/textView4" />
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="you another one."
+        android:textColor="@color/white"
+        android:paddingTop="5dp"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/textView4"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
         android:text="Verify"
         android:id="@+id/button5"
         android:textAllCaps="false"
-        android:layout_below="@+id/button4"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="51dp" />
+        android:layout_marginTop="51dp"
+        android:background="#55000000"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        />
 
 </RelativeLayout>

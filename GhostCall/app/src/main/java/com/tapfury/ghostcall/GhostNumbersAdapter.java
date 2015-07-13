@@ -1,6 +1,8 @@
 package com.tapfury.ghostcall;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,10 @@ public class GhostNumbersAdapter extends BaseAdapter {
 
     private LayoutInflater layoutInflater;
     private List<GhostNumbers> ghostNumbersList;
+    private Context context;
 
     public GhostNumbersAdapter(Context context, List<GhostNumbers> ghostNumbersList) {
-
+        this.context = context;
         layoutInflater = LayoutInflater.from(context);
         this.ghostNumbersList = ghostNumbersList;
     }
@@ -63,6 +66,23 @@ public class GhostNumbersAdapter extends BaseAdapter {
         GhostNumbers ghostNumbers = ghostNumbersList.get(position);
         holder.ghostName.setText(ghostNumbers.getGhostTitle());
         holder.ghostNumber.setText(ghostNumbers.getGhostNumber());
+        holder.smsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"));
+                Context context = v.getContext();
+                context.startActivity(sendIntent);
+            }
+        });
+
+        holder.callButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callIntent = new Intent(context.getApplicationContext(), CallScreen.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(callIntent);
+            }
+        });
 
         return view;
     }

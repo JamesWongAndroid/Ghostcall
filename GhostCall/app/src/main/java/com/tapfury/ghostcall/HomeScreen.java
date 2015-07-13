@@ -1,12 +1,15 @@
 package com.tapfury.ghostcall;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -41,8 +44,33 @@ public class HomeScreen extends AppCompatActivity {
         numbersList.add(gNumberTwo);
         numbersList.add(gNumberThree);
 
+        ImageView yourSMSButton = (ImageView) findViewById(R.id.yourSMS);
+        yourSMSButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"));
+                startActivity(sendIntent);
+            }
+        });
+
+        ImageView yourCallButton = (ImageView) findViewById(R.id.yourCall);
+        yourCallButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent callIntent = new Intent(HomeScreen.this, CallScreen.class);
+                startActivity(callIntent);
+            }
+        });
+
         gNumberAdapter = new GhostNumbersAdapter(this, numbersList);
         ghostNumberListView.setAdapter(gNumberAdapter);
+
+        ghostNumberListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(HomeScreen.this, HistoryScreen.class);
+                startActivity(intent);
+            }
+        });
 
         Button getGhostNumbers = (Button) findViewById(R.id.getGhostButton);
         getGhostNumbers.setOnClickListener(new View.OnClickListener() {

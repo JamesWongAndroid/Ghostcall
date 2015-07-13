@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/historyContentHolder"
+        >
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/historyStatusImage"
+        android:src="@drawable/sms_history"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="12dp"
+        />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(201) 241-3897"
+                android:layout_marginTop="20dp"
+                android:textSize="18sp"
+                android:id="@+id/historyNumber"
+                android:textColor="@color/white"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is a text message"
+                android:layout_marginTop="1dp"
+                android:id="@+id/historyDescription"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jun 30"
+                android:layout_marginTop="25dp"
+                android:id="@+id/historyDate"
+                android:textColor="@color/white"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="05:17pm"
+                android:id="@+id/historyTime"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="15dp"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</RelativeLayout>
