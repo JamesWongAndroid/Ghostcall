@@ -3,15 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/imageBackground"
     >
-
-    <ImageView
-        android:src="@drawable/tutorial_page_one"
-        android:id="@+id/image"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        />
 
 </LinearLayout>

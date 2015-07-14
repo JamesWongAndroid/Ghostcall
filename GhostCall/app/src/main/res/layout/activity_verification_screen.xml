@@ -23,13 +23,15 @@
         android:ems="15"
         android:padding="15dp"
         android:layout_margin="20dp"
-        android:id="@+id/editText"
+        android:id="@+id/phoneCodeField"
         android:hint="(888) 888-8888"
         android:ellipsize="start"
         android:gravity="center"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
+        android:digits="0123456789+"
+        android:maxLength="14"
         android:background="@drawable/edittext_rectangle"
          />
 
@@ -40,7 +42,7 @@
         android:text="@string/numbers_only"
         android:id="@+id/textView2"
         android:textColor="@color/white"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/phoneCodeField"
         android:layout_centerHorizontal="true"
         android:textSize="13sp" />
 
@@ -55,10 +57,10 @@
         android:textAlignment="center"
         android:paddingTop="5dp"
         android:layout_below="@id/textView2"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText"
-        android:layout_alignRight="@+id/editText"
-        android:layout_alignEnd="@+id/editText" />
+        android:layout_alignLeft="@+id/phoneCodeField"
+        android:layout_alignStart="@+id/phoneCodeField"
+        android:layout_alignRight="@+id/phoneCodeField"
+        android:layout_alignEnd="@+id/phoneCodeField" />
 
     <Button
         android:layout_width="match_parent"

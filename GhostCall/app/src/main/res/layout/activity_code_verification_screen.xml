@@ -23,13 +23,15 @@
         android:ems="15"
         android:padding="15dp"
         android:layout_margin="20dp"
-        android:id="@+id/editText2"
+        android:id="@+id/smsCodeInput"
         android:hint="8888"
         android:ellipsize="start"
         android:gravity="center"
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
+        android:digits="0123456789+"
+        android:maxLength="4"
         android:background="@drawable/edittext_rectangle" />
 
     <Button
@@ -39,7 +41,7 @@
         android:textColor="@color/white"
         android:id="@+id/button4"
         android:textAllCaps="false"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/smsCodeInput"
         android:layout_alignLeft="@+id/textView4"
         android:layout_alignStart="@+id/textView4"
         android:layout_alignRight="@+id/textView4"
@@ -57,10 +59,10 @@
         android:textColor="@color/white"
         android:paddingTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_alignStart="@+id/editText2"
-        android:layout_alignRight="@+id/editText2"
-        android:layout_alignEnd="@+id/editText2"
+        android:layout_alignLeft="@+id/smsCodeInput"
+        android:layout_alignStart="@+id/smsCodeInput"
+        android:layout_alignRight="@+id/smsCodeInput"
+        android:layout_alignEnd="@+id/smsCodeInput"
         android:id="@+id/textView4" />
 
     <TextView

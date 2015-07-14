@@ -4,11 +4,11 @@
     <string name="app_name">GhostCall</string>
     <string name="ghostcall_title">ghostcall</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_tour_screen">TourScreen</string>
-    <string name="title_activity_verification_screen">VerificationScreen</string>
+    <string name="title_activity_tour_screen"></string>
+    <string name="title_activity_verification_screen"></string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_code_verification_screen">CodeVerificationScreen</string>
+    <string name="title_activity_code_verification_screen"></string>
     <string name="take_tour">Take Tour</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
@@ -18,13 +18,13 @@
     <string name="done">Done</string>
     <string name="route_text">Ghost Call routes calls to your number while keeping it private. You can also send calls from your real number if you want.</string>
     <string name="code_verification">Code Verification</string>
-    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_home_screen">GhostCall</string>
     <string name="your_number">Your Number</string>
-    <string name="title_activity_get_ghost_number_screen">GetGhostNumberScreen</string>
-    <string name="title_activity_select_package_screen">SelectPackageScreen</string>
-    <string name="title_activity_call_history_screen">CallHistoryScreen</string>
-    <string name="title_activity_history_screen">HistoryScreen</string>
-    <string name="title_activity_call_screen">CallScreen</string>
-    <string name="title_activity_history_settings_screen">HistorySettingsScreen</string>
+    <string name="title_activity_get_ghost_number_screen">GhostCall</string>
+    <string name="title_activity_select_package_screen">GhostCall</string>
+    <string name="title_activity_call_history_screen">GhostCall</string>
+    <string name="title_activity_history_screen">GhostCall</string>
+    <string name="title_activity_call_screen">GhostCall</string>
+    <string name="title_activity_history_settings_screen">GhostCall</string>
 
 </resources>

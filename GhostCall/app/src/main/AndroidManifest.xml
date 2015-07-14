@@ -3,6 +3,8 @@
     package="com.tapfury.ghostcall" >
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -37,10 +39,6 @@
         <activity
             android:name=".SelectPackageScreen"
             android:label="@string/title_activity_select_package_screen" >
-        </activity>
-        <activity
-            android:name=".CallHistoryScreen"
-            android:label="@string/title_activity_call_history_screen" >
         </activity>
         <activity
             android:name=".HistoryScreen"

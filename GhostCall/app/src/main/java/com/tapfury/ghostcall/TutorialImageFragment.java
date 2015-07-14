@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 /**
@@ -26,8 +26,8 @@ public class TutorialImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_tutorial_image_fragment, container, false);
-        ImageView iv = (ImageView) view.findViewById(R.id.image);
-        iv.setImageResource(getArguments().getInt("imageResId"));
+        LinearLayout iv = (LinearLayout) view.findViewById(R.id.imageBackground);
+        iv.setBackgroundResource(getArguments().getInt("imageResId"));
 
 
         return view;
