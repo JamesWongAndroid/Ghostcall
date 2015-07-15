@@ -32,6 +32,8 @@
         android:layout_marginTop="25dp"
         android:digits="0123456789+"
         android:maxLength="4"
+        android:textSize="25sp"
+        android:cursorVisible="false"
         android:background="@drawable/edittext_rectangle" />
 
     <Button
