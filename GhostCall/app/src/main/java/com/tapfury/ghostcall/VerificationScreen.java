@@ -1,6 +1,8 @@
 package com.tapfury.ghostcall;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -35,6 +37,7 @@ public class VerificationScreen extends AppCompatActivity {
     private String ePhoneNumber;
     CircleProgressBar progressSpinner;
     RelativeLayout spinnerLayout;
+    public static final String GHOST_PREF = "GhostPrefFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,6 @@ public class VerificationScreen extends AppCompatActivity {
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  startActivity(new Intent(VerificationScreen.this, CodeVerificationScreen.class));
                 spinnerLayout.setVisibility(View.VISIBLE);
                 PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                 try {
@@ -103,31 +105,32 @@ public class VerificationScreen extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-            try {
-                url = new URL(builderString.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setDoInput(true);
-                urlConnection.connect();
-                inStream = urlConnection.getInputStream();
-                BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
-                while ((temp = bReader.readLine()) != null) {
-                    response += temp;
-                }
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
-            } finally {
-                if (inStream != null) {
-                    try {
-                        inStream.close();
-                    } catch (IOException ignored) {
+                try {
+                    url = new URL(builderString.toString());
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setDoInput(true);
+                    urlConnection.connect();
+                    inStream = urlConnection.getInputStream();
+                    BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
+                    while ((temp = bReader.readLine()) != null) {
+                        response += temp;
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
+                } finally {
+                    if (inStream != null) {
+                        try {
+                            inStream.close();
+                        } catch (IOException ignored) {
+                        }
+                    }
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
                     }
                 }
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
+
+
             return null;
         }
 
@@ -138,10 +141,72 @@ public class VerificationScreen extends AppCompatActivity {
                     JSONObject jObject = new JSONObject(response);
                     String apiKey = jObject.getString("api_key");
                     Toast.makeText(getApplicationContext(), apiKey, Toast.LENGTH_SHORT).show();
-                    spinnerLayout.setVisibility(View.INVISIBLE);
+                    SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("api_key", apiKey);
+                    editor.apply();
+                    new sendVerifyCodeTask().execute();
                 }  catch (JSONException e) {
                     spinnerLayout.setVisibility(View.INVISIBLE);
                 }
+            }
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    public class sendVerifyCodeTask extends AsyncTask<Void, Void, Void> {
+
+        HttpURLConnection urlConnection = null;
+        URL url = null;
+        String temp, response = "";
+        Uri.Builder builderString;
+        InputStream inStream = null;
+        String apiKey;
+        int responseCode;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            builderString = new Uri.Builder();
+            builderString.scheme("https")
+                    .authority("www.ghostcall.in")
+                    .appendPath("api")
+                    .appendPath("verify");
+            SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
+            apiKey = settings.getString("api_key", "");
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (apiKey.equals("")) {
+                // do something
+            } else {
+                try {
+                    url = new URL(builderString.toString());
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("X-api-key", apiKey);
+                    urlConnection.setDoInput(true);
+                    urlConnection.connect();
+                    responseCode = urlConnection.getResponseCode();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            spinnerLayout.setVisibility(View.INVISIBLE);
+            if (responseCode == 200 || responseCode == 201 || responseCode == 202) {
+                startActivity(new Intent(VerificationScreen.this, CodeVerificationScreen.class));
+            } else {
+                Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(aVoid);
         }
