@@ -136,6 +136,7 @@ public class VerificationScreen extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             if (response != null) {
                 try {
                     JSONObject jObject = new JSONObject(response);
@@ -150,7 +151,6 @@ public class VerificationScreen extends AppCompatActivity {
                     spinnerLayout.setVisibility(View.INVISIBLE);
                 }
             }
-            super.onPostExecute(aVoid);
         }
     }
 
