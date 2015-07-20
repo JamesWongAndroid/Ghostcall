@@ -69,7 +69,6 @@ public class CodeVerificationScreen extends AppCompatActivity {
         InputStream inStream = null;
         String apiKey;
         StringBuilder codeInput;
-        int responseCode;
 
         @Override
         protected void onPreExecute() {
@@ -134,7 +133,7 @@ public class CodeVerificationScreen extends AppCompatActivity {
                     JSONObject jObject = new JSONObject(response);
                     String verificationString = jObject.getString("verified");
                     if (verificationString.equals("true")) {
-                        startActivity(new Intent(CodeVerificationScreen.this, HomeScreen.class));
+                        startActivity(new Intent(CodeVerificationScreen.this, StartScreen.class));
                     } else {
                         Toast.makeText(getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
                     }

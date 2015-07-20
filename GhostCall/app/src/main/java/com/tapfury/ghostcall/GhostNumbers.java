@@ -13,14 +13,17 @@ public class GhostNumbers {
     }
 
     public void setGhostTitle(String ghostTitle) {
+
         this.ghostTitle = ghostTitle;
     }
 
     public String getGhostNumber() {
+
         return ghostNumber;
     }
 
     public void setGhostNumber(String ghostNumber) {
+
         this.ghostNumber = ghostNumber;
     }
 

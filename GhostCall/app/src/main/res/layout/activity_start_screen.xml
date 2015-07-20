@@ -32,7 +32,7 @@
         android:layout_height="60dp"
         android:text="@string/get_started"
         android:textColor="@color/white"
-        android:id="@+id/button2"
+        android:id="@+id/startButton"
         android:layout_weight="1"
         android:background="#22FFFFFF"
          />

@@ -11,13 +11,16 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeScreen extends AppCompatActivity {
 
     ListView ghostNumberListView;
     GhostNumbersAdapter gNumberAdapter;
+    NumbersDatabaseAdapter nDatabaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +29,16 @@ public class HomeScreen extends AppCompatActivity {
 
         ghostNumberListView = (ListView) findViewById(R.id.ghostNumberList);
 
-        GhostNumbers gNumber = new GhostNumbers();
-        gNumber.setGhostNumber("201-124-0984");
-        gNumber.setGhostTitle("Trial Number");
-
-        GhostNumbers gNumberTwo = new GhostNumbers();
-        gNumberTwo.setGhostNumber("123-234-5678");
-        gNumberTwo.setGhostTitle("Awesome Number");
-
-        GhostNumbers gNumberThree = new GhostNumbers();
-        gNumberThree.setGhostNumber("212-842-1122");
-        gNumberThree.setGhostTitle("Manhattan Number");
-
-        List<GhostNumbers> numbersList = new ArrayList<>();
-        numbersList.add(gNumber);
-        numbersList.add(gNumberTwo);
-        numbersList.add(gNumberThree);
+        nDatabaseAdapter = new NumbersDatabaseAdapter(HomeScreen.this);
+        try {
+            nDatabaseAdapter.open();
+            ArrayList<GhostNumbers> gNumberList = nDatabaseAdapter.getUserNumbers();
+            nDatabaseAdapter.close();
+            gNumberAdapter = new GhostNumbersAdapter(this, gNumberList);
+            ghostNumberListView.setAdapter(gNumberAdapter);
+        } catch (SQLException e) {
+            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+        }
 
         ImageView yourSMSButton = (ImageView) findViewById(R.id.yourSMS);
         yourSMSButton.setOnClickListener(new View.OnClickListener() {
@@ -59,9 +56,6 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(callIntent);
             }
         });
-
-        gNumberAdapter = new GhostNumbersAdapter(this, numbersList);
-        ghostNumberListView.setAdapter(gNumberAdapter);
 
         ghostNumberListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
