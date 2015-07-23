@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -93,7 +94,7 @@ public class VerificationScreen extends AppCompatActivity {
             phoneNumber = new StringBuilder();
             phoneNumber.append("%2B").append(codePhoneInput.getText().toString());
             builderString = new Uri.Builder();
-            builderString.scheme("https")
+            builderString.scheme("http")
                     .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("login")
@@ -117,7 +118,8 @@ public class VerificationScreen extends AppCompatActivity {
                         response += temp;
                     }
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
+                    String error = e.getMessage();
+                    Log.d("wtf", error);
                 } finally {
                     if (inStream != null) {
                         try {
@@ -149,6 +151,7 @@ public class VerificationScreen extends AppCompatActivity {
                     new sendVerifyCodeTask().execute();
                 }  catch (JSONException e) {
                     spinnerLayout.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -168,7 +171,7 @@ public class VerificationScreen extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             builderString = new Uri.Builder();
-            builderString.scheme("https")
+            builderString.scheme("http")
                     .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");

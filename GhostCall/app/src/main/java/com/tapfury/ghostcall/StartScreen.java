@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +24,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.http.GET;
 
 
 public class StartScreen extends Activity {
@@ -91,6 +102,102 @@ public class StartScreen extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
+                RequestInterceptor requestInterceptor = new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("X-api-key", apiKey);
+                    }
+                };
+
+                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+                        .setRequestInterceptor(requestInterceptor).build();
+                GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
+
+
+
+                try {
+                    NumbersDatabaseAdapter numberAdapter = new NumbersDatabaseAdapter(StartScreen.this);
+                    numberAdapter.open();
+
+                    if (!numberAdapter.numberPackageExists("1")) {
+                        List<NumberPackagesData> newNumberPackageList = service.getNewNumberPackages();
+                        if (!newNumberPackageList.isEmpty()) {
+                            for (int i = 0; i < newNumberPackageList.size(); i++) {
+                                numberAdapter.createNumbersPackage(newNumberPackageList.get(i).getId(), newNumberPackageList.get(i).getName(), newNumberPackageList.get(i).getType(),
+                                        newNumberPackageList.get(i).getCredits(), newNumberPackageList.get(i).getCost(), newNumberPackageList.get(i).getIosProductId(),
+                                        newNumberPackageList.get(i).getAndroidProductId(), newNumberPackageList.get(i).getExpiration(), newNumberPackageList.get(i).getCreatedOn());
+                            }
+                        }
+                    }
+
+                    if (!numberAdapter.numberPackageExists("4")) {
+                        List<NumberPackagesData> extendNumberPackageList = service.getExtendNumberPackages();
+                        if (!extendNumberPackageList.isEmpty()) {
+                            for (int i = 0; i <extendNumberPackageList.size(); i++) {
+                                numberAdapter.createNumbersPackage(extendNumberPackageList.get(i).getId(), extendNumberPackageList.get(i).getName(), extendNumberPackageList.get(i).getType(),
+                                        extendNumberPackageList.get(i).getCredits(), extendNumberPackageList.get(i).getCost(), extendNumberPackageList.get(i).getIosProductId(),
+                                        extendNumberPackageList.get(i).getAndroidProductId(), extendNumberPackageList.get(i).getExpiration(), extendNumberPackageList.get(i).getCreatedOn());
+                            }
+                        }
+                    }
+
+                    if (!numberAdapter.soundEffectExists("2")) {
+                        List<SoundEffectsData> soundEffectsDataList = service.getsoundEffectsList();
+                        if (!soundEffectsDataList.isEmpty()) {
+                            for (int i = 0; i < soundEffectsDataList.size(); i++) {
+                                List<com.tapfury.ghostcall.SoundEffects.Item> effectItems = soundEffectsDataList.get(i).getItems();
+                                for (int j = 0; j < effectItems.size(); j++) {
+                                    numberAdapter.createSoundEffect(effectItems.get(j).getId(), effectItems.get(j).getEffectId(), effectItems.get(j).getName(),
+                                            effectItems.get(j).getAudioName(), effectItems.get(j).getVolume(), effectItems.get(j).getImageActive(), effectItems.get(j).getImageOn(),
+                                            effectItems.get(j).getImageOff(), effectItems.get(j).getCreatedAt(), effectItems.get(j).getUpdatedAt(), effectItems.get(j).getAudioUrl());
+                                }
+                            }
+                        }
+                    }
+                    numberAdapter.close();
+                } catch (SQLException e) {
+
+                }
+
+                service.creditPackagesList(new Callback<List<CreditPackagesData>>() {
+                    @Override
+                    public void success(List<CreditPackagesData> creditPackagesDatas, Response response) {
+                        try {
+                            NumbersDatabaseAdapter numberAdapter = new NumbersDatabaseAdapter(StartScreen.this);
+                            numberAdapter.open();
+                            List<CreditPackagesData> creditPackagesDataList = new ArrayList();
+                            creditPackagesDataList.addAll(creditPackagesDatas);
+                            if (!creditPackagesDataList.isEmpty()) {
+                                for (int i = 0; i < creditPackagesDataList.size(); i++) {
+                                    if (!numberAdapter.creditPackageExists(creditPackagesDataList.get(i).getId())) {
+                                        numberAdapter.createCreditsNumber(creditPackagesDataList.get(i).getId(),
+                                                creditPackagesDataList.get(i).getName(),
+                                                creditPackagesDataList.get(i).getDescription(),
+                                                creditPackagesDataList.get(i).getCost(),
+                                                creditPackagesDataList.get(i).getCredits(),
+                                                creditPackagesDataList.get(i).getIosProductId(),
+                                                creditPackagesDataList.get(i).getAndroidProductId(),
+                                                creditPackagesDataList.get(i).getCreatedAt(),
+                                                creditPackagesDataList.get(i).getUpdatedAt(),
+                                                creditPackagesDataList.get(i).getDeleted()
+                                        );
+                                    }
+                                }
+                            }
+                            numberAdapter.close();
+                        } catch (SQLException e) {
+
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.d("wtf", "fuck");
+                    }
+                });
+
+
+
                 url = new URL(builderString.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -144,10 +251,6 @@ public class StartScreen extends Activity {
                             numberAdapter.createNumber(ghostID, ghostNumber, ghostName, ghostVoicemail, ghostDisableCalls, ghostDisableMessages, ghostExpire);
                         }
                         numberAdapter.close();
-
-                        Intent toHomeScreen = new Intent(getApplicationContext(), HomeScreen.class);
-                        startActivity(toHomeScreen);
-                        finish();
                     }
 
                 } catch (JSONException e) {
@@ -156,6 +259,23 @@ public class StartScreen extends Activity {
                     Toast.makeText(getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
+            Intent toHomeScreen = new Intent(getApplicationContext(), HomeScreen.class);
+            startActivity(toHomeScreen);
+            finish();
         }
+    }
+
+    public interface GhostCallAPIInterface {
+        @GET("/credit_packages")
+        void creditPackagesList(Callback<List<CreditPackagesData>> callBack);
+
+        @GET("/effects")
+        List<SoundEffectsData> getsoundEffectsList();
+
+        @GET("/packages?type=new")
+        List<NumberPackagesData> getNewNumberPackages();
+
+        @GET("/packages?type=extend")
+        List<NumberPackagesData> getExtendNumberPackages();
     }
 }

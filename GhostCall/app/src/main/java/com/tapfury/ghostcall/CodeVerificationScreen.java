@@ -74,7 +74,7 @@ public class CodeVerificationScreen extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             builderString = new Uri.Builder();
-            builderString.scheme("https")
+            builderString.scheme("http")
                     .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");
