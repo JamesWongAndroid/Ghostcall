@@ -58,6 +58,30 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
     public static final String NUMBERS_EXPIRATION = "expiration";
     public static final String NUMBERS_CREATED_ON = "created_on";
 
+    public static final String TABLE_BACKGROUND_EFFECTS = "background_effects";
+    public static final String BACKGROUND_PRIMARY_ID = "_id";
+    public static final String BACKGROUND_ID = "id";
+    public static final String BACKGROUND_BACKGROUND_ID = "background_id";
+    public static final String BACKGROUND_NAME = "name";
+    public static final String BACKGROUND_AUDIO_NAME = "audio_name";
+    public static final String BACKGROUND_VOLUME = "volume";
+    public static final String BACKGROUND_AUDIO_URL = "audio_url";
+
+    public static final String TABLE_MESSAGES = "messages";
+    public static final String MESSAGES_PRIMARY_ID = "_id";
+    public static final String MESSAGES_ID = "id";
+    public static final String MESSAGES_USER_ID = "user_id";
+    public static final String MESSAGES_NUMBER_ID = "number_id";
+    public static final String MESSAGES_TO = "message_to";
+    public static final String MESSAGES_FROM = "message_from";
+    public static final String MESSAGES_DIRECTION = "direction";
+    public static final String MESSAGES_STATUS = "status";
+    public static final String MESSAGES_RESOURCE_ID = "resource_id";
+    public static final String MESSAGES_TEXT = "text";
+    public static final String MESSAGES_CREATED_AT = "created_at";
+    public static final String MESSAGES_UPDATED_AT = "updated_at";
+    public static final String MESSAGES_DELETED = "deleted";
+
     private static final String DATABASE_NAME = "ghostcall.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -75,6 +99,13 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE_NUMBER_PACKAGES = "CREATE TABLE " + TABLE_NUMBER_PACKAGES + "(" + NUMBERS_PRIMARY_ID + " integer primary key autoincrement, " + NUMBERS_ID + " TEXT, " + NUMBERS_NAME + " TEXT, " + NUMBERS_TYPE + " TEXT, " +
             NUMBERS_CREDITS + " TEXT, " + NUMBERS_COST + " TEXT, " + NUMBERS_IOS_PRODUCT_ID + " TEXT, " + NUMBERS_ANDROID_PRODUCT_ID + " TEXT, " + NUMBERS_EXPIRATION + " TEXT, " + NUMBERS_CREATED_ON + " TEXT " + ");";
 
+    private static final String DATABASE_CREATE_BACKGROUND_EFFECTS = "CREATE TABLE " + TABLE_BACKGROUND_EFFECTS + "(" + BACKGROUND_PRIMARY_ID + " integer primary key autoincrement, " + BACKGROUND_ID +
+            " TEXT, " + BACKGROUND_BACKGROUND_ID + " TEXT, " + BACKGROUND_NAME + " TEXT, " + BACKGROUND_AUDIO_NAME + " TEXT, " + BACKGROUND_VOLUME + " TEXT, " + BACKGROUND_AUDIO_URL + " TEXT " + ");";
+
+    private static final String DATABASE_CREATE_MESSAGES = "CREATE TABLE " + TABLE_MESSAGES + "(" + MESSAGES_PRIMARY_ID + " integer primary key autoincrement, " + MESSAGES_ID + " TEXT, " +
+            MESSAGES_USER_ID + " TEXT, " + MESSAGES_NUMBER_ID + " TEXT, " + MESSAGES_TO + " TEXT, " + MESSAGES_FROM + " TEXT, " + MESSAGES_DIRECTION + " TEXT, " + MESSAGES_STATUS + " TEXT, " +
+            MESSAGES_RESOURCE_ID + " TEXT, " + MESSAGES_TEXT + " TEXT, " + MESSAGES_CREATED_AT + " TEXT, " + MESSAGES_UPDATED_AT + " TEXT, " + MESSAGES_DELETED + " TEXT " + ");";
+
 
     public MySQLiteNumbersHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -86,6 +117,8 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DATABASE_CREATE_CREDIT_NUMBERS);
         sqLiteDatabase.execSQL(DATABASE_CREATE_SOUND_EFFECTS);
         sqLiteDatabase.execSQL(DATABASE_CREATE_NUMBER_PACKAGES);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_BACKGROUND_EFFECTS);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_MESSAGES);
     }
 
     @Override
@@ -94,6 +127,8 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CREDIT_PACKAGES);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_SOUND_EFFECTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NUMBER_PACKAGES);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_BACKGROUND_EFFECTS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
     }
 
     public SQLiteDatabase getWritable() {

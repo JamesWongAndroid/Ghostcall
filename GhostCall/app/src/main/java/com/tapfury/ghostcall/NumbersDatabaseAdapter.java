@@ -51,6 +51,24 @@ public class NumbersDatabaseAdapter {
         cursor.close();
     }
 
+    public void createMessage(String id, String userID, String numberID, String to, String from, String direction, String status, String resourceID, String text, String createdAt, String updatedAt, String deleted) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteNumbersHelper.MESSAGES_ID, id);
+        values.put(MySQLiteNumbersHelper.MESSAGES_USER_ID, userID);
+        values.put(MySQLiteNumbersHelper.MESSAGES_NUMBER_ID, numberID);
+        values.put(MySQLiteNumbersHelper.MESSAGES_TO, to);
+        values.put(MySQLiteNumbersHelper.MESSAGES_FROM, from);
+        values.put(MySQLiteNumbersHelper.MESSAGES_DIRECTION, direction);
+        values.put(MySQLiteNumbersHelper.MESSAGES_STATUS, status);
+        values.put(MySQLiteNumbersHelper.MESSAGES_RESOURCE_ID, resourceID);
+        values.put(MySQLiteNumbersHelper.MESSAGES_TEXT, text);
+        values.put(MySQLiteNumbersHelper.MESSAGES_CREATED_AT, createdAt);
+        values.put(MySQLiteNumbersHelper.MESSAGES_UPDATED_AT, updatedAt);
+        values.put(MySQLiteNumbersHelper.MESSAGES_DELETED, deleted);
+
+        database.insert(MySQLiteNumbersHelper.TABLE_MESSAGES, null, values);
+    }
+
     public void createCreditsNumber(String id, String name, String description, String cost, String credits, String iosProductID, String androidProductID, String createdAt, String updatedAt, String deleted) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteNumbersHelper.CREDITS_ID, id);
@@ -99,6 +117,18 @@ public class NumbersDatabaseAdapter {
         database.insert(MySQLiteNumbersHelper.TABLE_SOUND_EFFECTS, null, values);
     }
 
+    public void createBackgroundEffects(String id, String backgroundID, String name, String audioName, String volume, String audioURL) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteNumbersHelper.BACKGROUND_ID, id);
+        values.put(MySQLiteNumbersHelper.BACKGROUND_BACKGROUND_ID, backgroundID);
+        values.put(MySQLiteNumbersHelper.BACKGROUND_NAME, name);
+        values.put(MySQLiteNumbersHelper.BACKGROUND_AUDIO_NAME, audioName);
+        values.put(MySQLiteNumbersHelper.BACKGROUND_VOLUME, volume);
+        values.put(MySQLiteNumbersHelper.BACKGROUND_AUDIO_URL, audioURL);
+
+        database.insert(MySQLiteNumbersHelper.TABLE_BACKGROUND_EFFECTS, null, values);
+    }
+
     public ArrayList<GhostNumbers> getUserNumbers() {
         ArrayList<GhostNumbers> userNumbers = new ArrayList();
         Cursor cursor = database.rawQuery("select * from " + MySQLiteNumbersHelper.TABLE_NUMBERS, null);
@@ -117,6 +147,13 @@ public class NumbersDatabaseAdapter {
         }
         cursor.close();
         return userNumbers;
+    }
+
+    public boolean dataExists(String id, String table) {
+        Cursor cursor = database.rawQuery("SELECT * FROM " + table + " WHERE id = " + id, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
     }
 
     public boolean numberExists(String id) {

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
 import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
 
 import org.json.JSONArray;
@@ -100,6 +101,11 @@ public class StartScreen extends Activity {
         }
 
         @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
         protected Void doInBackground(Void... voids) {
             try {
                 RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -154,6 +160,19 @@ public class StartScreen extends Activity {
                             }
                         }
                     }
+
+                    if (!numberAdapter.dataExists("1", "background_effects")) {
+                        List<BackgroundEffectsData> backgroundEffectsDataList = service.getBackgroundEffectsList();
+                        if (!backgroundEffectsDataList.isEmpty()) {
+                            for (int i = 0; i < backgroundEffectsDataList.size(); i++) {
+                                List<com.tapfury.ghostcall.BackgroundEffects.Item> backgroundItems = backgroundEffectsDataList.get(i).getItems();
+                                for (int j = 0; j < backgroundItems.size(); j++) {
+                                    numberAdapter.createBackgroundEffects(backgroundItems.get(j).getId(), backgroundItems.get(j).getBackgroundId(), backgroundItems.get(j).getName(),
+                                            backgroundItems.get(j).getAudioName(), backgroundItems.get(j).getVolume(), backgroundItems.get(j).getAudioUrl());
+                                }
+                            }
+                        }
+                    }
                     numberAdapter.close();
                 } catch (SQLException e) {
 
@@ -196,8 +215,6 @@ public class StartScreen extends Activity {
                     }
                 });
 
-
-
                 url = new URL(builderString.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -230,9 +247,11 @@ public class StartScreen extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
             if (response != null) {
                 try {
-
+                    NumbersDatabaseAdapter numberAdapter = new NumbersDatabaseAdapter(StartScreen.this);
+                    numberAdapter.open();
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i <jsonArray.length(); i++) {
                         JSONObject jObject = jsonArray.getJSONObject(i);
@@ -243,10 +262,49 @@ public class StartScreen extends Activity {
                         String ghostVoicemail = jObject.getString("voicemail");
                         String ghostDisableCalls = jObject.getString("disable_calls");
                         String ghostDisableMessages = jObject.getString("disable_messages");
+                        JSONArray callArray = jObject.getJSONArray("calls");
+                        if (!(callArray.length() == 0)) {
+                            for (int k = 0; k < callArray.length(); k++) {
+                                JSONObject jCall = callArray.getJSONObject(k);
+                                String callID = jCall.getString("id");
+                                String callUserID = jCall.getString("user_id");
+                                String callTo = jCall.getString("to");
+                                String callFrom = jCall.getString("from");
+                                String callDirection = jCall.getString("direction");
+                                String callStatus = jCall.getString("status");
+                                String callPitch = jCall.getString("pitch");
+                                String callBackgroundID = jCall.getString("background_item_id");
+                                String callDuration = jCall.getString("duration");
+                                String callResourceID = jCall.getString("resource_id");
+                                String callRecord = jCall.getString("record");
+                                String callCreatedAt = jCall.getString("created_at");
+                                String callUpdatedAt = jCall.getString("updated_at");
+                            }
+                        }
+                        JSONArray messageArray = jObject.getJSONArray("messages");
+                        if (!(messageArray.length() == 0)) {
+                            for (int j = 0; j < messageArray.length(); j++) {
+                                JSONObject jMessage = messageArray.getJSONObject(j);
+                                if (!numberAdapter.dataExists(jMessage.getString("id"), MySQLiteNumbersHelper.TABLE_MESSAGES)) {
+                                    String messageID = jMessage.getString("id");
+                                    String messageUserID = jMessage.getString("user_id");
+                                    String messageNumberID = jMessage.getString("number_id");
+                                    String messageTo = jMessage.getString("to");
+                                    String messageFrom = jMessage.getString("from");
+                                    String messageDirection = jMessage.getString("direction");
+                                    String messageStatus = jMessage.getString("status");
+                                    String messageResourceID = jMessage.getString("resource_id");
+                                    String messageText = jMessage.getString("text");
+                                    String messageCreatedAt = jMessage.getString("created_at");
+                                    String messageupdatedAt = jMessage.getString("updated_at");
+                                    String messageDeleted = jMessage.getString("deleted");
+                                    numberAdapter.createMessage(messageID, messageUserID, messageNumberID, messageTo, messageFrom, messageDirection,
+                                            messageStatus, messageResourceID, messageText, messageCreatedAt, messageupdatedAt, messageDeleted);
+                                }
 
+                            }
+                        }
 
-                        NumbersDatabaseAdapter numberAdapter = new NumbersDatabaseAdapter(StartScreen.this);
-                        numberAdapter.open();
                         if (!numberAdapter.numberExists(ghostID)) {
                             numberAdapter.createNumber(ghostID, ghostNumber, ghostName, ghostVoicemail, ghostDisableCalls, ghostDisableMessages, ghostExpire);
                         }
@@ -266,6 +324,7 @@ public class StartScreen extends Activity {
     }
 
     public interface GhostCallAPIInterface {
+
         @GET("/credit_packages")
         void creditPackagesList(Callback<List<CreditPackagesData>> callBack);
 
@@ -277,5 +336,8 @@ public class StartScreen extends Activity {
 
         @GET("/packages?type=extend")
         List<NumberPackagesData> getExtendNumberPackages();
+
+        @GET("/backgrounds")
+        List<BackgroundEffectsData> getBackgroundEffectsList();
     }
 }

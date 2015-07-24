@@ -4,6 +4,7 @@
       <w>dialpad</w>
       <w>getsound</w>
       <w>voicemail</w>
+      <w>voicemails</w>
     </words>
   </dictionary>
 </component>
