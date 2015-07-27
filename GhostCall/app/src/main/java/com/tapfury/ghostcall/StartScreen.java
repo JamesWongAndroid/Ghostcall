@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
 import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
 import com.tapfury.ghostcall.User.UserData;
@@ -38,6 +40,8 @@ public class StartScreen extends Activity {
     public static final String GHOST_PREF = "GhostPrefFile";
     Button tourButton;
     Button startButton;
+    TextView progressText;
+    NumberProgressBar progressBar;
     private String apiKey, lastUpdatedTimestamp;
     private boolean isUserLoaded, isNumberPackageLoaded, isExtendLoaded, isCreditsLoaded, isEffectsLoaded, isBackgroundLoaded;
 
@@ -48,6 +52,9 @@ public class StartScreen extends Activity {
 
         tourButton = (Button) findViewById(R.id.tourButton);
         startButton = (Button) findViewById(R.id.startButton);
+
+        progressBar = (NumberProgressBar) findViewById(R.id.preloaderBar);
+        progressText = (TextView) findViewById(R.id.progressText);
 
         SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
@@ -87,17 +94,21 @@ public class StartScreen extends Activity {
         });
     }
 
-    public class getNumbersTask extends AsyncTask<Void, Void, Void> {
+    public class getNumbersTask extends AsyncTask<Void, Integer, Void> {
 
         HttpURLConnection urlConnection = null;
         URL url = null;
         String temp, response = "";
         Uri.Builder builderString;
         InputStream inStream = null;
+        int progress_status;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            progressText.setVisibility(View.VISIBLE);
+            progress_status = 0;
             builderString = new Uri.Builder();
             builderString.scheme("http")
                     .authority("www.ghostcall.in")
@@ -109,8 +120,45 @@ public class StartScreen extends Activity {
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
+
+            progressBar.setProgress(values[0]);
+
+
+            switch (values[0]) {
+                case 15:
+                    progressText.setText("Loading User Data...");
+                    break;
+                case 30:
+                    progressText.setText("Loading Number Packages...");
+                    break;
+                case 45:
+                    progressText.setText("Loading Extend Packages...");
+                    break;
+                case 60:
+                    progressText.setText("Loading Sound Effects...");
+                    break;
+                case 75:
+                    progressText.setText("Loading Background Effects");
+                    break;
+                case 80:
+                    progressText.setText("Loading Credits...");
+                    break;
+                case 85:
+                    progressText.setText("Loading Numbers");
+                    break;
+                case 90:
+                    progressText.setText("Loading Calls");
+                    break;
+                case 95:
+                    progressText.setText("Loading Messages");
+                    break;
+                case 100:
+                    progressText.setText("Done!");
+                    break;
+            }
+
         }
 
         @Override
@@ -147,6 +195,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("userDataLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 15;
+                        publishProgress(progress_status);
                     }
 
 
@@ -162,6 +212,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("numberPackageLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 30;
+                        publishProgress(progress_status);
                     }
 
                     if (!isExtendLoaded) {
@@ -175,6 +227,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("extendLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 45;
+                        publishProgress(progress_status);
                     }
 
                     if (!isEffectsLoaded) {
@@ -191,6 +245,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("effectsLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 60;
+                        publishProgress(progress_status);
                     }
 
                     if (!isBackgroundLoaded) {
@@ -206,6 +262,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("backgroundsLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 75;
+                        publishProgress(progress_status);
                     }
 
                     if (!isCreditsLoaded) {
@@ -219,6 +277,8 @@ public class StartScreen extends Activity {
                             editor.putBoolean("creditsLoaded", true);
                             editor.apply();
                         }
+                        progress_status = 80;
+                        publishProgress(progress_status);
                     }
 
                     numberAdapter.close();
@@ -226,6 +286,8 @@ public class StartScreen extends Activity {
                     // TODO: DO SOMETHING HERE
                 }
 
+                progress_status = 80;
+                publishProgress(progress_status);
                 url = new URL(builderString.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -258,6 +320,8 @@ public class StartScreen extends Activity {
                     GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(StartScreen.this);
                     numberAdapter.open();
                     JSONArray jsonArray = new JSONArray(response);
+                    progress_status = 85;
+                    publishProgress(progress_status);
                     for (int i = 0; i <jsonArray.length(); i++) {
                         JSONObject jObject = jsonArray.getJSONObject(i);
                         String ghostID = jObject.getString("id");
@@ -268,6 +332,8 @@ public class StartScreen extends Activity {
                         String ghostDisableCalls = jObject.getString("disable_calls");
                         String ghostDisableMessages = jObject.getString("disable_messages");
                         JSONArray callArray = jObject.getJSONArray("calls");
+                        progress_status = 90;
+                        publishProgress(progress_status);
                         if (!(callArray.length() == 0)) {
                             for (int k = 0; k < callArray.length(); k++) {
                                 JSONObject jCall = callArray.getJSONObject(k);
@@ -288,6 +354,8 @@ public class StartScreen extends Activity {
                                     numberAdapter.createCall(callID, callUserID, callNumberID, callTo, callFrom, callDirection, callStatus, callPitch, callBackgroundID, callDuration, callResourceID, callRecord, callCreatedAt, callUpdatedAt);
                             }
                         }
+                        progress_status = 95;
+                        publishProgress(progress_status);
                         JSONArray messageArray = jObject.getJSONArray("messages");
                         if (!(messageArray.length() == 0)) {
                             for (int j = 0; j < messageArray.length(); j++) {
@@ -329,7 +397,8 @@ public class StartScreen extends Activity {
                                     numberAdapter.createVoicemail(voicemailID, voicemailUserID, voicemailNumberID, voicemailCallID, voicemailTo, voicemailFrom, voicemailDuration, voicemailResourceID, voicemailText, voicemailCreatedAt, voicemailUpdatedAt);
                             }
                         }
-
+                        progress_status = 100;
+                        publishProgress(progress_status);
                         if (!numberAdapter.numberExists(ghostID)) {
                             numberAdapter.createNumber(ghostID, ghostNumber, ghostName, ghostVoicemail, ghostDisableCalls, ghostDisableMessages, ghostExpire);
                         }
