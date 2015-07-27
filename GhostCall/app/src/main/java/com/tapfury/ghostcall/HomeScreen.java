@@ -20,7 +20,7 @@ public class HomeScreen extends AppCompatActivity {
 
     ListView ghostNumberListView;
     GhostNumbersAdapter gNumberAdapter;
-    NumbersDatabaseAdapter nDatabaseAdapter;
+    GhostCallDatabaseAdapter nDatabaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class HomeScreen extends AppCompatActivity {
 
         ghostNumberListView = (ListView) findViewById(R.id.ghostNumberList);
 
-        nDatabaseAdapter = new NumbersDatabaseAdapter(HomeScreen.this);
+        nDatabaseAdapter = new GhostCallDatabaseAdapter(HomeScreen.this);
         try {
             nDatabaseAdapter.open();
             ArrayList<GhostNumbers> gNumberList = nDatabaseAdapter.getUserNumbers();

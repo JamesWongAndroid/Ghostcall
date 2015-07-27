@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by Ynott on 7/20/15.
  */
-public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
+public class MySQLiteGhostCallHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_NUMBERS = "numbers";
     public static final String PRIMARY_ID = "_id";
@@ -82,6 +82,56 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
     public static final String MESSAGES_UPDATED_AT = "updated_at";
     public static final String MESSAGES_DELETED = "deleted";
 
+    public static final String TABLE_CALLS = "calls";
+    public static final String CALLS_PRIMARY_ID = "_id";
+    public static final String CALLS_ID = "id";
+    public static final String CALLS_USER_ID = "user_id";
+    public static final String CALLS_NUMBER_ID = "number_id";
+    public static final String CALLS_TO = "call_to";
+    public static final String CALLS_FROM = "call_from";
+    public static final String CALLS_DIRECTION = "direction";
+    public static final String CALLS_STATUS = "status";
+    public static final String CALLS_PITCH = "pitch";
+    public static final String CALLS_BACKGROUND_ITEM_ID = "background_item_id";
+    public static final String CALLS_DURATION = "duration";
+    public static final String CALLS_RESOURCE_ID = "resource_id";
+    public static final String CALLS_RECORD = "record";
+    public static final String CALLS_CREATED_AT = "created_at";
+    public static final String CALLS_UPDATED_AT = "updated_at";
+
+    public static final String TABLE_VOICEMAILS = "voicemails";
+    public static final String VOICEMAILS_PRIMARY_ID = "_id";
+    public static final String VOICEMAILS_ID = "id";
+    public static final String VOICEMAILS_USER_ID = "user_id";
+    public static final String VOICEMAILS_NUMBER_ID = "number_id";
+    public static final String VOICEMAILS_CALL_ID = "call_id";
+    public static final String VOICEMAILS_TO = "voicemail_to";
+    public static final String VOICEMAILS_FROM = "voicemail_from";
+    public static final String VOICEMAILS_DURATION = "voicemail_duration";
+    public static final String VOICEMAILS_RESOURCE_ID = "resource_id";
+    public static final String VOICEMAILS_TEXT = "text";
+    public static final String VOICEMAILS_CREATED_AT = "created_at";
+    public static final String VOICEMAILS_UPDATED_AT = "updated_at";
+
+    public static final String TABLE_USER = "user";
+    public static final String USER_PRIMARY_ID = "_id";
+    public static final String USER_ID = "id";
+    public static final String USER_PHONE_NUMBER = "phone_number";
+    public static final String USER_DEVICE_TOKEN = "device_token";
+    public static final String USER_APP_VERSION = "app_version";
+    public static final String USER_PLATFORM = "platform";
+    public static final String USER_PLATFORM_VERSION = "platform_version";
+    public static final String USER_API_KEY_ID = "api_key_id";
+    public static final String USER_NAME = "name";
+    public static final String USER_EMAIL = "email";
+    public static final String USER_CREDITS = "credits";
+    public static final String USER_CREATED_AT = "created_at";
+    public static final String USER_UPDATED_AT = "updated_at";
+    public static final String USER_DELETED = "deleted";
+    public static final String USER_BALANCE_SMS = "balance_sms";
+    public static final String USER_BALANCE_MINUTES = "balance_minutes";
+    public static final String USER_BALANCE_CREDITS = "balance_credits";
+
     private static final String DATABASE_NAME = "ghostcall.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -106,8 +156,22 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
             MESSAGES_USER_ID + " TEXT, " + MESSAGES_NUMBER_ID + " TEXT, " + MESSAGES_TO + " TEXT, " + MESSAGES_FROM + " TEXT, " + MESSAGES_DIRECTION + " TEXT, " + MESSAGES_STATUS + " TEXT, " +
             MESSAGES_RESOURCE_ID + " TEXT, " + MESSAGES_TEXT + " TEXT, " + MESSAGES_CREATED_AT + " TEXT, " + MESSAGES_UPDATED_AT + " TEXT, " + MESSAGES_DELETED + " TEXT " + ");";
 
+    private static final String DATABASE_CREATE_CALLS = "CREATE TABLE " + TABLE_CALLS + " ( " + CALLS_PRIMARY_ID + " integer primary key autoincrement, " + CALLS_ID + " TEXT, " + CALLS_USER_ID +
+            " TEXT, " + CALLS_NUMBER_ID + " TEXT, " + CALLS_TO + " TEXT, " + CALLS_FROM + " TEXT, " + CALLS_DIRECTION
+            + " TEXT, " + CALLS_STATUS + " TEXT, " + CALLS_PITCH + " TEXT, " + CALLS_BACKGROUND_ITEM_ID + " TEXT, " + CALLS_DURATION + " TEXT, " + CALLS_RESOURCE_ID + " TEXT, "
+            + CALLS_RECORD + " TEXT, " + CALLS_CREATED_AT + " TEXT, " + CALLS_UPDATED_AT + " TEXT " + ");";
 
-    public MySQLiteNumbersHelper(Context context) {
+    private static final String DATABASE_CREATE_VOICEMAILS = "CREATE TABLE " + TABLE_VOICEMAILS + " ( " + VOICEMAILS_PRIMARY_ID + " integer primary key autoincrement, " + VOICEMAILS_ID + " TEXT, " + VOICEMAILS_USER_ID +
+            " TEXT, " + VOICEMAILS_NUMBER_ID + " TEXT, " + VOICEMAILS_CALL_ID  + " TEXT, " + VOICEMAILS_TO + " TEXT, " + VOICEMAILS_FROM + " TEXT, " + VOICEMAILS_DURATION +
+            " TEXT, " + VOICEMAILS_RESOURCE_ID + " TEXT, " + VOICEMAILS_TEXT + " TEXT, " + VOICEMAILS_CREATED_AT + " TEXT, " + VOICEMAILS_UPDATED_AT + " TEXT " + ");";
+
+    private static final String DATABASE_CREATE_USER = "CREATE TABLE " + TABLE_USER + " ( " + USER_PRIMARY_ID + " integer primary key autoincrement, " + USER_ID + " TEXT, " + USER_PHONE_NUMBER + " TEXT, " + USER_DEVICE_TOKEN + " TEXT, " + USER_APP_VERSION
+            + " TEXT, " + USER_PLATFORM + " TEXT, " + USER_PLATFORM_VERSION + " TEXT, " + USER_API_KEY_ID + " TEXT, " + USER_NAME + " TEXT, " + USER_EMAIL + " TEXT, " + USER_CREDITS + " TEXT, " + USER_CREATED_AT +
+            " TEXT, " + USER_UPDATED_AT + " TEXT, " + USER_DELETED + " TEXT, " + USER_BALANCE_SMS + " TEXT, " + USER_BALANCE_MINUTES + " TEXT, " + USER_BALANCE_CREDITS + " TEXT "
+            + ");";
+
+
+    public MySQLiteGhostCallHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -119,6 +183,9 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DATABASE_CREATE_NUMBER_PACKAGES);
         sqLiteDatabase.execSQL(DATABASE_CREATE_BACKGROUND_EFFECTS);
         sqLiteDatabase.execSQL(DATABASE_CREATE_MESSAGES);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_CALLS);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_VOICEMAILS);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_USER);
     }
 
     @Override
@@ -129,9 +196,8 @@ public class MySQLiteNumbersHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NUMBER_PACKAGES);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_BACKGROUND_EFFECTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
-    }
-
-    public SQLiteDatabase getWritable() {
-        return getWritableDatabase();
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CALLS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_VOICEMAILS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
     }
 }
