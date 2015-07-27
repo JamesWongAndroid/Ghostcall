@@ -1,16 +1,22 @@
 package com.tapfury.ghostcall;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
@@ -21,17 +27,28 @@ public class HomeScreen extends AppCompatActivity {
     ListView ghostNumberListView;
     GhostNumbersAdapter gNumberAdapter;
     GhostCallDatabaseAdapter nDatabaseAdapter;
+    TextView userNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1d375a")));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
+        }
+
+        userNumber = (TextView) findViewById(R.id.user_number);
 
         ghostNumberListView = (ListView) findViewById(R.id.ghostNumberList);
 
         nDatabaseAdapter = new GhostCallDatabaseAdapter(HomeScreen.this);
         try {
             nDatabaseAdapter.open();
+            userNumber.setText(nDatabaseAdapter.getUserNumber());
             ArrayList<GhostNumbers> gNumberList = nDatabaseAdapter.getUserNumbers();
             nDatabaseAdapter.close();
             gNumberAdapter = new GhostNumbersAdapter(this, gNumberList);

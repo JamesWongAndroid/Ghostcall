@@ -30,7 +30,7 @@
         </activity>
         <activity
             android:name=".HomeScreen"
-            android:label="@string/title_activity_home_screen" >
+             >
         </activity>
         <activity
             android:name=".GetGhostNumberScreen"

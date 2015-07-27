@@ -188,6 +188,17 @@ public class GhostCallDatabaseAdapter {
         database.insert(MySQLiteGhostCallHelper.TABLE_BACKGROUND_EFFECTS, null, values);
     }
 
+    public String getUserNumber() {
+        Cursor cursor = database.rawQuery("Select phone_number from user", null);
+        cursor.moveToFirst();
+        StringBuilder formatNumber = new StringBuilder(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.USER_PHONE_NUMBER)));
+        formatNumber.replace(0, 2, "(");
+        formatNumber.insert(4, ")");
+        formatNumber.insert(5, " ");
+        formatNumber.insert(9, "-");
+        return formatNumber.toString();
+    }
+
     public ArrayList<GhostNumbers> getUserNumbers() {
         ArrayList<GhostNumbers> userNumbers = new ArrayList();
         Cursor cursor = database.rawQuery("select * from " + MySQLiteGhostCallHelper.TABLE_NUMBERS, null);
