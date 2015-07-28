@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
@@ -33,23 +34,25 @@
 
             >
             <TextView
+                fontPath="fonts/helveticaneue_light.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(201) 124-0984"
+                android:text=""
                 android:id="@+id/user_number"
                 android:textSize="27sp"
                 android:textColor="@color/white"
                 android:layout_marginLeft="5dp"
                 />
             <TextView
+                fontPath="fonts/helveticaneue_light.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/expire_timer"
-                android:text="expires in 28 days"
+                android:text="expires in 0 days"
                 android:layout_marginLeft="14dp"
                 android:textColor="@color/white"
                 android:textSize="17dp"
-                android:paddingLeft="11dp"
+                android:paddingLeft="15dp"
                 />
         </LinearLayout>
 
@@ -73,6 +76,7 @@
         android:id="@+id/button_holder"
         >
         <Button
+            fontPath="fonts/helveticaneue_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_weight="1"
@@ -80,8 +84,11 @@
             android:text="Send Text"
             android:textColor="@color/white"
             android:id="@+id/sendTextButton"
+            android:textSize="20sp"
+            android:textAllCaps="false"
             />
         <Button
+            fontPath="fonts/helveticaneue_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_weight="1"
@@ -89,6 +96,8 @@
             android:text="Send Call"
             android:textColor="@color/white"
             android:id="@+id/sendCallButton"
+            android:textAllCaps="false"
+            android:textSize="20sp"
             />
     </LinearLayout>
 

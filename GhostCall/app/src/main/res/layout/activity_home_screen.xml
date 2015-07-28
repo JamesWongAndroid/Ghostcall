@@ -1,11 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     tools:context="com.tapfury.ghostcall.HomeScreen">
 
     <TextView android:text="@string/your_number"
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -25,6 +27,7 @@
         android:layout_below="@id/yourNumber"
         >
         <TextView
+            fontPath="fonts/helveticaneue_light.ttf"
             android:id="@+id/user_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,6 +70,7 @@
     </LinearLayout>
 
     <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#22FFFFFF"
@@ -96,12 +100,14 @@
     </ListView>
 
     <Button
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:text="Get a Ghost Number"
         android:background="#55000000"
         android:textColor="@color/white"
+        android:textSize="20sp"
         android:textAllCaps="false"
         android:id="@+id/getGhostButton"
         />

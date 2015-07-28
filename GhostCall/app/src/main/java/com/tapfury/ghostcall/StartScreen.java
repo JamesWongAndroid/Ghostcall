@@ -32,7 +32,6 @@ import java.util.List;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.http.GET;
 
 
 public class StartScreen extends Activity {
@@ -427,26 +426,5 @@ public class StartScreen extends Activity {
             startActivity(toHomeScreen);
             finish();
         }
-    }
-
-    public interface GhostCallAPIInterface {
-
-        @GET("/credit_packages")
-        List<CreditPackagesData> getCreditPackagesData();
-
-        @GET("/effects")
-        List<SoundEffectsData> getsoundEffectsList();
-
-        @GET("/packages?type=new")
-        List<NumberPackagesData> getNewNumberPackages();
-
-        @GET("/packages?type=extend")
-        List<NumberPackagesData> getExtendNumberPackages();
-
-        @GET("/backgrounds")
-        List<BackgroundEffectsData> getBackgroundEffectsList();
-
-        @GET("/user")
-        UserData getUserData();
     }
 }

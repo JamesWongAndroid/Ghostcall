@@ -71,6 +71,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/GhostCall/calligraphy-2.1.0/unspecified/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.lsjwzh/MaterialLoadingProgressBar/0.5.2/jars" />
@@ -96,8 +97,10 @@
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="MaterialLoadingProgressBar-0.5.2" level="project" />
     <orderEntry type="module" module-name="libphonenumber-7.0.8" exported="" />
+    <orderEntry type="module" module-name="calligraphy-2.1.0" exported="" />
     <orderEntry type="module" module-name="numberprogressbar" exported="" />
     <orderEntry type="module" module-name="gson-2.3.1" exported="" />
     <orderEntry type="module" module-name="retrofit-1.9.0" exported="" />
+    <orderEntry type="library" exported="" name="calligraphy-2.1.0-unspecified" level="project" />
   </component>
 </module>

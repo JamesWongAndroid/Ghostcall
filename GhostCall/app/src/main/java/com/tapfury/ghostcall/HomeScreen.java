@@ -1,5 +1,6 @@
 package com.tapfury.ghostcall;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -8,8 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -22,12 +21,15 @@ import android.widget.Toast;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class HomeScreen extends AppCompatActivity {
 
     ListView ghostNumberListView;
     GhostNumbersAdapter gNumberAdapter;
     GhostCallDatabaseAdapter nDatabaseAdapter;
     TextView userNumber;
+    ImageView purchaseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,9 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1d375a")));
+        actionBar.setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.home_actionbar_layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -42,6 +47,15 @@ public class HomeScreen extends AppCompatActivity {
         }
 
         userNumber = (TextView) findViewById(R.id.user_number);
+
+        purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
+        purchaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toPurchase = new Intent(HomeScreen.this, SelectPackageScreen.class);
+                startActivity(toPurchase);
+            }
+        });
 
         ghostNumberListView = (ListView) findViewById(R.id.ghostNumberList);
 
@@ -76,8 +90,11 @@ public class HomeScreen extends AppCompatActivity {
 
         ghostNumberListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                GhostNumbers ghostItem = (GhostNumbers) adapterView.getItemAtPosition(position);
                 Intent intent = new Intent(HomeScreen.this, HistoryScreen.class);
+                intent.putExtra("ghostNumberExtra", ghostItem.getGhostNumber());
+                intent.putExtra("ghostIDExtra", ghostItem.getGhostID());
                 startActivity(intent);
             }
         });
@@ -92,23 +109,7 @@ public class HomeScreen extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home_screen, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

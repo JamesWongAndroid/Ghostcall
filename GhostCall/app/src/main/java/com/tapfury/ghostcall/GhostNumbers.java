@@ -7,6 +7,15 @@ public class GhostNumbers {
 
     private String ghostNumber;
     private String ghostTitle;
+    private String ghostID;
+
+    public String getGhostID() {
+        return ghostID;
+    }
+
+    public void setGhostID(String ghostID) {
+        this.ghostID = ghostID;
+    }
 
     public String getGhostTitle() {
         return ghostTitle;
