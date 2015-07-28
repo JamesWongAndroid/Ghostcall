@@ -46,6 +46,9 @@ public class HomeScreen extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
 
+        GetUserInfo userInfo = new GetUserInfo(this);
+        userInfo.getUserData();
+
         userNumber = (TextView) findViewById(R.id.user_number);
 
         purchaseButton = (ImageView) findViewById(R.id.purchaseButton);

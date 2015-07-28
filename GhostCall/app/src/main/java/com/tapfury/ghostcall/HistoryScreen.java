@@ -26,6 +26,7 @@ public class HistoryScreen extends AppCompatActivity {
     ListView historyList;
     HistoryAdapter historyAdapter;
     TextView userNumber;
+    ImageView purchaseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,9 @@ public class HistoryScreen extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
 
+        GetUserInfo userInfo = new GetUserInfo(this);
+        userInfo.getUserData();
+
         userNumber = (TextView) findViewById(R.id.user_number);
 
         Bundle extras = getIntent().getExtras();
@@ -49,6 +53,15 @@ public class HistoryScreen extends AppCompatActivity {
             userNumber.setText(extras.getString("ghostNumberExtra"));
 
         }
+
+        purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
+        purchaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toPurchase = new Intent(HistoryScreen.this, SelectPackageScreen.class);
+                startActivity(toPurchase);
+            }
+        });
 
         historyList = (ListView) findViewById(R.id.historyList);
 

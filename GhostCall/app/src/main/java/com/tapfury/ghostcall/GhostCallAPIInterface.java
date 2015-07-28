@@ -6,6 +6,7 @@ import com.tapfury.ghostcall.User.UserData;
 
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.http.GET;
 
 /**
@@ -30,4 +31,7 @@ public interface GhostCallAPIInterface {
 
     @GET("/user")
     UserData getUserData();
+
+    @GET("/user")
+    void getUserData(Callback<UserData> callBack);
 }
