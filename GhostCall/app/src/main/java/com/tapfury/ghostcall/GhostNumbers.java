@@ -8,6 +8,15 @@ public class GhostNumbers {
     private String ghostNumber;
     private String ghostTitle;
     private String ghostID;
+    private String expirationDate;
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
     public String getGhostID() {
         return ghostID;

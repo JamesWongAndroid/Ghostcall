@@ -409,9 +409,9 @@ public class StartScreen extends Activity {
                     numberAdapter.close();
 
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 } catch (SQLException e) {
-                    Toast.makeText(getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
+
                 }
             }
 

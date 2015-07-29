@@ -98,6 +98,7 @@ public class HomeScreen extends AppCompatActivity {
                 Intent intent = new Intent(HomeScreen.this, HistoryScreen.class);
                 intent.putExtra("ghostNumberExtra", ghostItem.getGhostNumber());
                 intent.putExtra("ghostIDExtra", ghostItem.getGhostID());
+                intent.putExtra("ghostExpiration", ghostItem.getExpirationDate());
                 startActivity(intent);
             }
         });

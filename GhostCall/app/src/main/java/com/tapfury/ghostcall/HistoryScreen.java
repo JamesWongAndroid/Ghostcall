@@ -16,6 +16,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +31,7 @@ public class HistoryScreen extends AppCompatActivity {
 
     ListView historyList;
     HistoryAdapter historyAdapter;
-    TextView userNumber;
+    TextView userNumber, expireTimer;
     ImageView purchaseButton;
 
     @Override
@@ -47,10 +53,28 @@ public class HistoryScreen extends AppCompatActivity {
         userInfo.getUserData();
 
         userNumber = (TextView) findViewById(R.id.user_number);
+        expireTimer = (TextView) findViewById(R.id.expire_timer);
 
         Bundle extras = getIntent().getExtras();
         if (!(extras == null)) {
             userNumber.setText(extras.getString("ghostNumberExtra"));
+            try {
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                DateTime dateTime = formatter.parseDateTime(extras.getString("ghostExpiration"));
+                DateTime now = new DateTime();
+                LocalDate today = now.toLocalDate();
+                DateTime startOfToday = today.toDateTimeAtStartOfDay(now.getZone());
+                Days day = Days.daysBetween(startOfToday, dateTime);
+                int difference = day.getDays();
+                if (difference > 1) {
+                    expireTimer.setText("expires in " + Integer.toString(difference) + " days");
+                } else {
+                    expireTimer.setText("expires in " + Integer.toString(difference) + " day");
+                }
+
+            } catch (IllegalArgumentException e) {
+                expireTimer.setText("");
+            }
 
         }
 

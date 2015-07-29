@@ -213,6 +213,7 @@ public class GhostCallDatabaseAdapter {
             ghostNumber.setGhostNumber(formatNumber.toString());
             ghostNumber.setGhostTitle((cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NAME))));
             ghostNumber.setGhostID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.ID)));
+            ghostNumber.setExpirationDate(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.EXPIRE_ON)));
             userNumbers.add(ghostNumber);
             cursor.moveToNext();
         }
