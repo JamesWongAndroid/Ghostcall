@@ -3,10 +3,13 @@ package com.tapfury.ghostcall;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -44,6 +47,9 @@ public class VerificationScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification_screen);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1d375a")));
+        actionBar.setDisplayShowTitleEnabled(false);
 
         codePhoneInput = (EditText) findViewById(R.id.phoneCodeField);
         codePhoneInput.addTextChangedListener(new PhoneNumberTextWatcher(codePhoneInput));
@@ -143,7 +149,6 @@ public class VerificationScreen extends AppCompatActivity {
                 try {
                     JSONObject jObject = new JSONObject(response);
                     String apiKey = jObject.getString("api_key");
-                    Toast.makeText(getApplicationContext(), apiKey, Toast.LENGTH_SHORT).show();
                     SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("api_key", apiKey);
@@ -193,7 +198,7 @@ public class VerificationScreen extends AppCompatActivity {
                     urlConnection.connect();
                     responseCode = urlConnection.getResponseCode();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
+
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();

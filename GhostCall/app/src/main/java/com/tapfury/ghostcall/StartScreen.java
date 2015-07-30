@@ -1,6 +1,7 @@
 package com.tapfury.ghostcall;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
@@ -32,6 +32,7 @@ import java.util.List;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class StartScreen extends Activity {
@@ -67,10 +68,8 @@ public class StartScreen extends Activity {
 
         if (apiKey.equals("")) {
 
-            Toast.makeText(getApplicationContext(), "No API key", Toast.LENGTH_SHORT).show();
-        } else {
 
-            Toast.makeText(getApplicationContext(), apiKey, Toast.LENGTH_SHORT).show();
+        } else {
             tourButton.setVisibility(View.GONE);
             startButton.setVisibility(View.GONE);
             new getNumbersTask().execute();
@@ -126,31 +125,31 @@ public class StartScreen extends Activity {
 
 
             switch (values[0]) {
-                case 15:
-                    progressText.setText("Loading User Data...");
+                case 10:
+                    progressText.setText("Loading Server Data...");
                     break;
-                case 30:
+                case 20:
                     progressText.setText("Loading Numbers...");
                     break;
-                case 45:
+                case 30:
                     progressText.setText("Loading Calls...");
                     break;
-                case 60:
+                case 40:
                     progressText.setText("Loading Messages...");
                     break;
-                case 65:
+                case 50:
                     progressText.setText("Loading Voicemails...");
                     break;
-                case 70:
+                case 60:
                     progressText.setText("Loading Credits...");
                     break;
-                case 75:
+                case 70:
                     progressText.setText("Loading Number Packages...");
                     break;
                 case 80:
                     progressText.setText("Loading Sound Effects...");
                     break;
-                case 95:
+                case 90:
                     progressText.setText("Loading Background Effects");
                     break;
                 case 100:
@@ -178,7 +177,7 @@ public class StartScreen extends Activity {
                         .setRequestInterceptor(requestInterceptor).build();
                 GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
-                progress_status = 15;
+                progress_status = 0;
                 publishProgress(progress_status);
                 url = new URL(builderString.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -199,7 +198,7 @@ public class StartScreen extends Activity {
                         GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(StartScreen.this);
                         numberAdapter.open();
                         JSONArray jsonArray = new JSONArray(response);
-                        progress_status = 30;
+                        progress_status = 10;
                         publishProgress(progress_status);
                         for (int i = 0; i <jsonArray.length(); i++) {
                             JSONObject jObject = jsonArray.getJSONObject(i);
@@ -211,7 +210,7 @@ public class StartScreen extends Activity {
                             String ghostDisableCalls = jObject.getString("disable_calls");
                             String ghostDisableMessages = jObject.getString("disable_messages");
                             JSONArray callArray = jObject.getJSONArray("calls");
-                            progress_status = 45;
+                            progress_status = 20;
                             publishProgress(progress_status);
                             if (!(callArray.length() == 0)) {
                                 for (int k = 0; k < callArray.length(); k++) {
@@ -233,7 +232,7 @@ public class StartScreen extends Activity {
                                     numberAdapter.createCall(callID, callUserID, callNumberID, callTo, callFrom, callDirection, callStatus, callPitch, callBackgroundID, callDuration, callResourceID, callRecord, callCreatedAt, callUpdatedAt);
                                 }
                             }
-                            progress_status = 60;
+                            progress_status = 30;
                             publishProgress(progress_status);
                             JSONArray messageArray = jObject.getJSONArray("messages");
                             if (!(messageArray.length() == 0)) {
@@ -257,7 +256,7 @@ public class StartScreen extends Activity {
 
                                 }
                             }
-                            progress_status = 65;
+                            progress_status = 40;
                             publishProgress(progress_status);
                             JSONArray voicemailArray = jObject.getJSONArray("voicemails");
                             if (!(voicemailArray.length() == 0)) {
@@ -309,7 +308,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("userDataLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 70;
+                        progress_status = 50;
                         publishProgress(progress_status);
                     }
 
@@ -326,7 +325,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("numberPackageLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 75;
+                        progress_status = 60;
                         publishProgress(progress_status);
                     }
 
@@ -341,7 +340,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("extendLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 80;
+                        progress_status = 70;
                         publishProgress(progress_status);
                     }
 
@@ -359,7 +358,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("effectsLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 90;
+                        progress_status = 80;
                         publishProgress(progress_status);
                     }
 
@@ -376,7 +375,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("backgroundsLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 95;
+                        progress_status = 90;
                         publishProgress(progress_status);
                     }
 
@@ -426,5 +425,10 @@ public class StartScreen extends Activity {
             startActivity(toHomeScreen);
             finish();
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

@@ -2,6 +2,7 @@ package com.tapfury.ghostcall;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -34,6 +35,8 @@ public class HistoryScreen extends AppCompatActivity {
     TextView userNumber, expireTimer;
     ImageView purchaseButton;
     GhostCallDatabaseAdapter ghostDatabaseAdapter;
+    public static final String GHOST_PREF = "GhostPrefFile";
+    TextView userRemainingText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,12 @@ public class HistoryScreen extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
+
+        userRemainingText = (TextView) findViewById(R.id.remainingText);
+        SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
+        String userSMS = settings.getString("userSMS", "0");
+        String userMins = settings.getString("userMins", "0");
+        userRemainingText.setText(userSMS + " sms / " + userMins + " mins left");
 
         GetUserInfo userInfo = new GetUserInfo(this);
         userInfo.getUserData();

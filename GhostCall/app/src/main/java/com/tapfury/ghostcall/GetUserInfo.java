@@ -51,6 +51,10 @@ public class GetUserInfo {
                 public void success(UserData userData, Response response) {
                     userInfo.setBalance(userData.getBalance());
                     userRemainingText.setText(userData.getBalance().getSms() + " sms / " + userData.getBalance().getMinutes() + " mins left");
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("userSMS", userData.getBalance().getSms());
+                    editor.putString("userMins", userData.getBalance().getMinutes());
+                    editor.apply();
                 }
 
                 @Override

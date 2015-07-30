@@ -25,35 +25,43 @@
             android:label="@string/title_activity_tour_screen" >
         </activity>
         <activity android:name=".VerificationScreen"
-            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             >
         </activity>
         <activity android:name=".CodeVerificationScreen"
-            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             >
         </activity>
         <activity
             android:name=".HomeScreen"
+            android:screenOrientation="portrait"
              >
         </activity>
         <activity
             android:name=".GetGhostNumberScreen"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_get_ghost_number_screen" >
         </activity>
         <activity
             android:name=".SelectPackageScreen"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_select_package_screen" >
         </activity>
         <activity
             android:name=".HistoryScreen"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_history_screen" >
         </activity>
         <activity
             android:name=".CallScreen"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_call_screen" >
         </activity>
         <activity
             android:name=".HistorySettingsScreen"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_history_settings_screen" >
         </activity>
     </application>

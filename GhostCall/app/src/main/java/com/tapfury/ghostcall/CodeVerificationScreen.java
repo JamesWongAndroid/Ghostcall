@@ -2,9 +2,12 @@ package com.tapfury.ghostcall;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +40,9 @@ public class CodeVerificationScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_verification_screen);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1d375a")));
+        actionBar.setDisplayShowTitleEnabled(false);
 
         spinnerLayout = (RelativeLayout) findViewById(R.id.spinnerLayout);
         progressSpinner = (CircleProgressBar) findViewById(R.id.progressBar);
@@ -134,6 +140,7 @@ public class CodeVerificationScreen extends AppCompatActivity {
                     String verificationString = jObject.getString("verified");
                     if (verificationString.equals("true")) {
                         startActivity(new Intent(CodeVerificationScreen.this, StartScreen.class));
+                        finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
                     }
