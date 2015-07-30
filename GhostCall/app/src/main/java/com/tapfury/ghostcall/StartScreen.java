@@ -130,28 +130,28 @@ public class StartScreen extends Activity {
                     progressText.setText("Loading User Data...");
                     break;
                 case 30:
-                    progressText.setText("Loading Number Packages...");
+                    progressText.setText("Loading Numbers...");
                     break;
                 case 45:
-                    progressText.setText("Loading Extend Packages...");
+                    progressText.setText("Loading Calls...");
                     break;
                 case 60:
-                    progressText.setText("Loading Sound Effects...");
+                    progressText.setText("Loading Messages...");
                     break;
-                case 75:
-                    progressText.setText("Loading Background Effects");
+                case 65:
+                    progressText.setText("Loading Voicemails...");
                     break;
-                case 80:
+                case 70:
                     progressText.setText("Loading Credits...");
                     break;
-                case 85:
-                    progressText.setText("Loading Numbers");
+                case 75:
+                    progressText.setText("Loading Number Packages...");
                     break;
-                case 90:
-                    progressText.setText("Loading Calls");
+                case 80:
+                    progressText.setText("Loading Sound Effects...");
                     break;
                 case 95:
-                    progressText.setText("Loading Messages");
+                    progressText.setText("Loading Background Effects");
                     break;
                 case 100:
                     progressText.setText("Done!");
@@ -178,6 +178,121 @@ public class StartScreen extends Activity {
                         .setRequestInterceptor(requestInterceptor).build();
                 GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
+                progress_status = 15;
+                publishProgress(progress_status);
+                url = new URL(builderString.toString());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("X-api-key", apiKey);
+                urlConnection.setDoInput(true);
+                urlConnection.connect();
+                int responseCode = urlConnection.getResponseCode();
+
+                inStream = urlConnection.getInputStream();
+                BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
+                while ((temp = bReader.readLine()) != null) {
+                    response += temp;
+                }
+
+                if (response != null) {
+                    try {
+                        GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(StartScreen.this);
+                        numberAdapter.open();
+                        JSONArray jsonArray = new JSONArray(response);
+                        progress_status = 30;
+                        publishProgress(progress_status);
+                        for (int i = 0; i <jsonArray.length(); i++) {
+                            JSONObject jObject = jsonArray.getJSONObject(i);
+                            String ghostID = jObject.getString("id");
+                            String ghostNumber = jObject.getString("number");
+                            String ghostName = jObject.getString("name");
+                            String ghostExpire = jObject.getString("expire_on");
+                            String ghostVoicemail = jObject.getString("voicemail");
+                            String ghostDisableCalls = jObject.getString("disable_calls");
+                            String ghostDisableMessages = jObject.getString("disable_messages");
+                            JSONArray callArray = jObject.getJSONArray("calls");
+                            progress_status = 45;
+                            publishProgress(progress_status);
+                            if (!(callArray.length() == 0)) {
+                                for (int k = 0; k < callArray.length(); k++) {
+                                    JSONObject jCall = callArray.getJSONObject(k);
+                                    String callID = jCall.getString("id");
+                                    String callUserID = jCall.getString("user_id");
+                                    String callNumberID = jCall.getString("number_id");
+                                    String callTo = jCall.getString("to");
+                                    String callFrom = jCall.getString("from");
+                                    String callDirection = jCall.getString("direction");
+                                    String callStatus = jCall.getString("status");
+                                    String callPitch = jCall.getString("pitch");
+                                    String callBackgroundID = jCall.getString("background_item_id");
+                                    String callDuration = jCall.getString("duration");
+                                    String callResourceID = jCall.getString("resource_id");
+                                    String callRecord = jCall.getString("record");
+                                    String callCreatedAt = jCall.getString("created_at");
+                                    String callUpdatedAt = jCall.getString("updated_at");
+                                    numberAdapter.createCall(callID, callUserID, callNumberID, callTo, callFrom, callDirection, callStatus, callPitch, callBackgroundID, callDuration, callResourceID, callRecord, callCreatedAt, callUpdatedAt);
+                                }
+                            }
+                            progress_status = 60;
+                            publishProgress(progress_status);
+                            JSONArray messageArray = jObject.getJSONArray("messages");
+                            if (!(messageArray.length() == 0)) {
+                                for (int j = 0; j < messageArray.length(); j++) {
+                                    JSONObject jMessage = messageArray.getJSONObject(j);
+                                    String messageID = jMessage.getString("id");
+                                    String messageUserID = jMessage.getString("user_id");
+                                    String messageNumberID = jMessage.getString("number_id");
+                                    String messageTo = jMessage.getString("to");
+                                    String messageFrom = jMessage.getString("from");
+                                    String messageDirection = jMessage.getString("direction");
+                                    String messageStatus = jMessage.getString("status");
+                                    String messageResourceID = jMessage.getString("resource_id");
+                                    String messageText = jMessage.getString("text");
+                                    String messageCreatedAt = jMessage.getString("created_at");
+                                    String messageupdatedAt = jMessage.getString("updated_at");
+                                    String messageDeleted = jMessage.getString("deleted");
+                                    numberAdapter.createMessage(messageID, messageUserID, messageNumberID, messageTo, messageFrom, messageDirection,
+                                            messageStatus, messageResourceID, messageText, messageCreatedAt, messageupdatedAt, messageDeleted);
+
+
+                                }
+                            }
+                            progress_status = 65;
+                            publishProgress(progress_status);
+                            JSONArray voicemailArray = jObject.getJSONArray("voicemails");
+                            if (!(voicemailArray.length() == 0)) {
+                                for (int m = 0; m < voicemailArray.length(); m++) {
+                                    JSONObject jVoicemail = voicemailArray.getJSONObject(m);
+                                    String voicemailID = jVoicemail.getString("id");
+                                    String voicemailUserID = jVoicemail.getString("user_id");
+                                    String voicemailNumberID = jVoicemail.getString("number_id");
+                                    String voicemailCallID = jVoicemail.getString("call_id");
+                                    String voicemailTo = jVoicemail.getString("to");
+                                    String voicemailFrom = jVoicemail.getString("from");
+                                    String voicemailDuration = jVoicemail.getString("duration");
+                                    String voicemailResourceID = jVoicemail.getString("resource_id");
+                                    String voicemailText = jVoicemail.getString("text");
+                                    String voicemailCreatedAt = jVoicemail.getString("created_at");
+                                    String voicemailUpdatedAt = jVoicemail.getString("updated_at");
+                                    numberAdapter.createVoicemail(voicemailID, voicemailUserID, voicemailNumberID, voicemailCallID, voicemailTo, voicemailFrom, voicemailDuration, voicemailResourceID, voicemailText, voicemailCreatedAt, voicemailUpdatedAt);
+                                }
+                            }
+                            if (!numberAdapter.numberExists(ghostID)) {
+                                numberAdapter.createNumber(ghostID, ghostNumber, ghostName, ghostVoicemail, ghostDisableCalls, ghostDisableMessages, ghostExpire);
+                            }
+                        }
+
+                        String theLatestTimestamp = numberAdapter.getLatestTimestamp();
+                        editor.putString("lastUpdatedTimestamp", theLatestTimestamp);
+                        editor.apply();
+                        numberAdapter.close();
+
+                    } catch (JSONException e) {
+
+                    } catch (SQLException e) {
+
+                    }
+                }
 
 
                 try {
@@ -194,7 +309,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("userDataLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 15;
+                        progress_status = 70;
                         publishProgress(progress_status);
                     }
 
@@ -211,7 +326,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("numberPackageLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 30;
+                        progress_status = 75;
                         publishProgress(progress_status);
                     }
 
@@ -226,7 +341,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("extendLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 45;
+                        progress_status = 80;
                         publishProgress(progress_status);
                     }
 
@@ -244,7 +359,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("effectsLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 60;
+                        progress_status = 90;
                         publishProgress(progress_status);
                     }
 
@@ -261,7 +376,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("backgroundsLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 75;
+                        progress_status = 95;
                         publishProgress(progress_status);
                     }
 
@@ -276,7 +391,7 @@ public class StartScreen extends Activity {
                             editor.putBoolean("creditsLoaded", true);
                             editor.apply();
                         }
-                        progress_status = 80;
+                        progress_status = 100;
                         publishProgress(progress_status);
                     }
 
@@ -285,21 +400,7 @@ public class StartScreen extends Activity {
                     // TODO: DO SOMETHING HERE
                 }
 
-                progress_status = 80;
-                publishProgress(progress_status);
-                url = new URL(builderString.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("X-api-key", apiKey);
-                urlConnection.setDoInput(true);
-                urlConnection.connect();
-                int responseCode = urlConnection.getResponseCode();
 
-                inStream = urlConnection.getInputStream();
-                BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
-                while ((temp = bReader.readLine()) != null) {
-                    response += temp;
-                }
             } catch (Exception e) {
                 Log.d("Something fucked up", e.getMessage().toString());
             } finally {
@@ -311,107 +412,6 @@ public class StartScreen extends Activity {
                 }
                 if (urlConnection != null) {
                     urlConnection.disconnect();
-                }
-            }
-
-            if (response != null) {
-                try {
-                    GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(StartScreen.this);
-                    numberAdapter.open();
-                    JSONArray jsonArray = new JSONArray(response);
-                    progress_status = 85;
-                    publishProgress(progress_status);
-                    for (int i = 0; i <jsonArray.length(); i++) {
-                        JSONObject jObject = jsonArray.getJSONObject(i);
-                        String ghostID = jObject.getString("id");
-                        String ghostNumber = jObject.getString("number");
-                        String ghostName = jObject.getString("name");
-                        String ghostExpire = jObject.getString("expire_on");
-                        String ghostVoicemail = jObject.getString("voicemail");
-                        String ghostDisableCalls = jObject.getString("disable_calls");
-                        String ghostDisableMessages = jObject.getString("disable_messages");
-                        JSONArray callArray = jObject.getJSONArray("calls");
-                        progress_status = 90;
-                        publishProgress(progress_status);
-                        if (!(callArray.length() == 0)) {
-                            for (int k = 0; k < callArray.length(); k++) {
-                                JSONObject jCall = callArray.getJSONObject(k);
-                                    String callID = jCall.getString("id");
-                                    String callUserID = jCall.getString("user_id");
-                                    String callNumberID = jCall.getString("number_id");
-                                    String callTo = jCall.getString("to");
-                                    String callFrom = jCall.getString("from");
-                                    String callDirection = jCall.getString("direction");
-                                    String callStatus = jCall.getString("status");
-                                    String callPitch = jCall.getString("pitch");
-                                    String callBackgroundID = jCall.getString("background_item_id");
-                                    String callDuration = jCall.getString("duration");
-                                    String callResourceID = jCall.getString("resource_id");
-                                    String callRecord = jCall.getString("record");
-                                    String callCreatedAt = jCall.getString("created_at");
-                                    String callUpdatedAt = jCall.getString("updated_at");
-                                    numberAdapter.createCall(callID, callUserID, callNumberID, callTo, callFrom, callDirection, callStatus, callPitch, callBackgroundID, callDuration, callResourceID, callRecord, callCreatedAt, callUpdatedAt);
-                            }
-                        }
-                        progress_status = 95;
-                        publishProgress(progress_status);
-                        JSONArray messageArray = jObject.getJSONArray("messages");
-                        if (!(messageArray.length() == 0)) {
-                            for (int j = 0; j < messageArray.length(); j++) {
-                                JSONObject jMessage = messageArray.getJSONObject(j);
-                                    String messageID = jMessage.getString("id");
-                                    String messageUserID = jMessage.getString("user_id");
-                                    String messageNumberID = jMessage.getString("number_id");
-                                    String messageTo = jMessage.getString("to");
-                                    String messageFrom = jMessage.getString("from");
-                                    String messageDirection = jMessage.getString("direction");
-                                    String messageStatus = jMessage.getString("status");
-                                    String messageResourceID = jMessage.getString("resource_id");
-                                    String messageText = jMessage.getString("text");
-                                    String messageCreatedAt = jMessage.getString("created_at");
-                                    String messageupdatedAt = jMessage.getString("updated_at");
-                                    String messageDeleted = jMessage.getString("deleted");
-                                    numberAdapter.createMessage(messageID, messageUserID, messageNumberID, messageTo, messageFrom, messageDirection,
-                                            messageStatus, messageResourceID, messageText, messageCreatedAt, messageupdatedAt, messageDeleted);
-
-
-                            }
-                        }
-
-                        JSONArray voicemailArray = jObject.getJSONArray("voicemails");
-                        if (!(voicemailArray.length() == 0)) {
-                            for (int m = 0; m < voicemailArray.length(); m++) {
-                                JSONObject jVoicemail = voicemailArray.getJSONObject(m);
-                                    String voicemailID = jVoicemail.getString("id");
-                                    String voicemailUserID = jVoicemail.getString("user_id");
-                                    String voicemailNumberID = jVoicemail.getString("number_id");
-                                    String voicemailCallID = jVoicemail.getString("call_id");
-                                    String voicemailTo = jVoicemail.getString("to");
-                                    String voicemailFrom = jVoicemail.getString("from");
-                                    String voicemailDuration = jVoicemail.getString("duration");
-                                    String voicemailResourceID = jVoicemail.getString("resource_id");
-                                    String voicemailText = jVoicemail.getString("text");
-                                    String voicemailCreatedAt = jVoicemail.getString("created_at");
-                                    String voicemailUpdatedAt = jVoicemail.getString("updated_at");
-                                    numberAdapter.createVoicemail(voicemailID, voicemailUserID, voicemailNumberID, voicemailCallID, voicemailTo, voicemailFrom, voicemailDuration, voicemailResourceID, voicemailText, voicemailCreatedAt, voicemailUpdatedAt);
-                            }
-                        }
-                        progress_status = 100;
-                        publishProgress(progress_status);
-                        if (!numberAdapter.numberExists(ghostID)) {
-                            numberAdapter.createNumber(ghostID, ghostNumber, ghostName, ghostVoicemail, ghostDisableCalls, ghostDisableMessages, ghostExpire);
-                        }
-                    }
-
-                    String theLatestTimestamp = numberAdapter.getLatestTimestamp();
-                    editor.putString("lastUpdatedTimestamp", theLatestTimestamp);
-                    editor.apply();
-                    numberAdapter.close();
-
-                } catch (JSONException e) {
-
-                } catch (SQLException e) {
-
                 }
             }
 

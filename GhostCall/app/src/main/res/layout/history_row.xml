@@ -43,6 +43,9 @@
                 android:id="@+id/historyDescription"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:maxLength="20"
+                android:ellipsize="end"
+                android:singleLine="true"
                 />
         </LinearLayout>
 

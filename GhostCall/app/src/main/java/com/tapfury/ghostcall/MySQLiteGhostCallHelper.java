@@ -81,6 +81,7 @@ public class MySQLiteGhostCallHelper extends SQLiteOpenHelper {
     public static final String MESSAGES_CREATED_AT = "created_at";
     public static final String MESSAGES_UPDATED_AT = "updated_at";
     public static final String MESSAGES_DELETED = "deleted";
+    public static final String MESSAGES_TYPE = "type";
 
     public static final String TABLE_CALLS = "calls";
     public static final String CALLS_PRIMARY_ID = "_id";
@@ -98,6 +99,7 @@ public class MySQLiteGhostCallHelper extends SQLiteOpenHelper {
     public static final String CALLS_RECORD = "record";
     public static final String CALLS_CREATED_AT = "created_at";
     public static final String CALLS_UPDATED_AT = "updated_at";
+    public static final String CALLS_TYPE = "type";
 
     public static final String TABLE_VOICEMAILS = "voicemails";
     public static final String VOICEMAILS_PRIMARY_ID = "_id";
@@ -112,6 +114,7 @@ public class MySQLiteGhostCallHelper extends SQLiteOpenHelper {
     public static final String VOICEMAILS_TEXT = "text";
     public static final String VOICEMAILS_CREATED_AT = "created_at";
     public static final String VOICEMAILS_UPDATED_AT = "updated_at";
+    public static final String VOICEMAILS_TYPE = "type";
 
     public static final String TABLE_USER = "user";
     public static final String USER_PRIMARY_ID = "_id";
@@ -154,16 +157,16 @@ public class MySQLiteGhostCallHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_CREATE_MESSAGES = "CREATE TABLE " + TABLE_MESSAGES + "(" + MESSAGES_PRIMARY_ID + " integer primary key autoincrement, " + MESSAGES_ID + " TEXT, " +
             MESSAGES_USER_ID + " TEXT, " + MESSAGES_NUMBER_ID + " TEXT, " + MESSAGES_TO + " TEXT, " + MESSAGES_FROM + " TEXT, " + MESSAGES_DIRECTION + " TEXT, " + MESSAGES_STATUS + " TEXT, " +
-            MESSAGES_RESOURCE_ID + " TEXT, " + MESSAGES_TEXT + " TEXT, " + MESSAGES_CREATED_AT + " TEXT, " + MESSAGES_UPDATED_AT + " TEXT, " + MESSAGES_DELETED + " TEXT " + ");";
+            MESSAGES_RESOURCE_ID + " TEXT, " + MESSAGES_TEXT + " TEXT, " + MESSAGES_CREATED_AT + " TEXT, " + MESSAGES_UPDATED_AT + " TEXT, " + MESSAGES_DELETED + " TEXT, " + MESSAGES_TYPE + " TEXT " + ");";
 
     private static final String DATABASE_CREATE_CALLS = "CREATE TABLE " + TABLE_CALLS + " ( " + CALLS_PRIMARY_ID + " integer primary key autoincrement, " + CALLS_ID + " TEXT, " + CALLS_USER_ID +
             " TEXT, " + CALLS_NUMBER_ID + " TEXT, " + CALLS_TO + " TEXT, " + CALLS_FROM + " TEXT, " + CALLS_DIRECTION
             + " TEXT, " + CALLS_STATUS + " TEXT, " + CALLS_PITCH + " TEXT, " + CALLS_BACKGROUND_ITEM_ID + " TEXT, " + CALLS_DURATION + " TEXT, " + CALLS_RESOURCE_ID + " TEXT, "
-            + CALLS_RECORD + " TEXT, " + CALLS_CREATED_AT + " TEXT, " + CALLS_UPDATED_AT + " TEXT " + ");";
+            + CALLS_RECORD + " TEXT, " + CALLS_CREATED_AT + " TEXT, " + CALLS_UPDATED_AT + " TEXT, " + CALLS_TYPE + " TEXT " + ");";
 
     private static final String DATABASE_CREATE_VOICEMAILS = "CREATE TABLE " + TABLE_VOICEMAILS + " ( " + VOICEMAILS_PRIMARY_ID + " integer primary key autoincrement, " + VOICEMAILS_ID + " TEXT, " + VOICEMAILS_USER_ID +
             " TEXT, " + VOICEMAILS_NUMBER_ID + " TEXT, " + VOICEMAILS_CALL_ID  + " TEXT, " + VOICEMAILS_TO + " TEXT, " + VOICEMAILS_FROM + " TEXT, " + VOICEMAILS_DURATION +
-            " TEXT, " + VOICEMAILS_RESOURCE_ID + " TEXT, " + VOICEMAILS_TEXT + " TEXT, " + VOICEMAILS_CREATED_AT + " TEXT, " + VOICEMAILS_UPDATED_AT + " TEXT " + ");";
+            " TEXT, " + VOICEMAILS_RESOURCE_ID + " TEXT, " + VOICEMAILS_TEXT + " TEXT, " + VOICEMAILS_CREATED_AT + " TEXT, " + VOICEMAILS_UPDATED_AT + " TEXT, " + VOICEMAILS_TYPE + " TEXT " + ");";
 
     private static final String DATABASE_CREATE_USER = "CREATE TABLE " + TABLE_USER + " ( " + USER_PRIMARY_ID + " integer primary key autoincrement, " + USER_ID + " TEXT, " + USER_PHONE_NUMBER + " TEXT, " + USER_DEVICE_TOKEN + " TEXT, " + USER_APP_VERSION
             + " TEXT, " + USER_PLATFORM + " TEXT, " + USER_PLATFORM_VERSION + " TEXT, " + USER_API_KEY_ID + " TEXT, " + USER_NAME + " TEXT, " + USER_EMAIL + " TEXT, " + USER_CREDITS + " TEXT, " + USER_CREATED_AT +

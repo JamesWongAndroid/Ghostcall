@@ -8,7 +8,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/app_icon"
+        android:icon="@drawable/ghostcallicon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -24,9 +24,13 @@
             android:name=".TourScreen"
             android:label="@string/title_activity_tour_screen" >
         </activity>
-        <activity android:name=".VerificationScreen" >
+        <activity android:name=".VerificationScreen"
+            android:windowSoftInputMode="adjustResize"
+            >
         </activity>
-        <activity android:name=".CodeVerificationScreen" >
+        <activity android:name=".CodeVerificationScreen"
+            android:windowSoftInputMode="adjustResize"
+            >
         </activity>
         <activity
             android:name=".HomeScreen"

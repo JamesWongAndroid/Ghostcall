@@ -10,6 +10,15 @@ public class HistoryObject {
     String historyDescription;
     String historyDate;
     String historyTime;
+    String historyType;
+
+    public String getHistoryType() {
+        return historyType;
+    }
+
+    public void setHistoryType(String historyType) {
+        this.historyType = historyType;
+    }
 
     public String getHistoryNumber() {
         return historyNumber;

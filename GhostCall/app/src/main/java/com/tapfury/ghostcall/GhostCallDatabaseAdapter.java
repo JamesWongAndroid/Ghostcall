@@ -5,6 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -67,6 +72,7 @@ public class GhostCallDatabaseAdapter {
         values.put(MySQLiteGhostCallHelper.CALLS_RECORD, record);
         values.put(MySQLiteGhostCallHelper.CALLS_CREATED_AT, createAt);
         values.put(MySQLiteGhostCallHelper.CALLS_UPDATED_AT, updateAt);
+        values.put(MySQLiteGhostCallHelper.CALLS_TYPE, "call");
 
         database.insert(MySQLiteGhostCallHelper.TABLE_CALLS, null, values);
     }
@@ -85,6 +91,7 @@ public class GhostCallDatabaseAdapter {
         values.put(MySQLiteGhostCallHelper.MESSAGES_CREATED_AT, createdAt);
         values.put(MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT, updatedAt);
         values.put(MySQLiteGhostCallHelper.MESSAGES_DELETED, deleted);
+        values.put(MySQLiteGhostCallHelper.MESSAGES_TYPE, "message");
 
         database.insert(MySQLiteGhostCallHelper.TABLE_MESSAGES, null, values);
     }
@@ -102,6 +109,7 @@ public class GhostCallDatabaseAdapter {
         values.put(MySQLiteGhostCallHelper.VOICEMAILS_TEXT, text);
         values.put(MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT, created_at);
         values.put(MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT, updated_at);
+        values.put(MySQLiteGhostCallHelper.VOICEMAILS_TYPE, "voicemail");
 
         database.insert(MySQLiteGhostCallHelper.TABLE_VOICEMAILS, null, values);
     }
@@ -221,6 +229,37 @@ public class GhostCallDatabaseAdapter {
         return userNumbers;
     }
 
+    public ArrayList<HistoryObject> getCallHistory() {
+        ArrayList<HistoryObject> historyList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
+                + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
+                + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
+                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " ORDER BY updated_at DESC", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            HistoryObject historyObject = new HistoryObject();
+            StringBuilder formatNumber = new StringBuilder(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_TO)));
+            formatNumber.replace(0, 2, "(");
+            formatNumber.insert(4, ")");
+            formatNumber.insert(5, " ");
+            formatNumber.insert(9, "-");
+            historyObject.setHistoryNumber(formatNumber.toString());
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_CREATED_AT))).withZone(DateTimeZone.UTC);
+            DateTimeFormatter formatterDate = DateTimeFormat.forPattern("MMM dd");
+            historyObject.setHistoryDate(formatterDate.print(dateTime));
+            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("hh:mm a").withZone(DateTimeZone.getDefault());
+            historyObject.setHistoryTime(formatterTime.print(dateTime));
+
+            historyObject.setHistoryDescription(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_DIRECTION)));
+            historyObject.setHistoryType(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_TYPE)));
+            historyList.add(historyObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return historyList;
+    }
+
     public boolean dataExists(String id, String table) {
         Cursor cursor = database.rawQuery("SELECT * FROM " + table + " WHERE id = " + id, null);
         boolean exists = (cursor.getCount() > 0);
@@ -243,27 +282,4 @@ public class GhostCallDatabaseAdapter {
         cursor.close();
         return latestTimestamp;
     }
-
-    public boolean creditPackageExists(String id) {
-        Cursor cursor = database.rawQuery("select * from " + MySQLiteGhostCallHelper.TABLE_CREDIT_PACKAGES + " where id = " + id, null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
-    }
-
-    public boolean soundEffectExists(String id) {
-        Cursor cursor = database.rawQuery("select * from " + MySQLiteGhostCallHelper.TABLE_SOUND_EFFECTS + " where id = " + id, null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
-    }
-
-    public boolean numberPackageExists(String id) {
-        Cursor cursor = database.rawQuery("select * from " + MySQLiteGhostCallHelper.TABLE_NUMBER_PACKAGES + " where id = " + id, null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
-    }
-
-
 }

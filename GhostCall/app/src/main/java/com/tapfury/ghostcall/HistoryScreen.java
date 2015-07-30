@@ -22,8 +22,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -33,6 +33,7 @@ public class HistoryScreen extends AppCompatActivity {
     HistoryAdapter historyAdapter;
     TextView userNumber, expireTimer;
     ImageView purchaseButton;
+    GhostCallDatabaseAdapter ghostDatabaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,6 @@ public class HistoryScreen extends AppCompatActivity {
             } catch (IllegalArgumentException e) {
                 expireTimer.setText("");
             }
-
         }
 
         purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
@@ -98,50 +98,16 @@ public class HistoryScreen extends AppCompatActivity {
             }
         });
 
+        ghostDatabaseAdapter = new GhostCallDatabaseAdapter(HistoryScreen.this);
+        try {
+            ghostDatabaseAdapter.open();
+            ArrayList<HistoryObject> gHistoryList = ghostDatabaseAdapter.getCallHistory();
+            historyAdapter = new HistoryAdapter(this, gHistoryList);
+            historyList.setAdapter(historyAdapter);
+            ghostDatabaseAdapter.close();
+        } catch (SQLException e) {
 
-        HistoryObject historyObject = new HistoryObject();
-        historyObject.setHistoryIcon("sms");
-        historyObject.setHistoryNumber("(201) 241-2897");
-        historyObject.setHistoryDescription("You got me dude");
-        historyObject.setHistoryDate("Jun 23");
-        historyObject.setHistoryTime("05:17pm");
-
-        HistoryObject historyObjectOne = new HistoryObject();
-        historyObjectOne.setHistoryIcon("sms");
-        historyObjectOne.setHistoryNumber("(201) 241-2897");
-        historyObjectOne.setHistoryDescription("ghostcall for the win");
-        historyObjectOne.setHistoryDate("Jun 23");
-        historyObjectOne.setHistoryTime("03:10pm");
-
-        HistoryObject historyObjectTwo = new HistoryObject();
-        historyObjectTwo.setHistoryIcon("sent");
-        historyObjectTwo.setHistoryNumber("(212) 125-4971");
-        historyObjectTwo.setHistoryDescription("test post");
-        historyObjectTwo.setHistoryDate("Jun 23");
-        historyObjectTwo.setHistoryTime("01:14pm");
-
-        HistoryObject historyObjectThree = new HistoryObject();
-        historyObjectThree.setHistoryIcon("sent");
-        historyObjectThree.setHistoryNumber("(201) 241-2897");
-        historyObjectThree.setHistoryDescription("scary ghostcall");
-        historyObjectThree.setHistoryDate("Jun 23");
-        historyObjectThree.setHistoryTime("11:17am");
-
-        HistoryObject historyObjectFour = new HistoryObject();
-        historyObjectFour.setHistoryIcon("smss");
-        historyObjectFour.setHistoryNumber("(201) 241-2897");
-        historyObjectFour.setHistoryDescription("outgoing call");
-        historyObjectFour.setHistoryDate("Jun 22");
-        historyObjectFour.setHistoryTime("12:17pm");
-
-        List<HistoryObject> historyArrayList = new ArrayList<>();
-        historyArrayList.add(historyObject);
-        historyArrayList.add(historyObjectTwo);
-        historyArrayList.add(historyObjectThree);
-        historyArrayList.add(historyObjectFour);
-
-        historyAdapter = new HistoryAdapter(this, historyArrayList);
-        historyList.setAdapter(historyAdapter);
+        }
 
         Button sendTextButton = (Button) findViewById(R.id.sendTextButton);
         sendTextButton.setOnClickListener(new View.OnClickListener() {

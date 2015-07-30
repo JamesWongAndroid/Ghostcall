@@ -63,11 +63,20 @@ public class HistoryAdapter extends BaseAdapter {
         holder.historyDate.setText(historyObject.getHistoryDate());
         holder.historyTime.setText(historyObject.getHistoryTime());
 
-        if(historyObject.getHistoryIcon().equals("sms")) {
-            holder.historyStatus.setImageResource(R.drawable.sms_history);
-        } else if (historyObject.getHistoryIcon().equals("sent")) {
-            holder.historyStatus.setImageResource(R.drawable.replied);
-        } else {
+        if (historyObject.getHistoryType() != null) {
+            if(historyObject.getHistoryType().equals("call")) {
+                if (historyObject.getHistoryDescription().equals("out")) {
+                    holder.historyStatus.setImageResource(R.drawable.call_outgoing);
+                } else if (historyObject.getHistoryDescription().equals("in")) {
+                    holder.historyStatus.setImageResource(R.drawable.call_incoming);
+                }
+            } else if (historyObject.getHistoryType().equals("message")) {
+                holder.historyStatus.setImageResource(R.drawable.sms_history);
+            } else if (historyObject.getHistoryType().equals("voicemail")) {
+                holder.historyStatus.setImageResource(R.drawable.audio_play);
+            }
+        }
+        else {
             holder.historyStatus.setImageResource(R.drawable.call_outgoing);
         }
 
