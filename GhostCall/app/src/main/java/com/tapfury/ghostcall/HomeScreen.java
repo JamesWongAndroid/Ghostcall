@@ -33,6 +33,7 @@ public class HomeScreen extends AppCompatActivity {
     ImageView purchaseButton;
     public static final String GHOST_PREF = "GhostPrefFile";
     TextView userRemainingText;
+    String ownNumber = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,8 @@ public class HomeScreen extends AppCompatActivity {
         nDatabaseAdapter = new GhostCallDatabaseAdapter(HomeScreen.this);
         try {
             nDatabaseAdapter.open();
-            userNumber.setText(nDatabaseAdapter.getUserNumber());
+            ownNumber = nDatabaseAdapter.getUserNumber();
+            userNumber.setText(ownNumber);
             ArrayList<GhostNumbers> gNumberList = nDatabaseAdapter.getUserNumbers();
             nDatabaseAdapter.close();
             gNumberAdapter = new GhostNumbersAdapter(this, gNumberList);
@@ -97,6 +99,8 @@ public class HomeScreen extends AppCompatActivity {
         yourCallButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent callIntent = new Intent(HomeScreen.this, CallScreen.class);
+                callIntent.putExtra("callName", "Own Number");
+                callIntent.putExtra("ghostIDExtra", "0");
                 startActivity(callIntent);
             }
         });
@@ -109,6 +113,7 @@ public class HomeScreen extends AppCompatActivity {
                 intent.putExtra("ghostNumberExtra", ghostItem.getGhostNumber());
                 intent.putExtra("ghostIDExtra", ghostItem.getGhostID());
                 intent.putExtra("ghostExpiration", ghostItem.getExpirationDate());
+                intent.putExtra("ghostName", ghostItem.getGhostTitle());
                 startActivity(intent);
             }
         });

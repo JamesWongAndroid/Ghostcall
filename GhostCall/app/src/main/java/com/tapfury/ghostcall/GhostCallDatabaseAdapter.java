@@ -229,12 +229,12 @@ public class GhostCallDatabaseAdapter {
         return userNumbers;
     }
 
-    public ArrayList<HistoryObject> getCallHistory() {
+    public ArrayList<HistoryObject> getCallHistory(String numberID) {
         ArrayList<HistoryObject> historyList = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
-                + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
-                + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
-                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " ORDER BY updated_at DESC", null);
+                + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " WHERE number_id = " + numberID + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
+                + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " WHERE number_id = " + numberID + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
+                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE number_id = " + numberID + " ORDER BY updated_at DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             HistoryObject historyObject = new HistoryObject();

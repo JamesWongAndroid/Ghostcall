@@ -63,7 +63,7 @@ public class GhostNumbersAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        GhostNumbers ghostNumbers = ghostNumbersList.get(position);
+        final GhostNumbers ghostNumbers = ghostNumbersList.get(position);
         holder.ghostName.setText(ghostNumbers.getGhostTitle());
         holder.ghostNumber.setText(ghostNumbers.getGhostNumber());
         holder.smsButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +80,8 @@ public class GhostNumbersAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent callIntent = new Intent(context.getApplicationContext(), CallScreen.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                callIntent.putExtra("callName", ghostNumbers.getGhostTitle());
+                callIntent.putExtra("ghostIDExtra", ghostNumbers.getGhostID());
                 context.startActivity(callIntent);
             }
         });

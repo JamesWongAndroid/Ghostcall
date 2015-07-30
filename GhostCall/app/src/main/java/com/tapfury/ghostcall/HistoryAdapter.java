@@ -66,8 +66,10 @@ public class HistoryAdapter extends BaseAdapter {
         if (historyObject.getHistoryType() != null) {
             if(historyObject.getHistoryType().equals("call")) {
                 if (historyObject.getHistoryDescription().equals("out")) {
+                    holder.historyDescription.setText("outgoing call");
                     holder.historyStatus.setImageResource(R.drawable.call_outgoing);
                 } else if (historyObject.getHistoryDescription().equals("in")) {
+                    holder.historyDescription.setText("incoming call");
                     holder.historyStatus.setImageResource(R.drawable.call_incoming);
                 }
             } else if (historyObject.getHistoryType().equals("message")) {

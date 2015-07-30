@@ -1,6 +1,8 @@
 package com.tapfury.ghostcall;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +15,8 @@ public class TourScreen extends FragmentActivity {
 
     private ViewPager viewPager;
     private TutorialAdapter adapter;
+    private SoundPool soundPool;
+    private int soundId;
 
     Button skipButton;
 
@@ -42,6 +46,29 @@ public class TourScreen extends FragmentActivity {
                 startActivity(new Intent(TourScreen.this, VerificationScreen.class));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                if (soundPool != null) {
+                    soundPool.play(soundId, 1, 1, 0, -1, 1);
+                }
+            }
+        });
+        soundId = soundPool.load(this, R.raw.ghost_call_loop, 1);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        soundPool.release();
+        soundPool = null;
     }
 
     ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {

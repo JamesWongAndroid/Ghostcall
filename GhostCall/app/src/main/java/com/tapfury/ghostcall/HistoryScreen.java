@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,6 +38,7 @@ public class HistoryScreen extends AppCompatActivity {
     GhostCallDatabaseAdapter ghostDatabaseAdapter;
     public static final String GHOST_PREF = "GhostPrefFile";
     TextView userRemainingText;
+    Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,7 @@ public class HistoryScreen extends AppCompatActivity {
         userNumber = (TextView) findViewById(R.id.user_number);
         expireTimer = (TextView) findViewById(R.id.expire_timer);
 
-        Bundle extras = getIntent().getExtras();
+        extras = getIntent().getExtras();
         if (!(extras == null)) {
             userNumber.setText(extras.getString("ghostNumberExtra"));
             try {
@@ -110,13 +112,28 @@ public class HistoryScreen extends AppCompatActivity {
         ghostDatabaseAdapter = new GhostCallDatabaseAdapter(HistoryScreen.this);
         try {
             ghostDatabaseAdapter.open();
-            ArrayList<HistoryObject> gHistoryList = ghostDatabaseAdapter.getCallHistory();
+            ArrayList<HistoryObject> gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"));
             historyAdapter = new HistoryAdapter(this, gHistoryList);
             historyList.setAdapter(historyAdapter);
             ghostDatabaseAdapter.close();
         } catch (SQLException e) {
-
+            // TODO DO SOMETHING
         }
+
+        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                HistoryObject historyObject = (HistoryObject) adapterView.getItemAtPosition(position);
+                if (historyObject.getHistoryType().equals("call")) {
+                    Intent intent = new Intent(HistoryScreen.this, CallScreen.class);
+                    intent.putExtra("callName", extras.getString("ghostName"));
+                    intent.putExtra("toNumber", historyObject.getHistoryNumber());
+                    intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                    startActivity(intent);
+                }
+
+            }
+        });
 
         Button sendTextButton = (Button) findViewById(R.id.sendTextButton);
         sendTextButton.setOnClickListener(new View.OnClickListener() {

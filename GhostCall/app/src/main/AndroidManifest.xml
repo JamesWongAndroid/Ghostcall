@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -57,7 +58,9 @@
         <activity
             android:name=".CallScreen"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_call_screen" >
+            android:label="@string/title_activity_call_screen"
+            android:windowSoftInputMode="stateHidden"
+            >
         </activity>
         <activity
             android:name=".HistorySettingsScreen"

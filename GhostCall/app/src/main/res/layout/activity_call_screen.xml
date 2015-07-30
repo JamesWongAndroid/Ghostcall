@@ -1,6 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
@@ -119,6 +120,7 @@
     </LinearLayout>
 
     <EditText
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
@@ -134,7 +136,9 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginTop="12dp"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:maxLength="12"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -527,6 +531,7 @@
     </LinearLayout>
 
     <Button
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
