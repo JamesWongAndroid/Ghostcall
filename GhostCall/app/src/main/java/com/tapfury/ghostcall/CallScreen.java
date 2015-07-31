@@ -47,6 +47,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private String apiKey;
     private String toNumber;
     private String numberID;
+    private String verified;
     private static final String GHOST_PREF = "GhostPrefFile";
     private static final String TAG = CallScreen.class.getSimpleName();
     private boolean isRecording = false;
@@ -76,10 +77,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         numberName = (TextView) findViewById(R.id.remainingText);
         numberBox  = (EditText) findViewById(R.id.callEditText);
-        numberBox.addTextChangedListener(new PhoneNumberTextWatcher(numberBox));
+
         extras = getIntent().getExtras();
         if (!(extras == null)) {
             numberID = extras.getString("ghostIDExtra");
+            if (numberID.equals("0")) {
+                verified = "true";
+            } else {
+                verified = "";
+            }
             numberName.setText(extras.getString("callName"));
             String toNumber = extras.getString("toNumber");
             if (toNumber != null) {
@@ -87,6 +93,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             }
 
         }
+
+        numberBox.addTextChangedListener(new PhoneNumberTextWatcher(numberBox));
 
         recordImage = (ImageView) findViewById(R.id.recordImage);
 
@@ -112,7 +120,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                 .setRequestInterceptor(requestInterceptor).build();
                         GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
-                        service.makeCall(toNumber, numberID, "-5", "true", new Callback<CallData>() {
+                        service.makeCall(toNumber, numberID, "-5", verified, new Callback<CallData>() {
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();

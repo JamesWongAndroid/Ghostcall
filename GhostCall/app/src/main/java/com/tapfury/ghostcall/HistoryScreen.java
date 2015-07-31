@@ -127,7 +127,11 @@ public class HistoryScreen extends AppCompatActivity {
                 if (historyObject.getHistoryType().equals("call")) {
                     Intent intent = new Intent(HistoryScreen.this, CallScreen.class);
                     intent.putExtra("callName", extras.getString("ghostName"));
-                    intent.putExtra("toNumber", historyObject.getHistoryNumber());
+
+                    StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryNumber());
+                    formatNumber.delete(0, 1);
+                    formatNumber.replace(3, 5, "-");
+                    intent.putExtra("toNumber", formatNumber.toString());
                     intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
                     startActivity(intent);
                 }
