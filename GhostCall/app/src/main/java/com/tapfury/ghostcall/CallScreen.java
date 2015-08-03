@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     dialpadContacts, dialpadDelete, dialpadZero, recordButton;
     LinearLayout rowNumberOne, rowNumberTwo, rowNumberThree, rowNumberFour;
     LinearLayout vcHolder, vcLayout;
+    RelativeLayout dialpadHolder;
     DiscreteSeekBar voiceChangeBar;
     ImageView recordImage;
 
@@ -102,6 +104,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         }
 
+        dialpadHolder = (RelativeLayout) findViewById(R.id.dialpadLayout);
+
         numberBox.addTextChangedListener(new PhoneNumberTextWatcher(numberBox));
 
         recordImage = (ImageView) findViewById(R.id.recordImage);
@@ -114,11 +118,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             public void onClick(View v) {
                 isChangingVoice = false;
                 vcIcon.setImageResource(R.drawable.vc_off);
-                rowNumberOne.setVisibility(View.VISIBLE);
-                rowNumberTwo.setVisibility(View.VISIBLE);
-                rowNumberThree.setVisibility(View.VISIBLE);
-                rowNumberFour.setVisibility(View.VISIBLE);
-                numberBox.setVisibility(View.VISIBLE);
+                dialpadHolder.setVisibility(View.VISIBLE);
                 makeCallButton.setVisibility(View.VISIBLE);
                 vcLayout.setVisibility(View.GONE);
                 closeButton.setVisibility(View.GONE);
@@ -267,21 +267,13 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 if (isChangingVoice) {
                     isChangingVoice = false;
                     vcIcon.setImageResource(R.drawable.vc_off);
-                    rowNumberOne.setVisibility(View.VISIBLE);
-                    rowNumberTwo.setVisibility(View.VISIBLE);
-                    rowNumberThree.setVisibility(View.VISIBLE);
-                    rowNumberFour.setVisibility(View.VISIBLE);
-                    numberBox.setVisibility(View.VISIBLE);
+                    dialpadHolder.setVisibility(View.VISIBLE);
                     makeCallButton.setVisibility(View.VISIBLE);
                     vcLayout.setVisibility(View.GONE);
                     closeButton.setVisibility(View.GONE);
                 } else {
                     isChangingVoice = true;
-                    rowNumberOne.setVisibility(View.GONE);
-                    rowNumberTwo.setVisibility(View.GONE);
-                    rowNumberThree.setVisibility(View.GONE);
-                    rowNumberFour.setVisibility(View.GONE);
-                    numberBox.setVisibility(View.GONE);
+                    dialpadHolder.setVisibility(View.GONE);
                     vcLayout.setVisibility(View.VISIBLE);
                     closeButton.setVisibility(View.VISIBLE);
                     makeCallButton.setVisibility(View.GONE);
