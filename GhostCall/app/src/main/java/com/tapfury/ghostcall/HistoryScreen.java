@@ -153,8 +153,10 @@ public class HistoryScreen extends AppCompatActivity {
         sendCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent callIntent = new Intent(getApplicationContext(), CallScreen.class);
-                startActivity(callIntent);
+                Intent intent = new Intent(HistoryScreen.this, CallScreen.class);
+                intent.putExtra("callName", extras.getString("ghostName"));
+                intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                startActivity(intent);
             }
         });
     }

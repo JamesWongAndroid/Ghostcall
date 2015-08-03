@@ -26,6 +26,8 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -37,7 +39,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
     LinearLayout dialpadOne, dialpadTwo, dialpadThree, dialpadFour, dialpadFive, dialpadSix, dialpadSeven, dialpadEight, dialpadNine,
     dialpadContacts, dialpadDelete, dialpadZero, recordButton;
-
+    LinearLayout rowNumberOne, rowNumberTwo, rowNumberThree, rowNumberFour;
+    LinearLayout vcHolder, vcLayout;
+    DiscreteSeekBar voiceChangeBar;
     ImageView recordImage;
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
@@ -48,14 +52,18 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private String toNumber;
     private String numberID;
     private String verified;
+    private String voiceChangerNumber;
     private static final String GHOST_PREF = "GhostPrefFile";
     private static final String TAG = CallScreen.class.getSimpleName();
     private boolean isRecording = false;
+    private boolean isChangingVoice = false;
+    private ImageView vcIcon;
     TextView numberName;
     EditText numberBox;
     Bundle extras;
     private SharedPreferences settings;
     Button makeCallButton;
+    Button closeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +106,31 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         recordImage = (ImageView) findViewById(R.id.recordImage);
 
+        voiceChangeBar = (DiscreteSeekBar) findViewById(R.id.voiceSeekBar);
+
+        closeButton = (Button) findViewById(R.id.closeVCButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isChangingVoice = false;
+                vcIcon.setImageResource(R.drawable.vc_off);
+                rowNumberOne.setVisibility(View.VISIBLE);
+                rowNumberTwo.setVisibility(View.VISIBLE);
+                rowNumberThree.setVisibility(View.VISIBLE);
+                rowNumberFour.setVisibility(View.VISIBLE);
+                numberBox.setVisibility(View.VISIBLE);
+                makeCallButton.setVisibility(View.VISIBLE);
+                vcLayout.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE);
+            }
+        });
+
         makeCallButton = (Button) findViewById(R.id.makeCallButton);
         makeCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                voiceChangerNumber = Integer.toString(voiceChangeBar.getProgress());
                 PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                 try {
                     Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(numberBox.getText().toString(), "US");
@@ -120,7 +148,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                 .setRequestInterceptor(requestInterceptor).build();
                         GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
-                        service.makeCall(toNumber, numberID, "-5", verified, new Callback<CallData>() {
+                        service.makeCall(toNumber, numberID, voiceChangerNumber, verified, new Callback<CallData>() {
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();
@@ -159,6 +187,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         dialpadZero = (LinearLayout) findViewById(R.id.dialPadZero);
         recordButton = (LinearLayout) findViewById(R.id.recordHolder);
 
+        rowNumberOne = (LinearLayout) findViewById(R.id.firstDialerRow);
+        rowNumberTwo = (LinearLayout) findViewById(R.id.secondDialerRow);
+        rowNumberThree = (LinearLayout) findViewById(R.id.thirdDialerRow);
+        rowNumberFour = (LinearLayout) findViewById(R.id.contactRow);
+
+        vcHolder = (LinearLayout) findViewById(R.id.vcHolder);
+        vcIcon = (ImageView) findViewById(R.id.vcIcon);
+        vcLayout = (LinearLayout) findViewById(R.id.vcLayout);
+
         dialpadOne.setOnClickListener(this);
         dialpadTwo.setOnClickListener(this);
         dialpadThree.setOnClickListener(this);
@@ -172,6 +209,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         dialpadDelete.setOnClickListener(this);
         dialpadZero.setOnClickListener(this);
         recordButton.setOnClickListener(this);
+        vcHolder.setOnClickListener(this);
     }
 
     @Override
@@ -225,6 +263,32 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     recordImage.setImageResource(R.drawable.record_on);
                 }
                 break;
+            case R.id.vcHolder:
+                if (isChangingVoice) {
+                    isChangingVoice = false;
+                    vcIcon.setImageResource(R.drawable.vc_off);
+                    rowNumberOne.setVisibility(View.VISIBLE);
+                    rowNumberTwo.setVisibility(View.VISIBLE);
+                    rowNumberThree.setVisibility(View.VISIBLE);
+                    rowNumberFour.setVisibility(View.VISIBLE);
+                    numberBox.setVisibility(View.VISIBLE);
+                    makeCallButton.setVisibility(View.VISIBLE);
+                    vcLayout.setVisibility(View.GONE);
+                    closeButton.setVisibility(View.GONE);
+                } else {
+                    isChangingVoice = true;
+                    rowNumberOne.setVisibility(View.GONE);
+                    rowNumberTwo.setVisibility(View.GONE);
+                    rowNumberThree.setVisibility(View.GONE);
+                    rowNumberFour.setVisibility(View.GONE);
+                    numberBox.setVisibility(View.GONE);
+                    vcLayout.setVisibility(View.VISIBLE);
+                    closeButton.setVisibility(View.VISIBLE);
+                    makeCallButton.setVisibility(View.GONE);
+                    vcIcon.setImageResource(R.drawable.vc_on);
+                }
+                break;
+
         }
     }
 
