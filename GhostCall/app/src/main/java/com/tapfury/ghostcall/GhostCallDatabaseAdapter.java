@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -258,6 +260,21 @@ public class GhostCallDatabaseAdapter {
         }
         cursor.close();
         return historyList;
+    }
+
+    public ArrayList<BackgroundObject> getBackgroundObjects() {
+        ArrayList<BackgroundObject> backgroundList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.BACKGROUND_NAME + ", " + MySQLiteGhostCallHelper.BACKGROUND_AUDIO_URL + " FROM " + MySQLiteGhostCallHelper.TABLE_BACKGROUND_EFFECTS, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            BackgroundObject backgroundObject = new BackgroundObject();
+            backgroundObject.setBackgroundName(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.BACKGROUND_NAME)));
+            backgroundObject.setBackgroundURL(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.BACKGROUND_AUDIO_URL)));
+            backgroundList.add(backgroundObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return backgroundList;
     }
 
     public boolean dataExists(String id, String table) {

@@ -15,8 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -26,8 +28,13 @@ import android.widget.Toast;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.skyfishjy.library.RippleBackground;
+import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -41,10 +48,12 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     LinearLayout dialpadOne, dialpadTwo, dialpadThree, dialpadFour, dialpadFive, dialpadSix, dialpadSeven, dialpadEight, dialpadNine,
     dialpadContacts, dialpadDelete, dialpadZero, recordButton;
     LinearLayout rowNumberOne, rowNumberTwo, rowNumberThree, rowNumberFour;
-    LinearLayout vcHolder, vcLayout;
+    LinearLayout vcHolder, vcLayout, bgHolder;
     RelativeLayout dialpadHolder;
     DiscreteSeekBar voiceChangeBar;
     ImageView recordImage;
+    GridView bgGrid;
+    BackgroundAdapter backgroundAdapter;
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
@@ -59,13 +68,16 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private static final String TAG = CallScreen.class.getSimpleName();
     private boolean isRecording = false;
     private boolean isChangingVoice = false;
+    private boolean isChangingBG = false;
     private ImageView vcIcon;
+    private ImageView bgIcon;
     TextView numberName;
     EditText numberBox;
     Bundle extras;
     private SharedPreferences settings;
     Button makeCallButton;
     Button closeButton;
+    RippleBackground rippleBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +99,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         numberName = (TextView) findViewById(R.id.remainingText);
         numberBox  = (EditText) findViewById(R.id.callEditText);
+
+        rippleBackground = (RippleBackground) findViewById(R.id.content_loading);
 
         extras = getIntent().getExtras();
         if (!(extras == null)) {
@@ -116,12 +130,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isChangingVoice = false;
-                vcIcon.setImageResource(R.drawable.vc_off);
-                dialpadHolder.setVisibility(View.VISIBLE);
-                makeCallButton.setVisibility(View.VISIBLE);
-                vcLayout.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE);
+                removeAllViews();
+                showDialpad();
             }
         });
 
@@ -135,6 +145,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 try {
                     Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(numberBox.getText().toString(), "US");
                     if (phoneUtil.isValidNumberForRegion(usaNumber, "US")) {
+
+                        rippleBackground.setVisibility(View.VISIBLE);
+                        rippleBackground.startRippleAnimation();
+                        dialpadHolder.setVisibility(View.GONE);
+
                         toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
                         RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -156,11 +171,17 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                 callIntent.setData(Uri.parse("tel:" + toCallNumber));
                                 startActivity(callIntent);
                                 Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
+                                rippleBackground.stopRippleAnimation();
+                                rippleBackground.setVisibility(View.GONE);
+                                dialpadHolder.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Toast.makeText(getApplicationContext(), "Error Calling", Toast.LENGTH_SHORT).show();
+                                rippleBackground.stopRippleAnimation();
+                                dialpadHolder.setVisibility(View.VISIBLE);
+                                rippleBackground.setVisibility(View.GONE);
                             }
                         });
 
@@ -196,6 +217,28 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         vcIcon = (ImageView) findViewById(R.id.vcIcon);
         vcLayout = (LinearLayout) findViewById(R.id.vcLayout);
 
+        bgHolder = (LinearLayout) findViewById(R.id.bgHolder);
+        bgIcon = (ImageView) findViewById(R.id.bgIcon);
+        bgGrid = (GridView) findViewById(R.id.bgLayout);
+        GhostCallDatabaseAdapter databaseAdapter = new GhostCallDatabaseAdapter(CallScreen.this);
+
+        try {
+            databaseAdapter.open();
+            ArrayList<BackgroundObject> backgroundList = databaseAdapter.getBackgroundObjects();
+            backgroundAdapter = new BackgroundAdapter(this, backgroundList);
+            bgGrid.setAdapter(backgroundAdapter);
+            databaseAdapter.close();
+        } catch (SQLException e) {
+
+        }
+
+        bgGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
         dialpadOne.setOnClickListener(this);
         dialpadTwo.setOnClickListener(this);
         dialpadThree.setOnClickListener(this);
@@ -210,6 +253,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         dialpadZero.setOnClickListener(this);
         recordButton.setOnClickListener(this);
         vcHolder.setOnClickListener(this);
+        bgHolder.setOnClickListener(this);
     }
 
     @Override
@@ -265,21 +309,32 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.vcHolder:
                 if (isChangingVoice) {
+                    removeAllViews();
                     isChangingVoice = false;
                     vcIcon.setImageResource(R.drawable.vc_off);
-                    dialpadHolder.setVisibility(View.VISIBLE);
-                    makeCallButton.setVisibility(View.VISIBLE);
-                    vcLayout.setVisibility(View.GONE);
-                    closeButton.setVisibility(View.GONE);
+                    showDialpad();
                 } else {
+                    removeAllViews();
                     isChangingVoice = true;
-                    dialpadHolder.setVisibility(View.GONE);
                     vcLayout.setVisibility(View.VISIBLE);
                     closeButton.setVisibility(View.VISIBLE);
-                    makeCallButton.setVisibility(View.GONE);
                     vcIcon.setImageResource(R.drawable.vc_on);
                 }
                 break;
+            case R.id.bgHolder:
+                if (isChangingBG) {
+                    removeAllViews();
+                    isChangingBG = false;
+                    bgIcon.setImageResource(R.drawable.bg_off);
+                    showDialpad();
+                } else {
+                    removeAllViews();
+                    isChangingBG = true;
+                    bgGrid.setVisibility(View.VISIBLE);
+                    closeButton.setVisibility(View.VISIBLE);
+                    bgIcon.setImageResource(R.drawable.bg_on);
+                }
+
 
         }
     }
@@ -337,5 +392,22 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    private void removeAllViews() {
+        dialpadHolder.setVisibility(View.GONE);
+        makeCallButton.setVisibility(View.GONE);
+        vcLayout.setVisibility(View.GONE);
+        bgGrid.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
+        bgIcon.setImageResource(R.drawable.bg_off);
+        vcIcon.setImageResource(R.drawable.vc_off);
+        isChangingBG = false;
+        isChangingVoice = false;
+    }
+
+    private void showDialpad() {
+        dialpadHolder.setVisibility(View.VISIBLE);
+        makeCallButton.setVisibility(View.VISIBLE);
     }
 }

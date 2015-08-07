@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.tapfury.ghostcall"
-        minSdkVersion 10
+        minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -36,4 +36,5 @@ dependencies {
     compile project(':calligraphy-2.1.0')
     compile 'net.danlew:android.joda:2.8.1'
     compile 'org.adw.library:discrete-seekbar:1.0.0'
+    compile 'com.skyfishjy.ripplebackground:library:1.0.1'
 }
