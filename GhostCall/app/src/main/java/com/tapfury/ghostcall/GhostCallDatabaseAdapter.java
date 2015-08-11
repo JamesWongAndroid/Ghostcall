@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
+import com.tapfury.ghostcall.SoundEffects.EffectsObject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -173,6 +174,7 @@ public class GhostCallDatabaseAdapter {
         ContentValues values = new ContentValues();
         values.put(MySQLiteGhostCallHelper.EFFECTS_ID, id);
         values.put(MySQLiteGhostCallHelper.EFFECTS_EFFECT_ID, effectID);
+
         values.put(MySQLiteGhostCallHelper.EFFECTS_NAME, name);
         values.put(MySQLiteGhostCallHelper.EFFECTS_AUDIO_NAME, audioName);
         values.put(MySQLiteGhostCallHelper.EFFECTS_VOLUME, volume);
@@ -279,11 +281,21 @@ public class GhostCallDatabaseAdapter {
         return backgroundList;
     }
 
-    public boolean dataExists(String id, String table) {
-        Cursor cursor = database.rawQuery("SELECT * FROM " + table + " WHERE id = " + id, null);
-        boolean exists = (cursor.getCount() > 0);
+    public ArrayList<EffectsObject> getEffectsObjects() {
+        ArrayList<EffectsObject> effectsList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.EFFECTS_NAME + ", " + MySQLiteGhostCallHelper.EFFECTS_AUDIO_URL + ", " + MySQLiteGhostCallHelper.EFFECTS_ID + " FROM " + MySQLiteGhostCallHelper.TABLE_SOUND_EFFECTS, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            EffectsObject effectsObject = new EffectsObject();
+            effectsObject.setEffectsName(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.EFFECTS_NAME)));
+            effectsObject.setEffectsURL(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.EFFECTS_AUDIO_URL)));
+            effectsObject.setEffectsID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.EFFECTS_ID)));
+            effectsObject.setEffectsState("unselected");
+            effectsList.add(effectsObject);
+            cursor.moveToNext();
+        }
         cursor.close();
-        return exists;
+        return effectsList;
     }
 
     public boolean numberExists(String id) {
@@ -297,8 +309,12 @@ public class GhostCallDatabaseAdapter {
         Cursor cursor = database.rawQuery("SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " UNION SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES +
                 " UNION SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " ORDER BY updated_at DESC", null);
         cursor.moveToFirst();
-        String latestTimestamp = cursor.getString(0);
+        if (cursor.getCount() > 0) {
+            String latestTimestamp = cursor.getString(0);
+            cursor.close();
+            return latestTimestamp;
+        }
         cursor.close();
-        return latestTimestamp;
+        return "";
     }
 }

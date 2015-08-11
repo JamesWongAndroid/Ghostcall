@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
@@ -44,6 +45,7 @@ public class StartScreen extends Activity {
     NumberProgressBar progressBar;
     private String apiKey, lastUpdatedTimestamp;
     private boolean isUserLoaded, isNumberPackageLoaded, isExtendLoaded, isCreditsLoaded, isEffectsLoaded, isBackgroundLoaded;
+    RelativeLayout startRelativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,9 @@ public class StartScreen extends Activity {
         isCreditsLoaded = settings.getBoolean("creditsLoaded", false);
         isEffectsLoaded = settings.getBoolean("effectsLoaded", false);
         isBackgroundLoaded = settings.getBoolean("backgroundsLoaded", false);
+
+        startRelativeLayout = (RelativeLayout) findViewById(R.id.startRelativeLayout);
+        startRelativeLayout.setBackgroundResource(R.drawable.ghost_call_bg);
 
         if (apiKey.equals("")) {
 
