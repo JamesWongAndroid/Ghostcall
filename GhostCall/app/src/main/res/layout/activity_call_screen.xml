@@ -91,6 +91,7 @@
                 android:textColor="@color/white"
                 android:layout_marginBottom="10dp"
                 android:textSize="12sp"
+                android:id="@+id/vcText"
                 />
 
         </LinearLayout>
@@ -635,6 +636,7 @@
         android:layout_above="@id/closeVCButton"
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
+        android:listSelector="#00000000"
         />
 
 

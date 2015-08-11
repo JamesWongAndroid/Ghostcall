@@ -1,6 +1,8 @@
 package com.tapfury.ghostcall;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +68,15 @@ public class BackgroundAdapter extends BaseAdapter {
         if (backgroundObject.getBackgroundName().equals("Static")) {
             holder.backgroundImage.setImageResource(R.drawable.statics);
         }
+
+        if (backgroundObject.getBackgroundState() != null) {
+            if (backgroundObject.getBackgroundState().equals("selected")) {
+                holder.backgroundImage.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+            } else {
+                holder.backgroundImage.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+
 
         return view;
     }

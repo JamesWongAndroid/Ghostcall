@@ -264,12 +264,14 @@ public class GhostCallDatabaseAdapter {
 
     public ArrayList<BackgroundObject> getBackgroundObjects() {
         ArrayList<BackgroundObject> backgroundList = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.BACKGROUND_NAME + ", " + MySQLiteGhostCallHelper.BACKGROUND_AUDIO_URL + " FROM " + MySQLiteGhostCallHelper.TABLE_BACKGROUND_EFFECTS, null);
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.BACKGROUND_NAME + ", " + MySQLiteGhostCallHelper.BACKGROUND_AUDIO_URL + ", " + MySQLiteGhostCallHelper.BACKGROUND_ID + " FROM " + MySQLiteGhostCallHelper.TABLE_BACKGROUND_EFFECTS, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             BackgroundObject backgroundObject = new BackgroundObject();
             backgroundObject.setBackgroundName(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.BACKGROUND_NAME)));
             backgroundObject.setBackgroundURL(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.BACKGROUND_AUDIO_URL)));
+            backgroundObject.setBackgroundID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.BACKGROUND_ID)));
+            backgroundObject.setBackgroundState("Unselected");
             backgroundList.add(backgroundObject);
             cursor.moveToNext();
         }

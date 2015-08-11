@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -54,6 +57,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     ImageView recordImage;
     GridView bgGrid;
     BackgroundAdapter backgroundAdapter;
+    ImageView previousView = null;
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
@@ -63,7 +67,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private String toNumber;
     private String numberID;
     private String verified;
-    private String voiceChangerNumber;
+    private String voiceChangerNumber ="0";
+    private String backgroundID = "0";
     private static final String GHOST_PREF = "GhostPrefFile";
     private static final String TAG = CallScreen.class.getSimpleName();
     private boolean isRecording = false;
@@ -71,13 +76,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private boolean isChangingBG = false;
     private ImageView vcIcon;
     private ImageView bgIcon;
-    TextView numberName;
+    private ArrayList<BackgroundObject> backgroundList;
+    TextView numberName, bgText, vcText;
     EditText numberBox;
     Bundle extras;
     private SharedPreferences settings;
     Button makeCallButton;
     Button closeButton;
     RippleBackground rippleBackground;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +139,12 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             public void onClick(View v) {
                 removeAllViews();
                 showDialpad();
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
+                changeTextColor();
             }
         });
 
@@ -163,7 +176,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                 .setRequestInterceptor(requestInterceptor).build();
                         GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
-                        service.makeCall(toNumber, numberID, voiceChangerNumber, verified, new Callback<CallData>() {
+                        service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, verified, new Callback<CallData>() {
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();
@@ -216,15 +229,18 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         vcHolder = (LinearLayout) findViewById(R.id.vcHolder);
         vcIcon = (ImageView) findViewById(R.id.vcIcon);
         vcLayout = (LinearLayout) findViewById(R.id.vcLayout);
+        vcText = (TextView) findViewById(R.id.vcText);
 
         bgHolder = (LinearLayout) findViewById(R.id.bgHolder);
         bgIcon = (ImageView) findViewById(R.id.bgIcon);
         bgGrid = (GridView) findViewById(R.id.bgLayout);
+        bgGrid.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+        bgText = (TextView) findViewById(R.id.bgText);
         GhostCallDatabaseAdapter databaseAdapter = new GhostCallDatabaseAdapter(CallScreen.this);
 
         try {
             databaseAdapter.open();
-            ArrayList<BackgroundObject> backgroundList = databaseAdapter.getBackgroundObjects();
+            backgroundList = databaseAdapter.getBackgroundObjects();
             backgroundAdapter = new BackgroundAdapter(this, backgroundList);
             bgGrid.setAdapter(backgroundAdapter);
             databaseAdapter.close();
@@ -234,7 +250,48 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         bgGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                if (backgroundList.get(position).getBackgroundState() != null) {
+                    for (int i = 0; i < backgroundList.size(); i++) {
+                        if (i != position) {
+                            backgroundList.get(i).setBackgroundState("");
+                            if (mediaPlayer != null) {
+                                mediaPlayer.stop();
+                                mediaPlayer.release();
+                                mediaPlayer = null;
+                            }
+                        }
+                    }
+
+                    if (!backgroundList.get(position).getBackgroundState().equals("selected")) {
+                        backgroundList.get(position).setBackgroundState("selected");
+                        backgroundID = backgroundList.get(position).getBackgroundID();
+                        mediaPlayer = new MediaPlayer();
+
+                        try {
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mediaPlayer.setDataSource(backgroundList.get(position).getBackgroundURL());
+                            mediaPlayer.setLooping(true);
+                            mediaPlayer.prepareAsync();
+                        } catch (IOException e) {
+                            Toast.makeText(getApplicationContext(), "Fail to load sound", Toast.LENGTH_SHORT).show();
+                        }
+
+                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                mp.start();
+                            }
+                        });
+
+                        backgroundAdapter.notifyDataSetChanged();
+                    } else {
+                        backgroundList.get(position).setBackgroundState("");
+                        backgroundAdapter.notifyDataSetChanged();
+                        backgroundID = "0";
+                    }
+                }
 
             }
         });
@@ -320,6 +377,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     closeButton.setVisibility(View.VISIBLE);
                     vcIcon.setImageResource(R.drawable.vc_on);
                 }
+                changeTextColor();
                 break;
             case R.id.bgHolder:
                 if (isChangingBG) {
@@ -327,6 +385,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     isChangingBG = false;
                     bgIcon.setImageResource(R.drawable.bg_off);
                     showDialpad();
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
                 } else {
                     removeAllViews();
                     isChangingBG = true;
@@ -334,6 +397,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     closeButton.setVisibility(View.VISIBLE);
                     bgIcon.setImageResource(R.drawable.bg_on);
                 }
+                changeTextColor();
+                break;
 
 
         }
@@ -409,5 +474,20 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private void showDialpad() {
         dialpadHolder.setVisibility(View.VISIBLE);
         makeCallButton.setVisibility(View.VISIBLE);
+    }
+
+    private void changeTextColor() {
+        if (!backgroundID.equals("0")) {
+            bgText.setTextColor(getResources().getColor(R.color.selectedyellow));
+        } else {
+            bgText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        voiceChangerNumber = Integer.toString(voiceChangeBar.getProgress());
+        if (!voiceChangerNumber.equals("0")) {
+            vcText.setTextColor(getResources().getColor(R.color.selectedyellow));
+        } else {
+            vcText.setTextColor(getResources().getColor(R.color.white));
+        }
     }
 }

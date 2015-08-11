@@ -7,6 +7,24 @@ public class BackgroundObject {
 
     String backgroundName;
     String backgroundURL;
+    String backgroundID;
+    String backgroundState;
+
+    public String getBackgroundState() {
+        return backgroundState;
+    }
+
+    public void setBackgroundState(String backgroundState) {
+        this.backgroundState = backgroundState;
+    }
+
+    public String getBackgroundID() {
+        return backgroundID;
+    }
+
+    public void setBackgroundID(String backgroundID) {
+        this.backgroundID = backgroundID;
+    }
 
     public String getBackgroundName() {
         return backgroundName;

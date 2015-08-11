@@ -40,5 +40,5 @@ public interface GhostCallAPIInterface {
 
     @FormUrlEncoded
     @POST("/calls")
-    void makeCall(@Field("to") String to, @Field("number_id") String numberID, @Field("voicechanger") String voicechanger, @Field("use_verified_number") String verified, Callback<CallData> callback);
+    void makeCall(@Field("to") String to, @Field("number_id") String numberID, @Field("background_item_id") String backgroundID, @Field("voicechanger") String voicechanger, @Field("use_verified_number") String verified, Callback<CallData> callback);
 }
