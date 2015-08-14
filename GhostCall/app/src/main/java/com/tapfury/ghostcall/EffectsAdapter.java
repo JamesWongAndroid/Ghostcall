@@ -62,7 +62,11 @@ public class EffectsAdapter extends BaseAdapter {
 
         EffectsObject effectsObject = effectsObjectList.get(position);
         holder.effectsName.setText(effectsObject.getEffectsName());
-        int resID = context.getResources().getIdentifier(effectsObject.getEffectsName().toLowerCase(), "drawable", context.getPackageName());
+        String effectsNameModified = effectsObject.getEffectsName().toLowerCase();
+        if (effectsNameModified.contains(" ")) {
+            effectsNameModified = effectsNameModified.replace(" ", "");
+        }
+        int resID = context.getResources().getIdentifier(effectsNameModified, "drawable", context.getPackageName());
         holder.effectsImage.setImageResource(resID);
 
         if (effectsObject.getEffectsState() != null) {

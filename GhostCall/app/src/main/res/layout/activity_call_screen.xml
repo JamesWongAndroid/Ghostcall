@@ -628,6 +628,20 @@
         android:visibility="gone"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        fontPath="fonts/helveticaneue_light.ttf"
+        android:id="@+id/hangupButton"
+        android:background="#88000000"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:text="Hang Up"
+        android:visibility="gone"
+        />
+
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -651,6 +665,23 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:listSelector="#00000000" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="#55000000"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:id="@+id/spinnerLayout"
+        >
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
 
 
 </RelativeLayout>

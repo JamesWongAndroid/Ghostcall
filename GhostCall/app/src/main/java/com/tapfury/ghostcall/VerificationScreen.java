@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -125,7 +124,6 @@ public class VerificationScreen extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     String error = e.getMessage();
-                    Log.d("wtf", error);
                 } finally {
                     if (inStream != null) {
                         try {

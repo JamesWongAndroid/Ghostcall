@@ -174,7 +174,6 @@ public class GhostCallDatabaseAdapter {
         ContentValues values = new ContentValues();
         values.put(MySQLiteGhostCallHelper.EFFECTS_ID, id);
         values.put(MySQLiteGhostCallHelper.EFFECTS_EFFECT_ID, effectID);
-
         values.put(MySQLiteGhostCallHelper.EFFECTS_NAME, name);
         values.put(MySQLiteGhostCallHelper.EFFECTS_AUDIO_NAME, audioName);
         values.put(MySQLiteGhostCallHelper.EFFECTS_VOLUME, volume);

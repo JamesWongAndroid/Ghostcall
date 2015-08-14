@@ -30,15 +30,19 @@ import android.widget.Toast;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.skyfishjy.library.RippleBackground;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
 import com.tapfury.ghostcall.SoundEffects.EffectsObject;
+import com.tapfury.ghostcall.User.CallStatus;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -53,12 +57,13 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     dialpadContacts, dialpadDelete, dialpadZero, recordButton;
     LinearLayout rowNumberOne, rowNumberTwo, rowNumberThree, rowNumberFour;
     LinearLayout vcHolder, vcLayout, bgHolder, effectsHolder;
-    RelativeLayout dialpadHolder;
+    RelativeLayout dialpadHolder, spinnerLayout;
     DiscreteSeekBar voiceChangeBar;
     ImageView recordImage;
     GridView bgGrid, effectsGrid;
     BackgroundAdapter backgroundAdapter;
     EffectsAdapter effectAdapter;
+    ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
@@ -70,6 +75,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private String verified;
     private String voiceChangerNumber ="0";
     private String backgroundID = "0";
+    String resourceID = "";
+    String currentCallStatus = "";
     private static final String GHOST_PREF = "GhostPrefFile";
     private static final String TAG = CallScreen.class.getSimpleName();
     private boolean isRecording = false;
@@ -89,6 +96,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     Button closeButton;
     RippleBackground rippleBackground;
     MediaPlayer mediaPlayer;
+    RequestInterceptor requestInterceptor;
+    RestAdapter restAdapter;
+    GhostCallAPIInterface service;
+    CircleProgressBar progressSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +115,17 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
+
+        requestInterceptor = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                request.addHeader("X-api-key", apiKey);
+            }
+        };
+
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+                .setRequestInterceptor(requestInterceptor).build();
+        service = restAdapter.create(GhostCallAPIInterface.class);
 
         settings = getSharedPreferences(GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
@@ -130,6 +152,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         }
 
         dialpadHolder = (RelativeLayout) findViewById(R.id.dialpadLayout);
+        spinnerLayout = (RelativeLayout) findViewById(R.id.spinnerLayout);
+        progressSpinner = (CircleProgressBar) findViewById(R.id.progressBar);
+        progressSpinner.setColorSchemeResources(android.R.color.holo_blue_dark);
 
         numberBox.addTextChangedListener(new PhoneNumberTextWatcher(numberBox));
 
@@ -141,14 +166,30 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeAllViews();
-                showDialpad();
-                if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
+                if (currentCallStatus.equals("connected")) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    service.hangUpCall(resourceID, new Callback<Response>() {
+                        @Override
+                        public void success(Response response, Response response2) {
+
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+
+                        }
+                    });
+                } else {
+                    removeAllViews();
+                    showDialpad();
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    changeTextColor();
                 }
-                changeTextColor();
+
             }
         });
 
@@ -166,31 +207,22 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         rippleBackground.setVisibility(View.VISIBLE);
                         rippleBackground.startRippleAnimation();
                         dialpadHolder.setVisibility(View.GONE);
-
+                        makeCallButton.setVisibility(View.GONE);
                         toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
-
-                        RequestInterceptor requestInterceptor = new RequestInterceptor() {
-                            @Override
-                            public void intercept(RequestFacade request) {
-                                request.addHeader("X-api-key", apiKey);
-                            }
-                        };
-
-                        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
-                                .setRequestInterceptor(requestInterceptor).build();
-                        GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
                         service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, verified, new Callback<CallData>() {
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();
+                                resourceID = callData.getResourceId();
                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                                 callIntent.setData(Uri.parse("tel:" + toCallNumber));
                                 startActivity(callIntent);
                                 Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
-                                rippleBackground.stopRippleAnimation();
-                                rippleBackground.setVisibility(View.GONE);
-                                dialpadHolder.setVisibility(View.VISIBLE);
+                                Log.d("STARTED CALL", "started call");
+                                scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                                scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                                // TODO
                             }
 
                             @Override
@@ -199,6 +231,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                 rippleBackground.stopRippleAnimation();
                                 dialpadHolder.setVisibility(View.VISIBLE);
                                 rippleBackground.setVisibility(View.GONE);
+                                makeCallButton.setVisibility(View.VISIBLE);
                             }
                         });
 
@@ -266,6 +299,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         effectsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                final int positionInt = position;
                 for (int i = 0; i < effectsList.size(); i++) {
                     if (i != position) {
                         effectsList.get(i).setEffectsState("");
@@ -276,6 +311,22 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 if (!effectsList.get(position).getEffectsState().equals("selected")) {
                     effectsList.get(position).setEffectsState("selected");
                     mediaPlayer = new MediaPlayer();
+
+                    if (currentCallStatus.equals("connected")) {
+                        service.sendEffects(effectsList.get(position).getEffectsID(), resourceID, new Callback<Response>() {
+                            @Override
+                            public void success(Response responseTwo, Response response) {
+                                Log.d("EFFECTS RESPONSE", "i sent");
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Log.d("EFFECTS RESPONSE", "i failed " + retrofitError.getMessage());
+
+                            }
+                        });
+                        Log.d("sending effects", "effects id = " + effectsList.get(position).getEffectsID() + " resourceID = " + resourceID);
+                    }
 
                     try {
                         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -289,6 +340,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         @Override
                         public void onPrepared(MediaPlayer mp) {
                             mp.start();
+                        }
+                    });
+
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            effectsList.get(positionInt).setEffectsState("");
+                            ensureMediaPlayerDeath();
+                            effectAdapter.notifyDataSetChanged();
                         }
                     });
                     effectAdapter.notifyDataSetChanged();
@@ -531,6 +591,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         bgIcon.setImageResource(R.drawable.bg_off);
         vcIcon.setImageResource(R.drawable.vc_off);
         effectsIcon.setImageResource(R.drawable.effects_off);
+        spinnerLayout.setVisibility(View.GONE);
         isChangingBG = false;
         isChangingVoice = false;
         isViewingEffects = false;
@@ -561,6 +622,65 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+    }
+
+    public class CheckCallStatus implements Runnable {
+
+        @Override
+        public void run() {
+
+            service.getCallStatus(resourceID, new Callback<CallStatus>() {
+                @Override
+                public void success(CallStatus callStatus, Response response) {
+                    Log.d("GHOSTCALL CALL STATUS", callStatus.getStatus());
+                    currentCallStatus = callStatus.getStatus();
+
+                    if (currentCallStatus.equals("connected")) {
+                        rippleBackground.stopRippleAnimation();
+                        rippleBackground.setVisibility(View.GONE);
+                        removeAllViews();
+                        closeButton.setVisibility(View.VISIBLE);
+                        closeButton.setText("Hang Up");
+                        effectsGrid.setVisibility(View.VISIBLE);
+                    }
+
+                    if (currentCallStatus.equals("connecting")) {
+                       makeCallButton.setVisibility(View.GONE);
+                        bgHolder.setClickable(false);
+                        vcHolder.setClickable(false);
+                        effectsHolder.setClickable(false);
+                    }
+
+                    if (currentCallStatus.equals("initiated")) {
+                        bgHolder.setClickable(false);
+                        vcHolder.setClickable(false);
+                        effectsHolder.setClickable(false);
+                    }
+
+                    if (currentCallStatus.equals("hangup")) {
+                        scheduledThreadPoolExecutor.shutdownNow();
+                        removeAllViews();
+                        closeButton.setText("Close");
+                        showDialpad();
+                        bgHolder.setClickable(true);
+                        vcHolder.setClickable(true);
+                        effectsHolder.setClickable(true);
+                        Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
+                    }
+
+                }
+
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    rippleBackground.stopRippleAnimation();
+                    rippleBackground.setVisibility(View.GONE);
+                    removeAllViews();
+                    showDialpad();
+                    bgHolder.setClickable(true);
+                    vcHolder.setClickable(true);
+                }
+            });
         }
     }
 }
