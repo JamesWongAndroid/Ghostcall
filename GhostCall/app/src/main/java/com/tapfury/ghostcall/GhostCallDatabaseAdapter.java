@@ -234,10 +234,10 @@ public class GhostCallDatabaseAdapter {
 
     public ArrayList<HistoryObject> getCallHistory(String numberID) {
         ArrayList<HistoryObject> historyList = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
-                + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " WHERE number_id = " + numberID + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
-                + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " WHERE number_id = " + numberID + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
-                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE number_id = " + numberID + " ORDER BY updated_at DESC", null);
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_ID + ", " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
+                + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + ", " + MySQLiteGhostCallHelper.CALLS_RECORD + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " WHERE number_id = " + numberID + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_ID + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
+                + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " WHERE number_id = " + numberID + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_ID + ", " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
+                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + ", " + MySQLiteGhostCallHelper.MESSAGES_STATUS + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE number_id = " + numberID + " ORDER BY updated_at DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             HistoryObject historyObject = new HistoryObject();
@@ -253,6 +253,13 @@ public class GhostCallDatabaseAdapter {
             historyObject.setHistoryDate(formatterDate.print(dateTime));
             DateTimeFormatter formatterTime = DateTimeFormat.forPattern("hh:mm a").withZone(DateTimeZone.getDefault());
             historyObject.setHistoryTime(formatterTime.print(dateTime));
+            historyObject.setHistoryID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_ID)));
+            historyObject.setHistoryRecord(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_RECORD)));
+            if (historyObject.getHistoryRecord().equals("1")) {
+                historyObject.setHistoryState("not_playing");
+            } else {
+                historyObject.setHistoryState("");
+            }
 
             historyObject.setHistoryDescription(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_DIRECTION)));
             historyObject.setHistoryType(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_TYPE)));

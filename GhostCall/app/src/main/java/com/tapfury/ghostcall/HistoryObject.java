@@ -11,6 +11,9 @@ public class HistoryObject {
     String historyDate;
     String historyTime;
     String historyType;
+    String historyID;
+    String historyRecord;
+    String historyState;
 
     public String getHistoryType() {
         return historyType;
@@ -58,5 +61,29 @@ public class HistoryObject {
 
     public void setHistoryIcon(String historyIcon) {
         this.historyIcon = historyIcon;
+    }
+
+    public String getHistoryID() {
+        return historyID;
+    }
+
+    public void setHistoryID(String historyID) {
+        this.historyID = historyID;
+    }
+
+    public String getHistoryRecord() {
+        return historyRecord;
+    }
+
+    public void setHistoryRecord(String historyRecord) {
+        this.historyRecord = historyRecord;
+    }
+
+    public String getHistoryState() {
+        return historyState;
+    }
+
+    public void setHistoryState(String historyState) {
+        this.historyState = historyState;
     }
 }

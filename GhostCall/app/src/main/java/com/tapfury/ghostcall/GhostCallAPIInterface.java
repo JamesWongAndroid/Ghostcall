@@ -13,6 +13,7 @@ import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -54,7 +55,11 @@ public interface GhostCallAPIInterface {
 
     @FormUrlEncoded
     @POST("/calls")
-    void makeCall(@Field("to") String to, @Field("number_id") String numberID, @Field("background_item_id") String backgroundID, @Field("voicechanger") String voicechanger, @Field("use_verified_number") String verified, Callback<CallData> callback);
+    void makeCall(@Field("to") String to, @Field("number_id") String numberID, @Field("background_item_id") String backgroundID, @Field("voicechanger") String voicechanger,
+            @Field("record") String record, @Field("use_verified_number") String verified, Callback<CallData> callback);
+
+    @GET("/playback/call/{callID}/mp3")
+    void getMP3(@Path("callID") String callID, Callback<Response> responseCallback);
 
 
 }

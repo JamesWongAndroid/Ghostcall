@@ -17,8 +17,10 @@ public class HistoryAdapter extends BaseAdapter {
 
     private LayoutInflater layoutInflater;
     private List<HistoryObject> historyObjectList;
+    Context context;
 
     public HistoryAdapter(Context context, List<HistoryObject> historyObjectList) {
+        this.context = context;
         layoutInflater = LayoutInflater.from(context);
         this.historyObjectList = historyObjectList;
     }
@@ -42,7 +44,7 @@ public class HistoryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view;
-        ViewHolder holder;
+        final ViewHolder holder;
         if(convertView == null) {
             view = layoutInflater.inflate(R.layout.history_row, parent, false);
             holder = new ViewHolder();
@@ -57,7 +59,7 @@ public class HistoryAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        HistoryObject historyObject = historyObjectList.get(position);
+        final HistoryObject historyObject = historyObjectList.get(position);
         holder.historyNumber.setText(historyObject.getHistoryNumber());
         holder.historyDescription.setText(historyObject.getHistoryDescription());
         holder.historyDate.setText(historyObject.getHistoryDate());
@@ -80,6 +82,12 @@ public class HistoryAdapter extends BaseAdapter {
         }
         else {
             holder.historyStatus.setImageResource(R.drawable.call_outgoing);
+        }
+
+        if (historyObject.getHistoryState().equals("playing")) {
+            holder.historyStatus.setImageResource(R.drawable.audio_stop);
+        } else if (historyObject.getHistoryState().equals("not_playing")) {
+            holder.historyStatus.setImageResource(R.drawable.audio_play);
         }
 
         return view;

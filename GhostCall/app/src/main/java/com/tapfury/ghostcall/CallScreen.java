@@ -116,6 +116,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
 
+        settings = getSharedPreferences(GHOST_PREF, 0);
+        apiKey = settings.getString("api_key", "");
+
         requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
@@ -126,9 +129,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
-
-        settings = getSharedPreferences(GHOST_PREF, 0);
-        apiKey = settings.getString("api_key", "");
 
         numberName = (TextView) findViewById(R.id.remainingText);
         numberBox  = (EditText) findViewById(R.id.callEditText);
@@ -210,7 +210,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         makeCallButton.setVisibility(View.GONE);
                         toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
-                        service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, verified, new Callback<CallData>() {
+                        service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, Boolean.toString(isRecording), verified, new Callback<CallData>() {
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();
@@ -592,6 +592,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         vcIcon.setImageResource(R.drawable.vc_off);
         effectsIcon.setImageResource(R.drawable.effects_off);
         spinnerLayout.setVisibility(View.GONE);
+        rippleBackground.setVisibility(View.GONE);
         isChangingBG = false;
         isChangingVoice = false;
         isViewingEffects = false;
@@ -635,6 +636,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 public void success(CallStatus callStatus, Response response) {
                     Log.d("GHOSTCALL CALL STATUS", callStatus.getStatus());
                     currentCallStatus = callStatus.getStatus();
+                    bgHolder.setClickable(false);
+                    vcHolder.setClickable(false);
+                    effectsHolder.setClickable(false);
+                    recordButton.setClickable(false);
+
 
                     if (currentCallStatus.equals("connected")) {
                         rippleBackground.stopRippleAnimation();
@@ -650,12 +656,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         bgHolder.setClickable(false);
                         vcHolder.setClickable(false);
                         effectsHolder.setClickable(false);
-                    }
-
-                    if (currentCallStatus.equals("initiated")) {
-                        bgHolder.setClickable(false);
-                        vcHolder.setClickable(false);
-                        effectsHolder.setClickable(false);
+                        recordButton.setClickable(false);
                     }
 
                     if (currentCallStatus.equals("hangup")) {
@@ -666,6 +667,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         bgHolder.setClickable(true);
                         vcHolder.setClickable(true);
                         effectsHolder.setClickable(true);
+                        recordButton.setClickable(true);
                         Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
                     }
 
