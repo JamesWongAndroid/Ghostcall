@@ -6,4 +6,6 @@
     <dimen name="indicator_padding">4dp</dimen>
     <dimen name="tutorial_indicator_margin">84dp</dimen>
     <dimen name="horizontal_padding">16dp</dimen>
+    <dimen name="button_transition">14px</dimen>
+    <dimen name="negative_button_transition">-14px</dimen>
 </resources>

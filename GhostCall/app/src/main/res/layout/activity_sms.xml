@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustPan"
+    android:clipToPadding="false"
+    android:orientation="horizontal"
+    >
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@color/white"
+        android:divider="#00000000"
+        android:clipToPadding="false"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:dividerHeight="2dp"
+        android:id="@+id/conversation"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/composeHolder"
+        android:animateLayoutChanges="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:clipToPadding="false"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/compose_reply_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="-4dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:hint="Enter a message"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textShortMessage|textMultiLine|textCapSentences"
+                android:maxLines="3"
+                android:minHeight="40dp"
+                android:textCursorDrawable="@null"
+                android:background="@drawable/message_sent_compose"
+                android:layout_toLeftOf="@+id/compose_button"
+                />
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="72dp"
+                android:id="@+id/compose_button"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/compose_reply_text"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="-16dp"
+                android:animateLayoutChanges="true"
+                >
+
+                <ImageView
+                    android:id="@+id/sendTextCircleButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/send_background" />
+
+                <ImageView
+                    android:id="@+id/compose_button_bar_1"
+                    android:layout_width="14dp"
+                    android:layout_height="2dp"
+                    android:layout_gravity="center"
+                    android:rotation="225"
+                    android:translationY="@dimen/negative_button_transition"
+                    android:src="@color/white" />
+
+                <ImageView
+                    android:id="@+id/compose_button_bar_2"
+                    android:layout_width="14dp"
+                    android:layout_height="2dp"
+                    android:layout_gravity="center"
+                    android:rotation="-225"
+                    android:translationY="@dimen/button_transition"
+                    android:src="@color/white" />
+
+            </FrameLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>
