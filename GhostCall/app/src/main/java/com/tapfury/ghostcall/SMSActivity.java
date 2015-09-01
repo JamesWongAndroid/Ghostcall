@@ -69,6 +69,7 @@ public class SMSActivity extends AppCompatActivity {
     RestAdapter restAdapter;
     GhostCallAPIInterface service;
     private String lastUpdatedTimestamp;
+    SmsObject tempNew;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,12 @@ public class SMSActivity extends AppCompatActivity {
 
         nDatabaseAdapter = new GhostCallDatabaseAdapter(SMSActivity.this);
 
+        smsObjectArrayList = new ArrayList<>();
+        smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
+
+
         messagesList = (ListView) findViewById(R.id.conversation);
+        messagesList.setAdapter(smsAdapter);
         smsNumber = (TextView) findViewById(R.id.smsNumber);
         enterNameBar = (AutoCompleteTextView) findViewById(R.id.EnterNameBar);
         enterNameBar.addTextChangedListener(new PhoneNumberTextWatcher(enterNameBar));
@@ -173,6 +179,7 @@ public class SMSActivity extends AppCompatActivity {
         sendTextButton = (ImageView) findViewById(R.id.sendTextCircleButton);
         sendTextButton.setColorFilter(getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
 
+        tempNew = new SmsObject();
         composeEditText = (EditText) findViewById(R.id.compose_reply_text);
         composeButton = (FrameLayout) findViewById(R.id.compose_button);
         composeButton.setOnClickListener(new View.OnClickListener() {
@@ -180,21 +187,26 @@ public class SMSActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
-                String sendText = composeEditText.getText().toString();
+                final String sendText = composeEditText.getText().toString();
                 composeEditText.setText("");
+
+                tempNew.setMessageText(sendText);
+                tempNew.setMessageDirection("out");
+                tempNew.setMessageDate("sending...");
+                smsAdapter.getData().add(tempNew);
+                smsAdapter.notifyDataSetChanged();
+                messagesList.setSelection(smsAdapter.getCount() - 1);
 
                 composeButton.setClickable(false);
                 service.sendText(toNumber, ghostNumberID, sendText, new Callback<Response>() {
                     @Override
                     public void success(Response response, Response response2) {
-                        composeEditText.setText("");
                         new getNumbersTask().execute();
-
                     }
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-
+                        tempNew.setMessageDate("failed to send");
                     }
                 });
             }
@@ -206,6 +218,7 @@ public class SMSActivity extends AppCompatActivity {
         float translation = dpToPx(this, 14) / 3;
         sendBarTwo.setTranslationY(translation);
         sendBarOne.setTranslationY(-translation);
+
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -390,6 +403,7 @@ public class SMSActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            Log.d("I'm running", "running..");
             sendTextButton.setColorFilter(getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
             composeButton.setClickable(true);
             try {
@@ -407,8 +421,10 @@ public class SMSActivity extends AppCompatActivity {
                         smsAdapter.notifyDataSetChanged();
                         messagesList.setSelection(smsAdapter.getCount() - 1);
                     } else {
-                        smsAdapter = new SmsAdapter(getApplicationContext(), smsObjectArrayList);
-                        messagesList.setAdapter(smsAdapter);
+                        smsAdapter.getData().clear();
+                        smsAdapter.getData().addAll(smsObjectArrayList);
+                        smsAdapter.notifyDataSetChanged();
+                        messagesList.setSelection(smsAdapter.getCount() - 1);
                     }
 
                 }
