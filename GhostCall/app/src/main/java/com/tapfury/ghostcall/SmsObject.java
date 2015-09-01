@@ -9,6 +9,7 @@ public class SmsObject {
     String messageText;
     String messageDate;
     String messageDirection;
+    String messageNumber;
 
     public String getMessageName() {
         return messageName;
@@ -40,5 +41,13 @@ public class SmsObject {
 
     public void setMessageDirection(String messageDirection) {
         this.messageDirection = messageDirection;
+    }
+
+    public String getMessageNumber() {
+        return messageNumber;
+    }
+
+    public void setMessageNumber(String messageNumber) {
+        this.messageNumber = messageNumber;
     }
 }

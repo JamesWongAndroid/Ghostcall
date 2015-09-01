@@ -226,6 +226,23 @@ public class HistoryScreen extends AppCompatActivity {
                         intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
                         startActivity(intent);
                     }
+                } else if (historyObject.getHistoryType().equals("message")) {
+                    Intent intent = new Intent(HistoryScreen.this, SMSActivity.class);
+                    intent.putExtra("callName", extras.getString("ghostName"));
+                    if (historyObject.getHistoryNumber().equals(extras.getString("ghostNumberExtra"))) {
+                        StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryOutNumber());
+                        formatNumber.delete(0, 1);
+                        formatNumber.replace(3, 5, "-");
+                        intent.putExtra("toNumber", formatNumber.toString());
+                        intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                    } else {
+                        StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryNumber());
+                        formatNumber.delete(0, 1);
+                        formatNumber.replace(3, 5, "-");
+                        intent.putExtra("toNumber", formatNumber.toString());
+                        intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                    }
+                    startActivity(intent);
                 }
             }
         });
@@ -234,8 +251,8 @@ public class HistoryScreen extends AppCompatActivity {
         sendTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sms:"));
+                Intent sendIntent = new Intent(HistoryScreen.this, SMSActivity.class);
+                sendIntent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
                 startActivity(sendIntent);
             }
         });

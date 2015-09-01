@@ -232,6 +232,36 @@ public class GhostCallDatabaseAdapter {
         return userNumbers;
     }
 
+    public ArrayList<SmsObject> getSmsHistory(String numberID, String toNumber) {
+        ArrayList<SmsObject> smsList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_STATUS + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT + ", " +
+        MySQLiteGhostCallHelper.MESSAGES_DIRECTION + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + " FROM "
+        + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE " + MySQLiteGhostCallHelper.MESSAGES_NUMBER_ID + " = " +
+                 numberID + " AND (" + MySQLiteGhostCallHelper.MESSAGES_TO + " = " + "\"" + toNumber + "\"" + " OR " + MySQLiteGhostCallHelper.MESSAGES_FROM + " = " + "\"" + toNumber + "\")", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            SmsObject smsObject = new SmsObject();
+            StringBuilder formatNumber = new StringBuilder(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_TO)));
+            formatNumber.replace(0, 2, "(");
+            formatNumber.insert(4, ")");
+            formatNumber.insert(5, " ");
+            formatNumber.insert(9, "-");
+            smsObject.setMessageNumber(formatNumber.toString());
+            smsObject.setMessageName("#");
+            smsObject.setMessageText(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_TEXT)));
+            smsObject.setMessageDirection(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_DIRECTION)));
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_CREATED_AT))).withZone(DateTimeZone.UTC);
+            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm a").withZone(DateTimeZone.getDefault());
+
+            smsObject.setMessageDate(formatterTime.print(dateTime));
+            smsList.add(smsObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return smsList;
+    }
+
     public ArrayList<HistoryObject> getCallHistory(String numberID) {
         ArrayList<HistoryObject> historyList = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_ID + ", " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
@@ -248,7 +278,7 @@ public class GhostCallDatabaseAdapter {
             formatNumber.insert(9, "-");
             historyObject.setHistoryNumber(formatNumber.toString());
             DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_CREATED_AT))).withZone(DateTimeZone.UTC);
+            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_UPDATED_AT))).withZone(DateTimeZone.UTC);
             DateTimeFormatter formatterDate = DateTimeFormat.forPattern("MMM dd");
             historyObject.setHistoryDate(formatterDate.print(dateTime));
             DateTimeFormatter formatterTime = DateTimeFormat.forPattern("hh:mm a").withZone(DateTimeZone.getDefault());
@@ -263,6 +293,12 @@ public class GhostCallDatabaseAdapter {
 
             historyObject.setHistoryDescription(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_DIRECTION)));
             historyObject.setHistoryType(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_TYPE)));
+            StringBuilder formatNumberTwo = new StringBuilder(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_FROM)));
+            formatNumberTwo.replace(0, 2, "(");
+            formatNumberTwo.insert(4, ")");
+            formatNumberTwo.insert(5, " ");
+            formatNumberTwo.insert(9, "-");
+            historyObject.setHistoryOutNumber(formatNumberTwo.toString());
             historyList.add(historyObject);
             cursor.moveToNext();
         }

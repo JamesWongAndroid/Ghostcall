@@ -13,4 +13,7 @@
     <item name="white" type="color">#FFFFFF</item>
     <item name="titleblue" type="color">#1d375a</item>
     <item name="selectedyellow" type="color">#fff800</item>
+    <item name="lightgray" type="color">#D3D3D3</item>
+    <item name="gray" type="color">#808080</item>
+    <item name="black" type="color">#000000</item>
 </resources>

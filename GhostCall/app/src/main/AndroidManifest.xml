@@ -69,8 +69,15 @@
         </activity>
         <activity
             android:name=".SMSActivity"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_history_settings_screen" >
+            android:label="@string/title_activity_history_settings_screen"
+            android:parentActivityName="com.tapfury.ghostcall.HomeScreen"
+            >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name=".HomeScreen"
+                android:value="com.tapfury.ghostcall.HomeScreen" />
         </activity>
 
     </application>

@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -21,6 +19,8 @@ public class SmsAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private List<SmsObject> smsObjectList;
     Context context;
+    public static final int IN_LAYOUT = 0;
+    public static final int OUT_LAYOUT = 1;
 
     public SmsAdapter(Context context, List<SmsObject> smsObjectList) {
         this.context = context;
@@ -43,47 +43,79 @@ public class SmsAdapter extends BaseAdapter {
         return position;
     }
 
+    public List<SmsObject> getData() {
+        return smsObjectList;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (smsObjectList.get(position).getMessageDirection().equals("out")) {
+            return OUT_LAYOUT;
+        } else {
+            return IN_LAYOUT;
+        }
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
         final ViewHolder holder;
 
+        int type = getItemViewType(position);
+
         if (convertView == null) {
-            if (smsObjectList.get(position).getMessageDirection().equals("to")) {
-                view = layoutInflater.inflate(R.layout.sms_out_layout, parent, false);
+//            if (smsObjectList.get(position).getMessageDirection().equals("out")) {
+//                view = layoutInflater.inflate(R.layout.sms_out_layout, parent, false);
+//            } else {
+//                view = layoutInflater.inflate(R.layout.sms_in_layout, parent, false);
+//            }
+            if (type == OUT_LAYOUT) {
+                convertView = layoutInflater.inflate(R.layout.sms_out_layout, parent, false);
             } else {
-                view = layoutInflater.inflate(R.layout.sms_in_layout, parent, false);
+                convertView = layoutInflater.inflate(R.layout.sms_in_layout, parent, false);
             }
 
             holder = new ViewHolder();
-            holder.avatarImage = (ImageView) view.findViewById(R.id.avatarView);
-            holder.messageText = (TextView) view.findViewById(R.id.message_view);
-            holder.messageDate = (TextView) view.findViewById(R.id.date_view);
-            holder.messageBlock = (LinearLayout) view.findViewById(R.id.message_block);
+            holder.avatarImage = (TextView) convertView.findViewById(R.id.avatarView);
+            holder.messageText = (TextView) convertView.findViewById(R.id.message_view);
+            holder.messageDate = (TextView) convertView.findViewById(R.id.date_view);
+            holder.messageBlock = (LinearLayout) convertView.findViewById(R.id.message_block);
 
-            view.setTag(holder);
+            convertView.setTag(holder);
         } else {
-            view = convertView;
-            holder = (ViewHolder) view.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
         final SmsObject smsObject = smsObjectList.get(position);
-        holder.messageText.setText(smsObject.getMessageText());
-        holder.messageDate.setText(smsObject.getMessageDate());
 
-        if (smsObject.getMessageDirection().equals("to")) {
+//            final SmsObject smsObjectPrevious = smsObjectList.get(position - 1);
+//            DateTimeFormatter formatter = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm a");
+//            DateTime dateTimePrevious = formatter.parseDateTime(smsObjectPrevious.getMessageDate());
+//            DateTime dateTimeCurrent = formatter.parseDateTime(smsObject.getMessageDate());
+//            Minutes minute = Minutes.minutesBetween(dateTimePrevious, dateTimeCurrent);
+//            int difference = minute.getMinutes();
+            holder.messageDate.setText(smsObject.getMessageDate());
+
+        holder.messageText.setText(smsObject.getMessageText());
+
+        if (smsObject.getMessageDirection().equals("out")) {
             holder.messageText.getBackground().setColorFilter(context.getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
             holder.messageText.setTextColor(context.getResources().getColor(R.color.white));
-            ((RelativeLayout.LayoutParams) holder.messageBlock.getLayoutParams()).setMargins(0, 0, 0, 0);
-            holder.avatarImage.setVisibility(View.GONE);
+        } else if (smsObject.getMessageDirection().equals("in")) {
+            holder.messageText.getBackground().setColorFilter(context.getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            holder.messageText.setTextColor(context.getResources().getColor(R.color.black));
         }
 
-        return view;
+        return convertView;
     }
 
     private class ViewHolder {
         public TextView messageText, messageDate;
-        public ImageView avatarImage;
+        public TextView avatarImage;
         public LinearLayout messageBlock;
     }
 }

@@ -14,6 +14,7 @@ public class HistoryObject {
     String historyID;
     String historyRecord;
     String historyState;
+    String historyOutNumber;
 
     public String getHistoryType() {
         return historyType;
@@ -85,5 +86,13 @@ public class HistoryObject {
 
     public void setHistoryState(String historyState) {
         this.historyState = historyState;
+    }
+
+    public String getHistoryOutNumber() {
+        return historyOutNumber;
+    }
+
+    public void setHistoryOutNumber(String historyOutNumber) {
+        this.historyOutNumber = historyOutNumber;
     }
 }

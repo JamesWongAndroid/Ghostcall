@@ -1,6 +1,7 @@
 package com.tapfury.ghostcall;
 
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
+import com.tapfury.ghostcall.Numbers.Message;
 import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
 import com.tapfury.ghostcall.User.CallStatus;
 import com.tapfury.ghostcall.User.UserData;
@@ -61,5 +62,10 @@ public interface GhostCallAPIInterface {
     @GET("/playback/call/{callID}/mp3")
     void getMP3(@Path("callID") String callID, Callback<Response> responseCallback);
 
+    @FormUrlEncoded
+    @POST("/messages")
+    void sendText(@Field("to") String to, @Field("number_id") String numberID, @Field("text") String text, Callback<Response> response);
 
+    @GET("/messages/{numberID}/{timestamp}")
+    List<Message> getMessages(@Path("numberID") String numberID, @Path("timestamp") String timeStamp);
 }

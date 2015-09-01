@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <AutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        fontPath="fonts/helveticaneue_light.ttf"
+        android:textSize="22sp"
+        android:layout_centerInParent="true"
+        android:hint="Enter a number"
+        android:id="@+id/EnterNameBar"
+        android:visibility="gone"
+        android:inputType="phone"
+        android:maxLength="12"
+        />
+    <TextView
+        android:id="@+id/smsNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fontPath="fonts/helveticaneue_light.ttf"
+        android:textColor="@color/white"
+        android:text=""
+        android:textSize="25sp"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>

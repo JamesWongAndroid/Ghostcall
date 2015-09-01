@@ -69,6 +69,7 @@ public class GhostNumbersAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent sendIntent = new Intent(context.getApplicationContext(), SMSActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                sendIntent.putExtra("ghostIDExtra", ghostNumbers.getGhostID());
                 context.startActivity(sendIntent);
             }
         });
