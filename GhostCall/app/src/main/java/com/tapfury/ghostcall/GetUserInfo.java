@@ -42,7 +42,7 @@ public class GetUserInfo {
                 }
             };
 
-            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
                     .setRequestInterceptor(requestInterceptor).build();
             GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 

@@ -73,6 +73,7 @@ public class HistoryAdapter extends BaseAdapter {
                 } else if (historyObject.getHistoryDescription().equals("in")) {
                     holder.historyDescription.setText("incoming call");
                     holder.historyStatus.setImageResource(R.drawable.call_incoming);
+                    holder.historyNumber.setText(historyObject.getHistoryOutNumber());
                 }
             } else if (historyObject.getHistoryType().equals("message")) {
                 holder.historyStatus.setImageResource(R.drawable.sms_history);

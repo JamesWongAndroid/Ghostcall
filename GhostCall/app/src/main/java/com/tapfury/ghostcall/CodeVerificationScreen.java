@@ -81,7 +81,7 @@ public class CodeVerificationScreen extends AppCompatActivity {
             super.onPreExecute();
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("www.ghostcall.in")
+                    .authority("dev.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");
             SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);

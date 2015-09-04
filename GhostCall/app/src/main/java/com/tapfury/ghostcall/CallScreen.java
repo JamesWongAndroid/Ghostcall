@@ -126,7 +126,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             }
         };
 
-        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 
@@ -423,6 +423,37 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         vcHolder.setOnClickListener(this);
         bgHolder.setOnClickListener(this);
         effectsHolder.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        service.getCallStatus(null, new Callback<CallStatus>() {
+            @Override
+            public void success(CallStatus callStatus, Response response) {
+                if (callStatus != null) {
+                    String status = callStatus.getStatus();
+                    if (status.equals("connected")) {
+                        removeAllViews();
+                        isViewingEffects = true;
+                        effectsGrid.setVisibility(View.VISIBLE);
+                        closeButton.setVisibility(View.VISIBLE);
+                        effectsIcon.setImageResource(R.drawable.effects_on);
+                        resourceID = callStatus.getResourceId();
+                        toNumber = callStatus.getTo();
+                        numberName.setText(toNumber);
+                        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                        scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                    }
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+
+            }
+        });
     }
 
     @Override

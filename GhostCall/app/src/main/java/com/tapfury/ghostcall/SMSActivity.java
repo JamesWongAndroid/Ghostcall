@@ -11,18 +11,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -55,6 +60,7 @@ public class SMSActivity extends AppCompatActivity {
     ImageView sendTextButton, sendBarOne, sendBarTwo;
     ListView messagesList;
     FrameLayout composeButton;
+    RelativeLayout composeLayout;
     AutoCompleteTextView enterNameBar;
     private SmsAdapter smsAdapter;
     Bundle extras;
@@ -98,7 +104,7 @@ public class SMSActivity extends AppCompatActivity {
             }
         };
 
-        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 
@@ -107,6 +113,7 @@ public class SMSActivity extends AppCompatActivity {
         smsObjectArrayList = new ArrayList<>();
         smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
 
+        composeLayout = (RelativeLayout) findViewById(R.id.relativeComposeLayout);
 
         messagesList = (ListView) findViewById(R.id.conversation);
         messagesList.setAdapter(smsAdapter);
@@ -117,26 +124,33 @@ public class SMSActivity extends AppCompatActivity {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    enterNameBar.setVisibility(View.GONE);
-                    smsNumber.setText(enterNameBar.getText().toString());
-                    smsNumber.setVisibility(View.VISIBLE);
+
                     try {
-                        nDatabaseAdapter.open();
                         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                         Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(enterNameBar.getText().toString(), "US");
-                        toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
-                        smsObjectArrayList = nDatabaseAdapter.getSmsHistory(ghostNumberID, toNumber);
-                        nDatabaseAdapter.close();
+                        if (phoneUtil.isValidNumberForRegion(usaNumber, "US")) {
+                            hideKeyboard();
+                            enterNameBar.setCursorVisible(false);
+                            nDatabaseAdapter.open();
+                            enterNameBar.setVisibility(View.GONE);
+                            smsNumber.setText(enterNameBar.getText().toString());
+                            smsNumber.setVisibility(View.VISIBLE);
+                            composeLayout.setVisibility(View.VISIBLE);
+                            toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+                            smsObjectArrayList = nDatabaseAdapter.getSmsHistory(ghostNumberID, toNumber);
+                            nDatabaseAdapter.close();
 
-                        if (!smsObjectArrayList.isEmpty()) {
+                            if (!smsObjectArrayList.isEmpty()) {
 
-                            smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
-                            messagesList.setAdapter(smsAdapter);
+                                smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
+                                messagesList.setAdapter(smsAdapter);
+                            }
+                        } else {
+                            Toast.makeText(SMSActivity.this, "Invalid Number", Toast.LENGTH_SHORT).show();
                         }
-
-                    } catch (SQLException e) {
-
                     } catch (NumberParseException e) {
+                        Toast.makeText(SMSActivity.this, "Invalid Number", Toast.LENGTH_SHORT).show();
+                    } catch (SQLException e) {
 
                     }
                 }
@@ -151,6 +165,7 @@ public class SMSActivity extends AppCompatActivity {
                 ghostNumberID = extras.getString("ghostIDExtra");
                 smsNumber.setText(toNumber);
                 smsNumber.setVisibility(View.VISIBLE);
+                composeLayout.setVisibility(View.VISIBLE);
                 try {
                     nDatabaseAdapter.open();
                     PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
@@ -177,11 +192,36 @@ public class SMSActivity extends AppCompatActivity {
         }
 
         sendTextButton = (ImageView) findViewById(R.id.sendTextCircleButton);
-        sendTextButton.setColorFilter(getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
+        sendTextButton.setClickable(false);
+        sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
 
         tempNew = new SmsObject();
         composeEditText = (EditText) findViewById(R.id.compose_reply_text);
+        composeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    composeButton.setClickable(true);
+                    sendTextButton.setColorFilter(getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    composeButton.setClickable(false);
+                    sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         composeButton = (FrameLayout) findViewById(R.id.compose_button);
+        composeButton.setClickable(false);
         composeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,6 +278,15 @@ public class SMSActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void hideKeyboard() {
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
     public class getNumbersTask extends AsyncTask<Void, Integer, Void> {
 
         HttpURLConnection urlConnection = null;
@@ -253,7 +302,7 @@ public class SMSActivity extends AppCompatActivity {
             progress_status = 0;
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("www.ghostcall.in")
+                    .authority("dev.ghostcall.in")
                     .appendPath("api")
                     .appendPath("numbers");
             if (!lastUpdatedTimestamp.equals("")) {
@@ -404,8 +453,6 @@ public class SMSActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.d("I'm running", "running..");
-            sendTextButton.setColorFilter(getResources().getColor(R.color.titleblue), PorterDuff.Mode.SRC_ATOP);
-            composeButton.setClickable(true);
             try {
                 nDatabaseAdapter.open();
                 PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();

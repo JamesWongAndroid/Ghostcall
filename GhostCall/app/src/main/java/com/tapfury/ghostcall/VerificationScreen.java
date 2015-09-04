@@ -1,7 +1,9 @@
 package com.tapfury.ghostcall;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,18 +11,23 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
+import com.tapfury.ghostcall.Services.RegistrationIntentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +48,10 @@ public class VerificationScreen extends AppCompatActivity {
     CircleProgressBar progressSpinner;
     RelativeLayout spinnerLayout;
     public static final String GHOST_PREF = "GhostPrefFile";
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private SharedPreferences settings;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    boolean sentToken = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +63,14 @@ public class VerificationScreen extends AppCompatActivity {
 
         codePhoneInput = (EditText) findViewById(R.id.phoneCodeField);
         codePhoneInput.addTextChangedListener(new PhoneNumberTextWatcher(codePhoneInput));
+
+        settings = getSharedPreferences(GHOST_PREF, 0);
+
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
 
         TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         deviceID = tManager.getDeviceId();
@@ -82,6 +101,30 @@ public class VerificationScreen extends AppCompatActivity {
                 }
             }
         });
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                sentToken = settings.getBoolean("sentTokenToServer", false);
+                if (sentToken) {
+                    Log.d("HomeScreen", "TOKEN SUCCESS!");
+                } else {
+                    Log.d("HomeScreen", "TOKEN FAIL!");
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter("registrationComplete"));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
     }
 
     public class LoginCredentialsTask extends AsyncTask<Void, Void, Void> {
@@ -100,13 +143,18 @@ public class VerificationScreen extends AppCompatActivity {
             phoneNumber.append("%2B").append(codePhoneInput.getText().toString());
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("www.ghostcall.in")
+                    .authority("dev.ghostcall.in")
                     .appendPath("api")
                     .appendPath("login")
                     .appendQueryParameter("phone_number", ePhoneNumber)
                     .appendQueryParameter("device_id", deviceID)
                     .appendQueryParameter("platform", "android")
                     .appendQueryParameter("platform_version", buildNumber);
+            if (sentToken) {
+                String GCMToken = settings.getString("GCMToken", "");
+                builderString.appendQueryParameter("device_token", GCMToken);
+            }
+
         }
 
         @Override
@@ -147,7 +195,7 @@ public class VerificationScreen extends AppCompatActivity {
                 try {
                     JSONObject jObject = new JSONObject(response);
                     String apiKey = jObject.getString("api_key");
-                    SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
+                    settings = getSharedPreferences(GHOST_PREF, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("api_key", apiKey);
                     editor.apply();
@@ -175,10 +223,10 @@ public class VerificationScreen extends AppCompatActivity {
             super.onPreExecute();
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("www.ghostcall.in")
+                    .authority("dev.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");
-            SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
+            settings = getSharedPreferences(GHOST_PREF, 0);
             apiKey = settings.getString("api_key", "");
         }
 
@@ -216,5 +264,20 @@ public class VerificationScreen extends AppCompatActivity {
             }
             super.onPostExecute(aVoid);
         }
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i("HomeScreen", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

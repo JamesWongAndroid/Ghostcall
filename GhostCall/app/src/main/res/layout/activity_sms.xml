@@ -33,6 +33,8 @@
         android:layout_alignParentBottom="true"
         >
         <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/relativeComposeLayout"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

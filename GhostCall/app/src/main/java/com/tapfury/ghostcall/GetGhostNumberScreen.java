@@ -1,6 +1,7 @@
 package com.tapfury.ghostcall;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -10,8 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class GetGhostNumberScreen extends AppCompatActivity {
+
+    TextView userRemainingText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,15 @@ public class GetGhostNumberScreen extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
+
+        GetUserInfo userInfo = new GetUserInfo(this);
+        userInfo.getUserData();
+
+        userRemainingText = (TextView) findViewById(R.id.remainingText);
+        SharedPreferences settings = getSharedPreferences(Constants.GHOST_PREF, 0);
+        String userSMS = settings.getString("userSMS", "0");
+        String userMins = settings.getString("userMins", "0");
+        userRemainingText.setText(userSMS + " sms / " + userMins + " mins left");
 
         Button continueButton = (Button) findViewById(R.id.continueButton);
         continueButton.setOnClickListener(new View.OnClickListener() {

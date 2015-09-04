@@ -114,7 +114,7 @@ public class StartScreen extends Activity {
             progress_status = 0;
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("www.ghostcall.in")
+                    .authority("dev.ghostcall.in")
                     .appendPath("api")
                     .appendPath("numbers");
             if (!lastUpdatedTimestamp.equals("")) {
@@ -178,7 +178,7 @@ public class StartScreen extends Activity {
                     }
                 };
 
-                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
                         .setRequestInterceptor(requestInterceptor).build();
                 GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 
