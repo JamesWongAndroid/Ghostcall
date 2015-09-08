@@ -126,7 +126,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             }
         };
 
-        restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 

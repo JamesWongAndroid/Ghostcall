@@ -85,7 +85,7 @@ public class HistoryScreen extends AppCompatActivity {
             }
         };
 
-        restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 
@@ -174,7 +174,7 @@ public class HistoryScreen extends AppCompatActivity {
                                         @Override
                                         public void success(Response response, Response response2) {
                                             Log.d("TESTING MP3 API", "SUCCESS");
-                                            Uri url = Uri.parse("http://dev.ghostcall.in/api/playback/call/" + gHistoryList.get(position).getHistoryID() + "/mp3");
+                                            Uri url = Uri.parse("http://www.ghostcall.in/api/playback/call/" + gHistoryList.get(position).getHistoryID() + "/mp3");
                                             Map<String, String> headers = new HashMap<String, String>();
                                             headers.put("X-api-key", apiKey);
 

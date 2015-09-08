@@ -1,6 +1,9 @@
 package com.tapfury.ghostcall;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -76,6 +80,7 @@ public class SMSActivity extends AppCompatActivity {
     GhostCallAPIInterface service;
     private String lastUpdatedTimestamp;
     SmsObject tempNew;
+    private BroadcastReceiver incomingSmsBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +109,7 @@ public class SMSActivity extends AppCompatActivity {
             }
         };
 
-        restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 
@@ -259,6 +264,52 @@ public class SMSActivity extends AppCompatActivity {
         sendBarTwo.setTranslationY(translation);
         sendBarOne.setTranslationY(-translation);
 
+        incomingSmsBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    if (smsNumber != null || !smsNumber.equals("")) {
+                        nDatabaseAdapter.open();
+                        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                        Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(smsNumber.getText().toString(), "US");
+                        toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+                        smsObjectArrayList = nDatabaseAdapter.getSmsHistory(ghostNumberID, toNumber);
+                        nDatabaseAdapter.close();
+
+                        if (!smsObjectArrayList.isEmpty()) {
+                            if (smsObjectArrayList.size() != 1) {
+                                smsAdapter.getData().clear();
+                                smsAdapter.getData().addAll(smsObjectArrayList);
+                                smsAdapter.notifyDataSetChanged();
+                                messagesList.setSelection(smsAdapter.getCount() - 1);
+                            } else {
+                                smsAdapter.getData().clear();
+                                smsAdapter.getData().addAll(smsObjectArrayList);
+                                smsAdapter.notifyDataSetChanged();
+                                messagesList.setSelection(smsAdapter.getCount() - 1);
+                            }
+                        }
+                        lastUpdatedTimestamp = settings.getString("lastUpdatedTimestamp", "");
+                    }
+
+                } catch (Exception e) {
+
+                }
+            }
+        };
+
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(incomingSmsBroadcastReceiver, new IntentFilter("newIncomingSMS"));
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(incomingSmsBroadcastReceiver, new IntentFilter("newIncomingSMS"));
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -302,7 +353,7 @@ public class SMSActivity extends AppCompatActivity {
             progress_status = 0;
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("dev.ghostcall.in")
+                    .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("numbers");
             if (!lastUpdatedTimestamp.equals("")) {

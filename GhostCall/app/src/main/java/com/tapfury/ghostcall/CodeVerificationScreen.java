@@ -75,16 +75,16 @@ public class CodeVerificationScreen extends AppCompatActivity {
         InputStream inStream = null;
         String apiKey;
         StringBuilder codeInput;
+        SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("dev.ghostcall.in")
+                    .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");
-            SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
             apiKey = settings.getString("api_key", "");
             codeInput = new StringBuilder();
             codeInput.append("code=");
@@ -139,6 +139,9 @@ public class CodeVerificationScreen extends AppCompatActivity {
                     JSONObject jObject = new JSONObject(response);
                     String verificationString = jObject.getString("verified");
                     if (verificationString.equals("true")) {
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("verified", true);
+                        editor.apply();
                         startActivity(new Intent(CodeVerificationScreen.this, StartScreen.class));
                         finish();
                     } else {

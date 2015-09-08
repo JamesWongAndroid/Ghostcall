@@ -46,6 +46,7 @@ public class StartScreen extends Activity {
     private String apiKey, lastUpdatedTimestamp;
     private boolean isUserLoaded, isNumberPackageLoaded, isExtendLoaded, isCreditsLoaded, isEffectsLoaded, isBackgroundLoaded;
     RelativeLayout startRelativeLayout;
+    Boolean verified;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class StartScreen extends Activity {
 
         SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
+        verified = settings.getBoolean("verified", false);
         lastUpdatedTimestamp = settings.getString("lastUpdatedTimestamp", "");
         isUserLoaded = settings.getBoolean("userDataLoaded", false);
         isNumberPackageLoaded = settings.getBoolean("numberPackageLoaded", false);
@@ -71,7 +73,7 @@ public class StartScreen extends Activity {
         startRelativeLayout = (RelativeLayout) findViewById(R.id.startRelativeLayout);
         startRelativeLayout.setBackgroundResource(R.drawable.ghost_call_bg);
 
-        if (apiKey.equals("")) {
+        if (apiKey.equals("") || verified == false) {
 
 
         } else {
@@ -114,7 +116,7 @@ public class StartScreen extends Activity {
             progress_status = 0;
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("dev.ghostcall.in")
+                    .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("numbers");
             if (!lastUpdatedTimestamp.equals("")) {
@@ -178,7 +180,7 @@ public class StartScreen extends Activity {
                     }
                 };
 
-                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://dev.ghostcall.in/api")
+                RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                         .setRequestInterceptor(requestInterceptor).build();
                 GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
 

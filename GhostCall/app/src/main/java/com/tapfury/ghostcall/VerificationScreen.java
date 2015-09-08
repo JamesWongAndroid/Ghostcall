@@ -143,7 +143,7 @@ public class VerificationScreen extends AppCompatActivity {
             phoneNumber.append("%2B").append(codePhoneInput.getText().toString());
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("dev.ghostcall.in")
+                    .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("login")
                     .appendQueryParameter("phone_number", ePhoneNumber)
@@ -223,7 +223,7 @@ public class VerificationScreen extends AppCompatActivity {
             super.onPreExecute();
             builderString = new Uri.Builder();
             builderString.scheme("http")
-                    .authority("dev.ghostcall.in")
+                    .authority("www.ghostcall.in")
                     .appendPath("api")
                     .appendPath("verify");
             settings = getSharedPreferences(GHOST_PREF, 0);
