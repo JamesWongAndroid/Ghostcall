@@ -125,6 +125,7 @@ public class HistoryScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent toPurchase = new Intent(HistoryScreen.this, SelectPackageScreen.class);
+                toPurchase.putExtra(Constants.PACKAGE_TYPE, "credits");
                 startActivity(toPurchase);
             }
         });
@@ -136,6 +137,8 @@ public class HistoryScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent toPurchaseScreen = new Intent(getApplicationContext(), SelectPackageScreen.class);
+                toPurchaseScreen.putExtra(Constants.PACKAGE_TYPE, "extend");
+                toPurchaseScreen.putExtra("GhostID", extras.getString("ghostIDExtra"));
                 startActivity(toPurchaseScreen);
             }
         });

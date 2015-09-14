@@ -1,11 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     tools:context="com.tapfury.ghostcall.SelectPackageScreen">
 
     <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
         android:text="Select a number package"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,9 +23,10 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/selectLabel"
         android:id="@+id/packageListView"
+        android:divider="@color/white"
         >
 
     </ListView>

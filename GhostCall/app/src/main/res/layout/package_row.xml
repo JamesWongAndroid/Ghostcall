@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
     <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lite Ghost"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:id="@+id/packageName"
         />
     <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/packageName"
-        android:text="Expires in 7 days - 20 Minutes Free"
+        android:text="Expires in 7 days"
         android:textColor="@color/white"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
         android:id="@+id/packageTime"
         />
     <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/packageCredits"
+        android:layout_toRightOf="@+id/packageTime"
+        android:layout_below="@id/packageName"
+        android:textColor="@color/selectedyellow"
+        android:text=" - 20 Minutes free"
+        android:layout_marginTop="5dp"
+        />
+    <TextView
+        fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:textStyle="bold"
         android:text="$1.99"
         android:textColor="@color/white"
-        android:textSize="21sp"
+        android:textSize="25sp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="5dp"
         android:id="@+id/packagePrice"

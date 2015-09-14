@@ -63,6 +63,7 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent toPurchase = new Intent(HomeScreen.this, SelectPackageScreen.class);
+                toPurchase.putExtra(Constants.PACKAGE_TYPE, "credits");
                 startActivity(toPurchase);
             }
         });

@@ -50,6 +50,7 @@ public class PackageAdapter extends BaseAdapter {
             holder.packageName = (TextView) view.findViewById(R.id.packageName);
             holder.packageTime = (TextView) view.findViewById(R.id.packageTime);
             holder.packagePrice = (TextView) view.findViewById(R.id.packagePrice);
+            holder.packageCredit = (TextView) view.findViewById(R.id.packageCredits);
             view.setTag(holder);
         } else {
             view = convertView;
@@ -58,13 +59,23 @@ public class PackageAdapter extends BaseAdapter {
 
         GhostPackage gPackage = ghostPackage.get(position);
         holder.packageName.setText(gPackage.getPackageName());
-        holder.packageTime.setText(gPackage.getPackageTime());
-        holder.packagePrice.setText(gPackage.getPackagePrice());
+        if (gPackage.getPackageType().equals("new")) {
+            holder.packageTime.setText("Expires in " + gPackage.getPackageTime() + " days");
+            holder.packageCredit.setText(" - " + gPackage.getPackageCredits() + " Minutes Free");
+        } else if (gPackage.getPackageType().equals("extend")) {
+            holder.packageTime.setText("Extends for " + gPackage.getPackageTime() + " days");
+            holder.packageCredit.setText(" - " + gPackage.getPackageCredits() + " Minutes Free");
+        } else if (gPackage.getPackageType().equals("credits")) {
+            holder.packageTime.setText(gPackage.getPackageTime());
+            holder.packageCredit.setText("");
+        }
+        holder.packagePrice.setText("$" + gPackage.getPackagePrice());
+
 
         return view;
     }
 
     private class ViewHolder {
-        public TextView packageName, packagePrice, packageTime;
+        public TextView packageName, packagePrice, packageTime, packageCredit;
     }
 }

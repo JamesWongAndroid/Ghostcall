@@ -68,4 +68,7 @@ public interface GhostCallAPIInterface {
 
     @GET("/messages/{numberID}/{timestamp}")
     List<Message> getMessages(@Path("numberID") String numberID, @Path("timestamp") String timeStamp);
+
+    @GET("/available_area_code/{area_code}")
+    AreaCodeObject getAreaCodeStatus(@Path("area_code") String areaCode);
 }

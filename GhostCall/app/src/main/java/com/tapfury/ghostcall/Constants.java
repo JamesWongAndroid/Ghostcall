@@ -6,4 +6,5 @@ package com.tapfury.ghostcall;
 public class Constants {
 
     public static final String GHOST_PREF = "GhostPrefFile";
+    public static final String PACKAGE_TYPE = "packageType";
 }

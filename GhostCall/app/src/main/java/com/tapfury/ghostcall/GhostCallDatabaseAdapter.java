@@ -359,4 +359,39 @@ public class GhostCallDatabaseAdapter {
         cursor.close();
         return "";
     }
+
+    public ArrayList<GhostPackage> getPackages(String type) {
+        ArrayList<GhostPackage> ghostPackageArrayList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteGhostCallHelper.TABLE_NUMBER_PACKAGES + " WHERE " + MySQLiteGhostCallHelper.NUMBERS_TYPE + " = '" + type + "'", null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            GhostPackage ghostPackage = new GhostPackage();
+            ghostPackage.setPackageName(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_NAME)));
+            ghostPackage.setPackagePrice(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_COST)));
+            ghostPackage.setPackageTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_EXPIRATION)));
+            ghostPackage.setPackageCredits(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_CREDITS)));
+            ghostPackage.setPackageType(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_TYPE)));
+            ghostPackageArrayList.add(ghostPackage);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return ghostPackageArrayList;
+    }
+
+    public ArrayList<GhostPackage> getCreditPackages() {
+        ArrayList<GhostPackage> ghostPackageArrayList = new ArrayList<>();
+        Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteGhostCallHelper.TABLE_CREDIT_PACKAGES, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            GhostPackage ghostPackage = new GhostPackage();
+            ghostPackage.setPackageName(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_NAME)));
+            ghostPackage.setPackageType("credits");
+            ghostPackage.setPackageTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_DESCRIPTION)));
+            ghostPackage.setPackagePrice(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_COST)));
+            ghostPackageArrayList.add(ghostPackage);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return ghostPackageArrayList;
+    }
 }
