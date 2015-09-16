@@ -1,6 +1,7 @@
 package com.tapfury.ghostcall;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,12 +12,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tapfury.ghostcall.Numbers.ExtendObject;
+import com.tapfury.ghostcall.util.IabHelper;
+import com.tapfury.ghostcall.util.IabResult;
+import com.tapfury.ghostcall.util.Inventory;
+import com.tapfury.ghostcall.util.Purchase;
+
+import java.sql.SQLException;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SelectPackageScreen extends AppCompatActivity {
@@ -26,8 +41,18 @@ public class SelectPackageScreen extends AppCompatActivity {
     TextView userRemainingText, selectLabel;
     GhostCallDatabaseAdapter nDatabaseAdapter;
     Bundle extras;
-    String packagesType;
+    String packagesType, nickName, areaCode, ghostID, skuID;
     ImageView purchaseButton;
+    IabHelper mHelper;
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener;
+    IabHelper.QueryInventoryFinishedListener mReceivedInventoryListener;
+    private SharedPreferences settings;
+    private String apiKey, productID;
+    RequestInterceptor requestInterceptor;
+    RestAdapter restAdapter;
+    GhostCallAPIInterface service;
+    List<GhostPackage> ghostPackageList;
+    GetUserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +69,116 @@ public class SelectPackageScreen extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
 
-        GetUserInfo userInfo = new GetUserInfo(this);
+        userInfo = new GetUserInfo(this);
         userInfo.getUserData();
+
+        settings = getSharedPreferences(Constants.GHOST_PREF, 0);
+        apiKey = settings.getString("api_key", "");
+
+        requestInterceptor = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                request.addHeader("X-api-key", apiKey);
+            }
+        };
+
+        restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+                .setRequestInterceptor(requestInterceptor).build();
+        service = restAdapter.create(GhostCallAPIInterface.class);
+
+        mHelper = new IabHelper(this, Constants.GOOGLE_ACCOUNT_BASE64);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            @Override
+            public void onIabSetupFinished(IabResult result) {
+                if (result.isSuccess()) {
+                    Log.d("IapHelper result",  "isSuccess");
+                } else {
+                    Log.d("IapHelper result",  "isFailure");
+                }
+            }
+        });
+
+        mReceivedInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+            @Override
+            public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                if (result.isFailure()) {
+                    Log.d("query inventory",  "isFailure");
+                } else {
+                    mHelper.consumeAsync(inv.getPurchase(skuID), mConsumeFinishedListener);
+                }
+            }
+        };
+
+        mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+            @Override
+            public void onConsumeFinished(Purchase purchase, IabResult result) {
+                if (result.isSuccess()) {
+                    Toast.makeText(getApplicationContext(), "I WAS CONSUMED??", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("IapHelper query consume",  "isFailure");
+                }
+            }
+        };
+
+        final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+            @Override
+            public void onIabPurchaseFinished(IabResult result, Purchase info) {
+                if (result.isFailure()) {
+                    Log.d("IapHelper result",  "isFailure Listener");
+                } else if (info.getSku().equals(skuID)) {
+                    consumeItem();
+                    if (packagesType.equals("credits")) {
+                        service.purchaseCredits(packagesType, productID, new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+
+                                Toast.makeText(getApplicationContext(), "Purchase complete!", Toast.LENGTH_SHORT).show();
+                                userInfo.getUserData();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Toast.makeText(getApplicationContext(), retrofitError.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else if (packagesType.equals("new")) {
+                        service.purchaseNewNumber("number", productID, nickName, areaCode, new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+                                Toast.makeText(getApplicationContext(), "Purchase complete!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Log.d("purchasenewnumber error", retrofitError.getMessage());
+                            }
+                        });
+                    } else if (packagesType.equals("extend")) {
+                        service.extendNumber(packagesType, productID, ghostID, new Callback<ExtendObject>() {
+                            @Override
+                            public void success(ExtendObject extendObject, Response response) {
+                                if (extendObject != null) {
+                                    try {
+                                        nDatabaseAdapter.open();
+                                        nDatabaseAdapter.updateNumberTimestamp(extendObject.getExpireOn(), ghostID);
+                                        nDatabaseAdapter.close();
+                                    } catch (SQLException e) {
+                                        Log.d("ExtendNumber error", e.getMessage());
+                                    }
+
+
+                                }
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Log.d("ExtendNumber error", retrofitError.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+        };
 
         purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
         purchaseButton.setVisibility(View.GONE);
@@ -65,13 +198,16 @@ public class SelectPackageScreen extends AppCompatActivity {
             packagesType = extras.getString(Constants.PACKAGE_TYPE);
             if (packagesType.equals("new") || packagesType.equals("extend")) {
                 if (packagesType.equals("new")) {
+                    areaCode = extras.getString("areacode");
+                    nickName = extras.getString("nickName");
                     selectLabel.setText("Select a number package");
                 } else {
+                    ghostID = extras.getString("GhostID");
                     selectLabel.setText("Select an extend package");
                 }
                 try {
                     nDatabaseAdapter.open();
-                    List<GhostPackage> ghostPackageList = nDatabaseAdapter.getPackages(packagesType);
+                    ghostPackageList = nDatabaseAdapter.getPackages(packagesType);
                     nDatabaseAdapter.close();
                     packageAdapter = new PackageAdapter(this, ghostPackageList);
                     listView.setAdapter(packageAdapter);
@@ -83,7 +219,7 @@ public class SelectPackageScreen extends AppCompatActivity {
                 selectLabel.setText("Select a credits package");
                 try {
                     nDatabaseAdapter.open();
-                    List<GhostPackage> ghostPackageList = nDatabaseAdapter.getCreditPackages();
+                    ghostPackageList = nDatabaseAdapter.getCreditPackages();
                     nDatabaseAdapter.close();
                     packageAdapter = new PackageAdapter(this, ghostPackageList);
                     listView.setAdapter(packageAdapter);
@@ -93,10 +229,41 @@ public class SelectPackageScreen extends AppCompatActivity {
                 }
             }
         }
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                productID = ghostPackageList.get(position).getPackageID();
+                skuID = ghostPackageList.get(position).getPackageAndroidID();
+     //           skuID = "android.test.purchased";
+                mHelper.launchPurchaseFlow(SelectPackageScreen.this, skuID, 10001, mPurchaseFinishedListener, "mytestpurchase");
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mHelper != null) {
+            mHelper.dispose();
+            mHelper = null;
+        }
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    public void consumeItem() {
+        mHelper.queryInventoryAsync(mReceivedInventoryListener);
     }
 }

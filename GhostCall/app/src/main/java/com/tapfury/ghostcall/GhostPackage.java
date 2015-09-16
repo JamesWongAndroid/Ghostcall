@@ -6,6 +6,8 @@ public class GhostPackage {
     private String packageName;
     private String packageTime;
     private String packageCredits;
+    private String packageID;
+    private String packageAndroidID;
 
     public String getPackageType() {
         return packageType;
@@ -49,5 +51,21 @@ public class GhostPackage {
 
     public void setPackageCredits(String packageCredits) {
         this.packageCredits = packageCredits;
+    }
+
+    public String getPackageID() {
+        return packageID;
+    }
+
+    public void setPackageID(String packageID) {
+        this.packageID = packageID;
+    }
+
+    public String getPackageAndroidID() {
+        return packageAndroidID;
+    }
+
+    public void setPackageAndroidID(String packageAndroidID) {
+        this.packageAndroidID = packageAndroidID;
     }
 }

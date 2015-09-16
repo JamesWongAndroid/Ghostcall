@@ -95,6 +95,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/ghostNumberList"
         android:layout_below="@+id/ghostNumbersLabel"
+        android:layout_above="@+id/getGhostButton"
         >
 
     </ListView>

@@ -1,6 +1,7 @@
 package com.tapfury.ghostcall;
 
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
+import com.tapfury.ghostcall.Numbers.ExtendObject;
 import com.tapfury.ghostcall.Numbers.Message;
 import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
 import com.tapfury.ghostcall.User.CallStatus;
@@ -71,4 +72,16 @@ public interface GhostCallAPIInterface {
 
     @GET("/available_area_code/{area_code}")
     AreaCodeObject getAreaCodeStatus(@Path("area_code") String areaCode);
+
+    @FormUrlEncoded
+    @POST("/purchase")
+    void purchaseCredits(@Field("type") String type, @Field("item") String item, Callback<Response> response);
+
+    @FormUrlEncoded
+    @POST("/purchase")
+    void purchaseNewNumber(@Field("type") String type, @Field("item") String item, @Field("name") String nickName, @Field("area_code") String areaCode, Callback<Response> response);
+
+    @FormUrlEncoded
+    @POST("/purchase")
+    void extendNumber(@Field("type") String type, @Field("item") String item, @Field("number_id") String numberID, Callback<ExtendObject> extendObject);
 }

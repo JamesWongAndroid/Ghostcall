@@ -371,6 +371,8 @@ public class GhostCallDatabaseAdapter {
             ghostPackage.setPackageTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_EXPIRATION)));
             ghostPackage.setPackageCredits(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_CREDITS)));
             ghostPackage.setPackageType(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_TYPE)));
+            ghostPackage.setPackageID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_ID)));
+            ghostPackage.setPackageAndroidID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_ANDROID_PRODUCT_ID)));
             ghostPackageArrayList.add(ghostPackage);
             cursor.moveToNext();
         }
@@ -388,10 +390,19 @@ public class GhostCallDatabaseAdapter {
             ghostPackage.setPackageType("credits");
             ghostPackage.setPackageTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_DESCRIPTION)));
             ghostPackage.setPackagePrice(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_COST)));
+            ghostPackage.setPackageID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_ID)));
+            ghostPackage.setPackageAndroidID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CREDITS_ANDROID_PRODUCT_ID)));
             ghostPackageArrayList.add(ghostPackage);
             cursor.moveToNext();
         }
         cursor.close();
         return ghostPackageArrayList;
+    }
+
+    public void updateNumberTimestamp(String newTimestamp, String numberID) {
+        Cursor cursor = database.rawQuery("UPDATE " + MySQLiteGhostCallHelper.TABLE_NUMBERS + " SET " + MySQLiteGhostCallHelper.EXPIRE_ON + " = '" + newTimestamp + "' WHERE " + MySQLiteGhostCallHelper.ID
+                 + " = '" + numberID + "'", null);
+        cursor.moveToFirst();
+        cursor.close();
     }
 }
