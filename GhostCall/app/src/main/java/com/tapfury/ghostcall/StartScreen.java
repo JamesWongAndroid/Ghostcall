@@ -313,6 +313,8 @@ public class StartScreen extends Activity {
                                     userData.getApiKeyId(), userData.getName(), userData.getEmail(), userData.getCredits(),
                                     userData.getCreatedAt(), userData.getUpdatedAt(), userData.getDeleted(), userData.getBalance().getSms(), userData.getBalance().getMinutes(), userData.getBalance().getCredits());
                             editor.putBoolean("userDataLoaded", true);
+                            editor.putString(Constants.SIP_NAME, userData.getSip().getUsername());
+                            editor.putString(Constants.SIP_PASSWORD, userData.getSip().getPassword());
                             editor.apply();
                         }
                         progress_status = 50;

@@ -1,5 +1,6 @@
 package com.tapfury.ghostcall;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.net.sip.SipAudioCall;
+import android.net.sip.SipManager;
+import android.net.sip.SipProfile;
+import android.net.sip.SipRegistrationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -100,6 +105,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     RestAdapter restAdapter;
     GhostCallAPIInterface service;
     CircleProgressBar progressSpinner;
+    String sipUsername;
+    String sipPassword;
+    SipManager sipManager = null;
+    SipProfile sipProfile = null;
+    SipAudioCall.Listener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +128,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         settings = getSharedPreferences(GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
+        sipUsername = settings.getString(Constants.SIP_NAME, "");
+        sipPassword = settings.getString(Constants.SIP_PASSWORD, "");
 
         requestInterceptor = new RequestInterceptor() {
             @Override
@@ -214,6 +226,12 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             @Override
                             public void success(CallData callData, Response response) {
                                 String toCallNumber = callData.getDial();
+//                                try {
+//                                    sipManager.makeAudioCall(sipProfile.getUriString(), toCallNumber, listener, 30);
+//                                } catch (SipException e) {
+//                                    Log.d("Sip error call", e.getMessage());
+//                                }
+
                                 resourceID = callData.getResourceId();
                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                                 callIntent.setData(Uri.parse("tel:" + toCallNumber));
@@ -279,6 +297,55 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         effectsText = (TextView) findViewById(R.id.effectsText);
         effectsGrid = (GridView) findViewById(R.id.effectsLayout);
         effectsGrid.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+
+        if (sipManager == null) {
+            sipManager = sipManager.newInstance(this);
+        }
+
+        try {
+            SipProfile.Builder builder = new SipProfile.Builder(sipUsername, "sip.ghostcall.in");
+            builder.setPassword(sipPassword);
+            sipProfile = builder.build();
+
+            Intent intent = new Intent();
+            intent.setAction("android.GhostCall.INCOMING_CALL");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, Intent.FILL_IN_ACTION);
+            sipManager.open(sipProfile, pendingIntent, null);
+            String test = sipProfile.getUriString();
+            sipManager.setRegistrationListener(sipProfile.getUriString(), new SipRegistrationListener() {
+                @Override
+                public void onRegistering(String localProfileUri) {
+                    Log.d("Registering", "doing work");
+                }
+
+                @Override
+                public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                    Log.d("Sip reg done", "Sip done");
+                }
+
+                @Override
+                public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
+                    Log.d("Sip error message", errorMessage.toString());
+                }
+            });
+
+             listener = new SipAudioCall.Listener() {
+                @Override
+                public void onCallEstablished(SipAudioCall call) {
+                    call.startAudio();
+                    Log.d("Sip call done", "call started");
+                }
+
+                @Override
+                public void onCallEnded(SipAudioCall call) {
+                    Log.d("Sip call done", "call ended");
+                }
+
+            };
+
+        } catch (Exception e) {
+            Log.d("Sip error", e.getMessage());
+        }
 
         GhostCallDatabaseAdapter databaseAdapter = new GhostCallDatabaseAdapter(CallScreen.this);
 
@@ -552,8 +619,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     closeButton.setVisibility(View.VISIBLE);
                     effectsIcon.setImageResource(R.drawable.effects_on);
                 }
-
-
         }
     }
 
@@ -610,6 +675,20 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    public void closeLocalProfile() {
+        if (sipManager == null) {
+            return;
+        }
+
+        try {
+            if (sipManager != null) {
+                sipManager.close(sipProfile.getUriString());
+            }
+        } catch (Exception e) {
+
+        }
     }
 
     private void removeAllViews() {

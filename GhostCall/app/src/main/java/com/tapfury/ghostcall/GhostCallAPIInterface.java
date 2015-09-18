@@ -75,13 +75,13 @@ public interface GhostCallAPIInterface {
 
     @FormUrlEncoded
     @POST("/purchase")
-    void purchaseCredits(@Field("type") String type, @Field("item") String item, Callback<Response> response);
+    void purchaseCredits(@Field("type") String type, @Field("item") String item, @Field("token") String token, @Field("transaction_id") String transactionID, Callback<Response> response);
 
     @FormUrlEncoded
     @POST("/purchase")
-    void purchaseNewNumber(@Field("type") String type, @Field("item") String item, @Field("name") String nickName, @Field("area_code") String areaCode, Callback<Response> response);
+    void purchaseNewNumber(@Field("type") String type, @Field("item") String item, @Field("name") String nickName, @Field("area_code") String areaCode, @Field("token") String token, @Field("transaction_id") String transactionID, Callback<Response> response);
 
     @FormUrlEncoded
     @POST("/purchase")
-    void extendNumber(@Field("type") String type, @Field("item") String item, @Field("number_id") String numberID, Callback<ExtendObject> extendObject);
+    void extendNumber(@Field("type") String type, @Field("item") String item, @Field("number_id") String numberID, @Field("token") String token, @Field("transaction_id") String transactionID, Callback<ExtendObject> extendObject);
 }

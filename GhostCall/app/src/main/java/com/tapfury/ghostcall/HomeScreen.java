@@ -54,6 +54,7 @@ public class HomeScreen extends AppCompatActivity {
         final SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
         String userSMS = settings.getString("userSMS", "0");
         String userMins = settings.getString("userMins", "0");
+
         userRemainingText.setText(userSMS + " sms / " + userMins + " mins left");
 
         userNumber = (TextView) findViewById(R.id.user_number);
@@ -122,6 +123,12 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(new Intent(HomeScreen.this, GetGhostNumberScreen.class));
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
     @Override

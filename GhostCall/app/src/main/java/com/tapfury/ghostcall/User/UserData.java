@@ -43,6 +43,8 @@ public class UserData {
     private String deleted;
     @Expose
     private Balance balance;
+    @Expose
+    private Sip sip;
 
     /**
      *
@@ -294,6 +296,24 @@ public class UserData {
      */
     public void setBalance(Balance balance) {
         this.balance = balance;
+    }
+
+    /**
+     *
+     * @return
+     * The sip
+     */
+    public Sip getSip() {
+        return sip;
+    }
+
+    /**
+     *
+     * @param sip
+     * The sip
+     */
+    public void setSip(Sip sip) {
+        this.sip = sip;
     }
 
 }

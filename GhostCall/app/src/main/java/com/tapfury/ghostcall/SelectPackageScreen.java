@@ -113,22 +113,22 @@ public class SelectPackageScreen extends AppCompatActivity {
             @Override
             public void onConsumeFinished(Purchase purchase, IabResult result) {
                 if (result.isSuccess()) {
-                    Toast.makeText(getApplicationContext(), "I WAS CONSUMED??", Toast.LENGTH_SHORT).show();
+
                 } else {
-                    Log.d("IapHelper query consume",  "isFailure");
+                    Toast.makeText(getApplicationContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         };
 
         final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
-            public void onIabPurchaseFinished(IabResult result, Purchase info) {
+            public void onIabPurchaseFinished(IabResult result, final Purchase info) {
                 if (result.isFailure()) {
                     Log.d("IapHelper result",  "isFailure Listener");
                 } else if (info.getSku().equals(skuID)) {
                     consumeItem();
                     if (packagesType.equals("credits")) {
-                        service.purchaseCredits(packagesType, productID, new Callback<Response>() {
+                        service.purchaseCredits(packagesType, productID, info.getToken(), info.getOrderId(), new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
 
@@ -138,11 +138,11 @@ public class SelectPackageScreen extends AppCompatActivity {
 
                             @Override
                             public void failure(RetrofitError retrofitError) {
-                                Toast.makeText(getApplicationContext(), retrofitError.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else if (packagesType.equals("new")) {
-                        service.purchaseNewNumber("number", productID, nickName, areaCode, new Callback<Response>() {
+                        service.purchaseNewNumber("number", productID, nickName, areaCode, info.getToken(), info.getOrderId(), new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
                                 Toast.makeText(getApplicationContext(), "Purchase complete!", Toast.LENGTH_SHORT).show();
@@ -151,10 +151,11 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("purchasenewnumber error", retrofitError.getMessage());
+                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else if (packagesType.equals("extend")) {
-                        service.extendNumber(packagesType, productID, ghostID, new Callback<ExtendObject>() {
+                        service.extendNumber(packagesType, productID, ghostID, info.getToken(), info.getOrderId(), new Callback<ExtendObject>() {
                             @Override
                             public void success(ExtendObject extendObject, Response response) {
                                 if (extendObject != null) {
@@ -173,6 +174,7 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("ExtendNumber error", retrofitError.getMessage());
+                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -235,7 +237,7 @@ public class SelectPackageScreen extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 productID = ghostPackageList.get(position).getPackageID();
                 skuID = ghostPackageList.get(position).getPackageAndroidID();
-     //           skuID = "android.test.purchased";
+      //         skuID = "android.test.purchased";
                 mHelper.launchPurchaseFlow(SelectPackageScreen.this, skuID, 10001, mPurchaseFinishedListener, "mytestpurchase");
             }
         });
