@@ -259,11 +259,20 @@ public class VerificationScreen extends AppCompatActivity {
             spinnerLayout.setVisibility(View.INVISIBLE);
             if (responseCode == 200 || responseCode == 201 || responseCode == 202) {
                 startActivity(new Intent(VerificationScreen.this, CodeVerificationScreen.class));
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "Fail to connect to server", Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(aVoid);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backtoStart = new Intent(VerificationScreen.this, StartScreen.class);
+        startActivity(backtoStart);
+        finish();
     }
 
     private boolean checkPlayServices() {

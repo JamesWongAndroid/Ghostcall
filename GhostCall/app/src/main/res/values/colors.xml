@@ -16,4 +16,10 @@
     <item name="lightgray" type="color">#D3D3D3</item>
     <item name="gray" type="color">#808080</item>
     <item name="black" type="color">#000000</item>
+    <item name="lighterblue" type="color">#305a94</item>
+    <item name="transparentblack" type="color">#55000000</item>
+    <item name="lightertransblack" type="color">#11000000</item>
+    <item name="darkertransblack" type="color">#88000000</item>
+    <item name="lightertranswhite" type="color">#22FFFFFF</item>
+    <item name="darkerlightertranswhite" type="color">#44FFFFFF</item>
 </resources>

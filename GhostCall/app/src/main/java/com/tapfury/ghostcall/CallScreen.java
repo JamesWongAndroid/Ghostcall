@@ -9,11 +9,15 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.sip.SipAudioCall;
+import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -37,6 +41,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.skyfishjy.library.RippleBackground;
+import com.squareup.okhttp.OkHttpClient;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
 import com.tapfury.ghostcall.SoundEffects.EffectsObject;
 import com.tapfury.ghostcall.User.CallStatus;
@@ -53,6 +58,7 @@ import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -80,6 +86,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private String verified;
     private String voiceChangerNumber ="0";
     private String backgroundID = "0";
+    private String callMethod;
+    String toCallNumber;
     String resourceID = "";
     String currentCallStatus = "";
     private static final String GHOST_PREF = "GhostPrefFile";
@@ -110,6 +118,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     SipManager sipManager = null;
     SipProfile sipProfile = null;
     SipAudioCall.Listener listener;
+    SipAudioCall call = null;
+    OkHttpClient client;
+    SipRegistrationListener registrationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +142,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         sipUsername = settings.getString(Constants.SIP_NAME, "");
         sipPassword = settings.getString(Constants.SIP_PASSWORD, "");
 
+        new registerSIP().execute();
+
+  //      sipUsername = "506";
+  //      sipPassword = "bb3da293297155ee8ccbd3052c02d188";
+
         requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
@@ -138,8 +154,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             }
         };
 
+        client = new OkHttpClient();
+
         restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
-                .setRequestInterceptor(requestInterceptor).build();
+                .setRequestInterceptor(requestInterceptor).setClient(new OkClient(client)).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
 
         numberName = (TextView) findViewById(R.id.remainingText);
@@ -183,7 +201,14 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     service.hangUpCall(resourceID, new Callback<Response>() {
                         @Override
                         public void success(Response response, Response response2) {
+                            if (call != null) {
+                                try {
+                                    call.endCall();
+                                } catch (SipException e) {
 
+                                }
+
+                            }
                         }
 
                         @Override
@@ -192,6 +217,14 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         }
                     });
                 } else {
+                    if (call != null) {
+                        try {
+                            call.endCall();
+                        } catch (SipException e) {
+
+                        }
+
+                    }
                     removeAllViews();
                     showDialpad();
                     if (mediaPlayer != null) {
@@ -222,36 +255,116 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         makeCallButton.setVisibility(View.GONE);
                         toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
-                        service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, Boolean.toString(isRecording), verified, new Callback<CallData>() {
-                            @Override
-                            public void success(CallData callData, Response response) {
-                                String toCallNumber = callData.getDial();
-//                                try {
-//                                    sipManager.makeAudioCall(sipProfile.getUriString(), toCallNumber, listener, 30);
-//                                } catch (SipException e) {
-//                                    Log.d("Sip error call", e.getMessage());
-//                                }
+                        if (sipManager.isVoipSupported(getApplicationContext())) {
+                            callMethod = "sip";
+                        } else {
+                            callMethod = "gateway";
+                        }
 
-                                resourceID = callData.getResourceId();
-                                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:" + toCallNumber));
-                                startActivity(callIntent);
-                                Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
-                                Log.d("STARTED CALL", "started call");
-                                scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-                                scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
-                                // TODO
-                            }
+                        if (haveNetworkConnection()) {
+                            service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, Boolean.toString(isRecording), verified, callMethod, new Callback<CallData>() {
+                                @Override
+                                public void success(CallData callData, Response response) {
+                                    toCallNumber = callData.getDial();
+                                    resourceID = callData.getResourceId();
+                                    String removePlus = toNumber.replace("+", "sip:");
+                                    String sipCallAddress = removePlus + "@sip.ghostcall.in";
 
-                            @Override
-                            public void failure(RetrofitError retrofitError) {
-                                Toast.makeText(getApplicationContext(), "Error Calling", Toast.LENGTH_SHORT).show();
-                                rippleBackground.stopRippleAnimation();
-                                dialpadHolder.setVisibility(View.VISIBLE);
-                                rippleBackground.setVisibility(View.GONE);
-                                makeCallButton.setVisibility(View.VISIBLE);
-                            }
-                        });
+                                    if (callMethod.equals("sip")) {
+                                        try {
+                                            listener = new SipAudioCall.Listener() {
+                                                @Override
+                                                public void onCalling(SipAudioCall call) {
+                                                    super.onCalling(call);
+                                                }
+
+                                                @Override
+                                                public void onRinging(SipAudioCall call, SipProfile caller) {
+                                                    super.onRinging(call, caller);
+                                                }
+
+                                                @Override
+                                                public void onRingingBack(SipAudioCall call) {
+                                                    super.onRingingBack(call);
+                                                }
+
+                                                @Override
+                                                public void onCallEstablished(SipAudioCall call) {
+                                                    call.startAudio();
+                                                    call.setSpeakerMode(false);
+                                                    if (call.isMuted()) {
+                                                        call.toggleMute();
+                                                    }
+
+                                                    scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                                                    scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+
+                                                    Log.d("Sip call establish", "call started");
+                                                }
+
+                                                @Override
+                                                public void onCallEnded(SipAudioCall call) {
+                                                    Log.d("Sip call done", "call ended");
+                                                    updateUI();
+
+                                                }
+
+                                                @Override
+                                                public void onCallBusy(SipAudioCall call) {
+                                                    super.onCallBusy(call);
+                                                    Log.d("Sip call busy", "call ended");
+                                                    updateUI();
+                                                }
+
+                                                @Override
+                                                public void onCallHeld(SipAudioCall call) {
+                                                    super.onCallHeld(call);
+                                                    updateUI();
+                                                }
+
+                                                @Override
+                                                public void onError(SipAudioCall call, int errorCode, String errorMessage) {
+                                                    super.onError(call, errorCode, errorMessage);
+                                                    Log.d("Sip call error", "call ended");
+                                                    updateUI();
+                                                }
+                                            };
+
+                                            if (sipManager.isRegistered(sipProfile.getUriString())) {
+                                                call = sipManager.makeAudioCall(sipProfile.getUriString(), toCallNumber, listener, 30);
+                                            }
+                                        } catch (SipException e) {
+                                            Log.d("Sip error call", e.getMessage());
+                                        }
+                                    } else {
+                                        resourceID = callData.getResourceId();
+                                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                        callIntent.setData(Uri.parse("tel:" + toCallNumber));
+                                        startActivity(callIntent);
+                                        Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
+                                        Log.d("STARTED CALL", "started call");
+                                        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                                        scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                                    }
+                                }
+
+                                @Override
+                                public void failure(RetrofitError retrofitError) {
+                                    Toast.makeText(getApplicationContext(), "Error Calling", Toast.LENGTH_SHORT).show();
+                                    rippleBackground.stopRippleAnimation();
+                                    dialpadHolder.setVisibility(View.VISIBLE);
+                                    rippleBackground.setVisibility(View.GONE);
+                                    makeCallButton.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        } else {
+                            InternetDialog.showInternetDialog(CallScreen.this);
+                            rippleBackground.stopRippleAnimation();
+                            dialpadHolder.setVisibility(View.VISIBLE);
+                            rippleBackground.setVisibility(View.GONE);
+                            makeCallButton.setVisibility(View.VISIBLE);
+                        }
+
 
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid Number", Toast.LENGTH_SHORT).show();
@@ -297,55 +410,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         effectsText = (TextView) findViewById(R.id.effectsText);
         effectsGrid = (GridView) findViewById(R.id.effectsLayout);
         effectsGrid.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
-
-        if (sipManager == null) {
-            sipManager = sipManager.newInstance(this);
-        }
-
-        try {
-            SipProfile.Builder builder = new SipProfile.Builder(sipUsername, "sip.ghostcall.in");
-            builder.setPassword(sipPassword);
-            sipProfile = builder.build();
-
-            Intent intent = new Intent();
-            intent.setAction("android.GhostCall.INCOMING_CALL");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, Intent.FILL_IN_ACTION);
-            sipManager.open(sipProfile, pendingIntent, null);
-            String test = sipProfile.getUriString();
-            sipManager.setRegistrationListener(sipProfile.getUriString(), new SipRegistrationListener() {
-                @Override
-                public void onRegistering(String localProfileUri) {
-                    Log.d("Registering", "doing work");
-                }
-
-                @Override
-                public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    Log.d("Sip reg done", "Sip done");
-                }
-
-                @Override
-                public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
-                    Log.d("Sip error message", errorMessage.toString());
-                }
-            });
-
-             listener = new SipAudioCall.Listener() {
-                @Override
-                public void onCallEstablished(SipAudioCall call) {
-                    call.startAudio();
-                    Log.d("Sip call done", "call started");
-                }
-
-                @Override
-                public void onCallEnded(SipAudioCall call) {
-                    Log.d("Sip call done", "call ended");
-                }
-
-            };
-
-        } catch (Exception e) {
-            Log.d("Sip error", e.getMessage());
-        }
 
         GhostCallDatabaseAdapter databaseAdapter = new GhostCallDatabaseAdapter(CallScreen.this);
 
@@ -498,21 +562,24 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         service.getCallStatus(null, new Callback<CallStatus>() {
             @Override
             public void success(CallStatus callStatus, Response response) {
-                if (callStatus != null) {
-                    String status = callStatus.getStatus();
-                    if (status.equals("connected")) {
-                        removeAllViews();
-                        isViewingEffects = true;
-                        effectsGrid.setVisibility(View.VISIBLE);
-                        closeButton.setVisibility(View.VISIBLE);
-                        effectsIcon.setImageResource(R.drawable.effects_on);
-                        resourceID = callStatus.getResourceId();
-                        toNumber = callStatus.getTo();
-                        numberName.setText(toNumber);
-                        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-                        scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                if (haveNetworkConnection()) {
+                    if (callStatus != null) {
+                        String status = callStatus.getStatus();
+                        if (status.equals("connected")) {
+                            removeAllViews();
+                            isViewingEffects = true;
+                            effectsGrid.setVisibility(View.VISIBLE);
+                            closeButton.setVisibility(View.VISIBLE);
+                            effectsIcon.setImageResource(R.drawable.effects_on);
+                            resourceID = callStatus.getResourceId();
+                            toNumber = callStatus.getTo();
+                            numberName.setText(toNumber);
+                            scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                            scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                        }
                     }
                 }
+
 
             }
 
@@ -528,41 +595,74 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         switch (view.getId()) {
             case R.id.dialPadOne:
                 numberBox.append("1");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_1);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadTwo:
                 numberBox.append("2");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_2);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadThree:
                 numberBox.append("3");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_3);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadFour:
                 numberBox.append("4");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_4);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadFive:
                 numberBox.append("5");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_5);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadSix:
                 numberBox.append("6");
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_6);
+                mediaPlayer.start();
                 break;
             case R.id.dialPadSeven:
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_7);
                 numberBox.append("7");
+                mediaPlayer.start();
                 break;
             case R.id.dialPadEight:
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_8);
                 numberBox.append("8");
+                mediaPlayer.start();
                 break;
             case R.id.dialPadNine:
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_9);
                 numberBox.append("9");
+                mediaPlayer.start();
                 break;
             case R.id.dialPadContact:
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
                 break;
             case R.id.dialPadDelete:
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_11);
+                mediaPlayer.start();
                 int length = numberBox.getText().length();
                 if (length > 0) {
                     numberBox.getText().delete(length - 1, length);
                 }
                 break;
             case R.id.dialPadZero:
+                ensureMediaPlayerDeath();
+                mediaPlayer = mediaPlayer.create(this, R.raw.num_0);
+                mediaPlayer.start();
                 numberBox.append("0");
                 break;
             case R.id.recordHolder:
@@ -677,6 +777,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+    @Override
+    protected void onDestroy() {
+        closeLocalProfile();
+        if (call != null) {
+            call.close();
+        }
+        super.onDestroy();
+    }
+
     public void closeLocalProfile() {
         if (sipManager == null) {
             return;
@@ -685,6 +794,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         try {
             if (sipManager != null) {
                 sipManager.close(sipProfile.getUriString());
+                Log.d("sipmananger close", "got closed");
             }
         } catch (Exception e) {
 
@@ -713,6 +823,23 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         makeCallButton.setVisibility(View.VISIBLE);
     }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
     private void changeTextColor() {
         if (!backgroundID.equals("0")) {
             bgText.setTextColor(getResources().getColor(R.color.selectedyellow));
@@ -733,6 +860,77 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+    }
+
+    private void updateUI() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                removeAllViews();
+                showDialpad();
+                rippleBackground.stopRippleAnimation();
+                rippleBackground.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void updateCallConnectedUI() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                closeButton.setVisibility(View.VISIBLE);
+                closeButton.setText("Hang Up");
+                effectsGrid.setVisibility(View.VISIBLE);
+                rippleBackground.stopRippleAnimation();
+                rippleBackground.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public class registerSIP extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if (sipManager == null) {
+                sipManager = sipManager.newInstance(getApplicationContext());
+            }
+
+            try {
+                SipProfile.Builder builder = new SipProfile.Builder(sipUsername, "sip.ghostcall.in");
+                builder.setPassword(sipPassword);
+                sipProfile = builder.build();
+
+                Intent intent = new Intent();
+                intent.setAction("android.GhostCall.INCOMING_CALL");
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, Intent.FILL_IN_ACTION);
+                registrationListener = new SipRegistrationListener() {
+                    @Override
+                    public void onRegistering(String localProfileUri) {
+                        Log.d("Registering", "doing work");
+                    }
+
+                    @Override
+                    public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                        Log.d("Sip reg done", "Sip done");
+                    }
+
+                    @Override
+                    public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
+                        Log.d("Sip error message", errorMessage.toString());
+
+                    }
+                };
+                sipManager.open(sipProfile, pendingIntent, registrationListener);
+
+
+
+                Log.d("is voip supported", Boolean.toString(sipManager.isVoipSupported(getApplicationContext())));
+
+            } catch (Exception e) {
+                Log.d("Sip error", e.getMessage());
+            }
+            return null;
         }
     }
 

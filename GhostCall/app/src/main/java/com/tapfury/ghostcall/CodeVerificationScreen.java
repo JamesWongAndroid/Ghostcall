@@ -53,6 +53,8 @@ public class CodeVerificationScreen extends AppCompatActivity {
         resendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent toPhoneVerification = new Intent(CodeVerificationScreen.this, VerificationScreen.class);
+                startActivity(toPhoneVerification);
                 finish();
             }
         });

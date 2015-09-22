@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -60,6 +62,18 @@ public class HomeScreen extends AppCompatActivity {
         userNumber = (TextView) findViewById(R.id.user_number);
 
         purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
+        purchaseButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    purchaseButton.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    purchaseButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                }
+                return false;
+            }
+        });
         purchaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

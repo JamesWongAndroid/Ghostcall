@@ -1,7 +1,7 @@
 package com.tapfury.ghostcall;
 
 import android.content.Intent;
-import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +16,7 @@ public class TourScreen extends FragmentActivity {
     private ViewPager viewPager;
     private TutorialAdapter adapter;
     private SoundPool soundPool;
+    private MediaPlayer mediaPlayer;
     private int soundId;
 
     Button skipButton;
@@ -52,23 +53,23 @@ public class TourScreen extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                if (soundPool != null) {
-                    soundPool.play(soundId, 1, 1, 0, -1, 1);
-                }
-            }
-        });
-        soundId = soundPool.load(this, R.raw.ghost_call_loop, 1);
+        mediaPlayer = MediaPlayer.create(this, R.raw.ghost_call_loop);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        soundPool.release();
-        soundPool = null;
+        ensureMediaPlayerDeath();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backtoStart = new Intent(TourScreen.this, StartScreen.class);
+        startActivity(backtoStart);
+        finish();
     }
 
     ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -124,5 +125,13 @@ public class TourScreen extends FragmentActivity {
             return 5;
         }
 
+    }
+
+    private void ensureMediaPlayerDeath() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }

@@ -87,6 +87,7 @@ public class StartScreen extends Activity {
             public void onClick(View view) {
                 Intent toTour = new Intent(getApplicationContext(), TourScreen.class);
                 startActivity(toTour);
+                finish();
 
             }
         });
@@ -95,6 +96,7 @@ public class StartScreen extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(StartScreen.this, VerificationScreen.class));
+                finish();
             }
         });
     }

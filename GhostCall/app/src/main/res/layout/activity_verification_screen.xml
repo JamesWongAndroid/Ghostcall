@@ -69,7 +69,7 @@
         android:layout_alignParentBottom="true"
         android:text="@string/done"
         android:id="@+id/button3"
-        android:background="@color/titleblue"
+        android:background="@drawable/button_selector"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textAllCaps="false"

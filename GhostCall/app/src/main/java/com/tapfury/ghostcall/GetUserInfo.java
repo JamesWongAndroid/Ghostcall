@@ -59,7 +59,7 @@ public class GetUserInfo {
 
                 @Override
                 public void failure(RetrofitError retrofitError) {
-                    userRemainingText.setText("0" + " sms / " + "0" + " mins left");
+                    userRemainingText.setText("");
                 }
             });
 

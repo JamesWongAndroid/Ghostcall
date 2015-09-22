@@ -86,7 +86,7 @@
         android:id="@+id/verifyButton"
         android:textAllCaps="false"
         android:layout_marginTop="51dp"
-        android:background="@color/titleblue"
+        android:background="@drawable/button_selector"
         android:textColor="@color/white"
         android:textSize="20sp"
         />

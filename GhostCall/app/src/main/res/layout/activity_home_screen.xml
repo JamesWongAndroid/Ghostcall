@@ -88,8 +88,6 @@
         android:layout_alignRight="@+id/yourNumberRow"
         android:layout_alignEnd="@+id/yourNumberRow" />
 
-
-
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,7 +104,7 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:text="Get a Ghost Number"
-        android:background="#55000000"
+        android:background="@drawable/ghostbutton"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textAllCaps="false"
