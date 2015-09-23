@@ -45,6 +45,7 @@ public class TourScreen extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(TourScreen.this, VerificationScreen.class));
+                finish();
             }
         });
     }
@@ -115,7 +116,7 @@ public class TourScreen extends FragmentActivity {
                 case 3:
                     return TutorialImageFragment.newInstance(R.drawable.tutorial_page_four);
                 case 4:
-                    return TutorialImageFragment.newInstance(R.drawable.tutorial_page_five);
+                    return TutorialImageFragment.newInstance(R.drawable.tutorial_page_six);
             }
             throw new IllegalArgumentException("unknown fragment position");
         }

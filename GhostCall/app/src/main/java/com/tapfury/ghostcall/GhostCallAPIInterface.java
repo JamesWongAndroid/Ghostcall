@@ -61,7 +61,7 @@ public interface GhostCallAPIInterface {
             @Field("record") String record, @Field("use_verified_number") String verified, @Field("method") String method, Callback<CallData> callback);
 
     @GET("/playback/call/{callID}/mp3")
-    void getMP3(@Path("callID") String callID, Callback<Response> responseCallback);
+    void getMP3(@Path("callID") String callID, @Query("api_key") String api_key, Callback<Response> responseCallback);
 
     @FormUrlEncoded
     @POST("/messages")

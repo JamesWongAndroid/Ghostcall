@@ -13,11 +13,13 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundEffectsData;
 import com.tapfury.ghostcall.SoundEffects.SoundEffectsData;
 import com.tapfury.ghostcall.User.UserData;
 
+import io.fabric.sdk.android.Fabric;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +53,7 @@ public class StartScreen extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_start_screen);
 
         tourButton = (Button) findViewById(R.id.tourButton);

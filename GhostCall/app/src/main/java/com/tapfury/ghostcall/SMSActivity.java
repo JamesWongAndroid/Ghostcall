@@ -81,6 +81,7 @@ public class SMSActivity extends AppCompatActivity {
     private String lastUpdatedTimestamp;
     SmsObject tempNew;
     private BroadcastReceiver incomingSmsBroadcastReceiver;
+    boolean canSendAgain = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -230,30 +231,42 @@ public class SMSActivity extends AppCompatActivity {
         composeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (InternetDialog.haveNetworkConnection(SMSActivity.this)) {
 
-                sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
-                final String sendText = composeEditText.getText().toString();
-                composeEditText.setText("");
 
-                tempNew.setMessageText(sendText);
-                tempNew.setMessageDirection("out");
-                tempNew.setMessageDate("sending...");
-                smsAdapter.getData().add(tempNew);
-                smsAdapter.notifyDataSetChanged();
-                messagesList.setSelection(smsAdapter.getCount() - 1);
+                    if (canSendAgain) {
+                        sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
+                        final String sendText = composeEditText.getText().toString();
+                        composeEditText.setText("");
 
-                composeButton.setClickable(false);
-                service.sendText(toNumber, ghostNumberID, sendText, new Callback<Response>() {
-                    @Override
-                    public void success(Response response, Response response2) {
-                        new getNumbersTask().execute();
+                        tempNew.setMessageText(sendText);
+                        tempNew.setMessageDirection("out");
+                        tempNew.setMessageDate("sending...");
+                        smsAdapter.getData().add(tempNew);
+                        smsAdapter.notifyDataSetChanged();
+                        messagesList.setSelection(smsAdapter.getCount() - 1);
+
+                        composeButton.setClickable(false);
+                        canSendAgain = false;
+                        service.sendText(toNumber, ghostNumberID, sendText, new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+                                new getNumbersTask().execute();
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                tempNew.setMessageDate("failed to send");
+                                canSendAgain = true;
+                            }
+                        });
                     }
 
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        tempNew.setMessageDate("failed to send");
-                    }
-                });
+                } else {
+                    InternetDialog.showInternetDialog(SMSActivity.this);
+                }
+
             }
         });
 
@@ -320,11 +333,9 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-
-                return true;
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+                onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -518,20 +529,20 @@ public class SMSActivity extends AppCompatActivity {
                         smsAdapter.getData().addAll(smsObjectArrayList);
                         smsAdapter.notifyDataSetChanged();
                         messagesList.setSelection(smsAdapter.getCount() - 1);
+                        canSendAgain = true;
                     } else {
                         smsAdapter.getData().clear();
                         smsAdapter.getData().addAll(smsObjectArrayList);
                         smsAdapter.notifyDataSetChanged();
                         messagesList.setSelection(smsAdapter.getCount() - 1);
+                        canSendAgain = true;
                     }
 
                 }
 
 
-            } catch (SQLException e) {
-
-            } catch (NumberParseException e) {
-
+            } catch (Exception e) {
+                canSendAgain = true;
             }
 
 

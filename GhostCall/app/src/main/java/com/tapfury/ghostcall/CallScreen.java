@@ -75,6 +75,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     BackgroundAdapter backgroundAdapter;
     EffectsAdapter effectAdapter;
     ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+    int initiatedkill = 0;
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
@@ -144,9 +145,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         new registerSIP().execute();
 
-  //      sipUsername = "506";
-  //      sipPassword = "bb3da293297155ee8ccbd3052c02d188";
-
         requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
@@ -162,6 +160,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         numberName = (TextView) findViewById(R.id.remainingText);
         numberBox  = (EditText) findViewById(R.id.callEditText);
+        numberBox.setKeyListener(null);
 
         rippleBackground = (RippleBackground) findViewById(R.id.content_loading);
 
@@ -286,10 +285,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                                 @Override
                                                 public void onRingingBack(SipAudioCall call) {
                                                     super.onRingingBack(call);
+                                                    ensureMediaPlayerDeath();
+                                                    mediaPlayer = MediaPlayer.create(CallScreen.this, R.raw.ring);
+                                                    mediaPlayer.setLooping(true);
+                                                    mediaPlayer.start();
                                                 }
 
                                                 @Override
                                                 public void onCallEstablished(SipAudioCall call) {
+                                                    ensureMediaPlayerDeath();
                                                     call.startAudio();
                                                     call.setSpeakerMode(false);
                                                     if (call.isMuted()) {
@@ -327,6 +331,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                                     super.onError(call, errorCode, errorMessage);
                                                     Log.d("Sip call error", "call ended");
                                                     updateUI();
+                                                    Toast.makeText(CallScreen.this, errorMessage.toString(), Toast.LENGTH_SHORT).show();
                                                 }
                                             };
 
@@ -335,6 +340,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                             }
                                         } catch (SipException e) {
                                             Log.d("Sip error call", e.getMessage());
+                                            Toast.makeText(CallScreen.this, e.toString(), Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
                                         resourceID = callData.getResourceId();
@@ -728,7 +734,19 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
             uriContact = data.getData();
             contactNumber = retrieveContactNumber();
-            numberBox.setText(contactNumber);
+            contactNumber = contactNumber.replaceAll("[^0-9]", "");
+            if (contactNumber.startsWith("1")) {
+                contactNumber = contactNumber.replaceFirst("1", "");
+            }
+
+            try {
+                StringBuilder contactNumberBuilder = new StringBuilder(contactNumber);
+                contactNumberBuilder.insert(3, '-');
+                contactNumberBuilder.insert(7, '-');
+                numberBox.setText(contactNumberBuilder.toString());
+            } catch (Exception e) {
+                numberBox.setText(contactNumber);
+            }
         }
 
         }
@@ -948,6 +966,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     vcHolder.setClickable(false);
                     effectsHolder.setClickable(false);
                     recordButton.setClickable(false);
+
+                    if (currentCallStatus.equals("initiated")) {
+                        initiatedkill++;
+                    }
 
 
                     if (currentCallStatus.equals("connected")) {

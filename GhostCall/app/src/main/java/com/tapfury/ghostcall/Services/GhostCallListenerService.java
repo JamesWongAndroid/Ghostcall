@@ -17,7 +17,7 @@ import com.tapfury.ghostcall.CallScreen;
 import com.tapfury.ghostcall.Constants;
 import com.tapfury.ghostcall.GhostCallDatabaseAdapter;
 import com.tapfury.ghostcall.R;
-import com.tapfury.ghostcall.SMSActivity;
+import com.tapfury.ghostcall.StartScreen;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -175,7 +175,10 @@ public class GhostCallListenerService extends GcmListenerService {
                 smsMessage = data.getString("body");
                 Log.d("notificationType", smsMessage);
                 smsTitle = data.getString("title");
-                fromNumber = smsTitle.substring(smsTitle.indexOf("+"));
+                if (!smsTitle.equals("")) {
+                    fromNumber = smsTitle.substring(smsTitle.indexOf("+"));
+                }
+
             }
         }
 
@@ -213,7 +216,7 @@ public class GhostCallListenerService extends GcmListenerService {
     }
 
     private void sendTextNotification(String smsMessage, String fromNumber) {
-            Intent intent = new Intent(this, SMSActivity.class);
+            Intent intent = new Intent(this, StartScreen.class);
             if (!fromNumber.equals("")) {
                 StringBuilder formatNumber = new StringBuilder(fromNumber);
                 formatNumber.replace(0, 2, "(");

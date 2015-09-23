@@ -8,13 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import com.tapfury.ghostcall.BackgroundEffects.BackgroundObject;
 import com.tapfury.ghostcall.SoundEffects.EffectsObject;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by Ynott on 7/20/15.
@@ -250,11 +249,22 @@ public class GhostCallDatabaseAdapter {
             smsObject.setMessageName("#");
             smsObject.setMessageText(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_TEXT)));
             smsObject.setMessageDirection(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_DIRECTION)));
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_CREATED_AT))).withZone(DateTimeZone.UTC);
-            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm a").withZone(DateTimeZone.getDefault());
+//            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+//            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_CREATED_AT))).withZone(DateTimeZone.UTC);
+//            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm a").withZone(DateTimeZone.getDefault());
+//            smsObject.setMessageDate(formatterTime.print(dateTime));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            try {
+                Date parsed = simpleDateFormat.parse(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.MESSAGES_CREATED_AT)));
+                SimpleDateFormat smsDateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+                smsDateFormat.setTimeZone(TimeZone.getDefault());
+                smsObject.setMessageDate(smsDateFormat.format(parsed));
+            } catch (ParseException e) {
 
-            smsObject.setMessageDate(formatterTime.print(dateTime));
+            }
+
+
             smsList.add(smsObject);
             cursor.moveToNext();
         }
@@ -277,12 +287,34 @@ public class GhostCallDatabaseAdapter {
             formatNumber.insert(5, " ");
             formatNumber.insert(9, "-");
             historyObject.setHistoryNumber(formatNumber.toString());
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_UPDATED_AT))).withZone(DateTimeZone.UTC);
-            DateTimeFormatter formatterDate = DateTimeFormat.forPattern("MMM dd");
-            historyObject.setHistoryDate(formatterDate.print(dateTime));
-            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("hh:mm a").withZone(DateTimeZone.getDefault());
-            historyObject.setHistoryTime(formatterTime.print(dateTime));
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            try {
+                Date parsed = simpleDateFormat.parse(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_UPDATED_AT)));
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd");
+                dateFormat.setTimeZone(TimeZone.getDefault());
+                historyObject.setHistoryDate(dateFormat.format(parsed));
+
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+                timeFormat.setTimeZone(TimeZone.getDefault());
+                historyObject.setHistoryTime(timeFormat.format(parsed));
+
+            } catch (ParseException e) {
+
+            }
+
+            // remove this later
+
+//            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+//            DateTime dateTime = formatter.parseDateTime(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_UPDATED_AT)));
+//            DateTimeFormatter formatterDate = DateTimeFormat.forPattern("MMM dd");
+//            historyObject.setHistoryDate(formatterDate.print(dateTime));
+//            DateTimeFormatter formatterTime = DateTimeFormat.forPattern("hh:mm a").withZone(DateTimeZone.getDefault());
+//            historyObject.setHistoryTime(formatterTime.print(dateTime));
+
             historyObject.setHistoryID(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_ID)));
             historyObject.setHistoryRecord(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_RECORD)));
             if (historyObject.getHistoryRecord().equals("1")) {

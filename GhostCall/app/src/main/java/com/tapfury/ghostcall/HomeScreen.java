@@ -21,6 +21,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -92,6 +99,28 @@ public class HomeScreen extends AppCompatActivity {
             userNumber.setText(ownNumber);
             ArrayList<GhostNumbers> gNumberList = nDatabaseAdapter.getUserNumbers();
             nDatabaseAdapter.close();
+            if (gNumberList.size() != 0) {
+                for (int i = 0; i < gNumberList.size(); i++ ) {
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                        DateTime dateTime = formatter.parseDateTime(gNumberList.get(i).getExpirationDate());
+                        DateTime now = new DateTime();
+                        LocalDate today = now.toLocalDate();
+                        DateTime startOfToday = today.toDateTimeAtStartOfDay(now.getZone());
+                        Days day = Days.daysBetween(startOfToday, dateTime);
+                        int difference = day.getDays();
+                        if (difference == 0) {
+                            Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
+                            difference = minutes.getMinutes();
+                            if (difference < 0) {
+                                gNumberList.remove(i);
+                            }
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
             gNumberAdapter = new GhostNumbersAdapter(this, gNumberList);
             ghostNumberListView.setAdapter(gNumberAdapter);
         } catch (SQLException e) {

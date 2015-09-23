@@ -62,8 +62,14 @@ public class CodeVerificationScreen extends AppCompatActivity {
         findViewById(R.id.verifyButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                spinnerLayout.setVisibility(View.VISIBLE);
-                new verifyCodeTask().execute();
+                if (InternetDialog.haveNetworkConnection(CodeVerificationScreen.this)) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    new verifyCodeTask().execute();
+                } else {
+                    spinnerLayout.setVisibility(View.INVISIBLE);
+                    InternetDialog.showInternetDialog(CodeVerificationScreen.this);
+                }
+
             }
         });
     }

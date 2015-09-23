@@ -22,9 +22,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -70,6 +73,8 @@ public class HistoryScreen extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.home_actionbar_layout);
 
+        JodaTimeAndroid.init(this);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
@@ -111,8 +116,16 @@ public class HistoryScreen extends AppCompatActivity {
                 int difference = day.getDays();
                 if (difference > 1) {
                     expireTimer.setText("expires in " + Integer.toString(difference) + " days");
-                } else {
+                } else if (difference == 1) {
                     expireTimer.setText("expires in " + Integer.toString(difference) + " day");
+                } else if (difference == 0) {
+                    Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
+                    difference = minutes.getMinutes();
+                    if (difference > 1) {
+                        expireTimer.setText("expires in " + Integer.toString(difference) + "minutes");
+                    } else {
+                        expireTimer.setText("expires in " + Integer.toString(difference) + "minute");
+                    }
                 }
 
             } catch (IllegalArgumentException e) {
@@ -170,29 +183,37 @@ public class HistoryScreen extends AppCompatActivity {
                             }
                         }
                                 if (!gHistoryList.get(position).getHistoryState().equals("playing")) {
-                                    gHistoryList.get(position).setHistoryState("playing");
+                                    gHistoryList.get(position).setHistoryState("loading");
+                                    historyAdapter.notifyDataSetChanged();
+                                    ensureMediaPlayerDeath();
                                     mediaPlayer = new MediaPlayer();
 
-                                    service.getMP3(historyObject.getHistoryID(), new Callback<Response>() {
+                                    service.getMP3(historyObject.getHistoryID(), apiKey, new Callback<Response>() {
                                         @Override
                                         public void success(Response response, Response response2) {
                                             Log.d("TESTING MP3 API", "SUCCESS");
-                                            Uri url = Uri.parse("http://www.ghostcall.in/api/playback/call/" + gHistoryList.get(position).getHistoryID() + "/mp3");
+                                            Uri url = Uri.parse("http://www.ghostcall.in/api/playback/call/" + gHistoryList.get(position).getHistoryID() + "/mp3?api_key=" + apiKey);
                                             Map<String, String> headers = new HashMap<String, String>();
                                             headers.put("X-api-key", apiKey);
 
                                             try {
-                                                mediaPlayer.setDataSource(getApplicationContext(), url, headers);
+                                           //     mediaPlayer.setDataSource(getApplicationContext(), url, headers);
+                                                mediaPlayer.setDataSource(HistoryScreen.this, url);
                                                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                                                 mediaPlayer.prepareAsync();
                                             } catch (IOException e) {
                                                 Toast.makeText(getApplicationContext(), "Fail to load recording", Toast.LENGTH_SHORT).show();
+                                                gHistoryList.get(position).setHistoryState("not_playing");
+                                                ensureMediaPlayerDeath();
+                                                historyAdapter.notifyDataSetChanged();
                                             }
 
                                             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                                 @Override
                                                 public void onPrepared(MediaPlayer mp) {
                                                     mp.start();
+                                                    gHistoryList.get(position).setHistoryState("playing");
+                                                    historyAdapter.notifyDataSetChanged();
                                                 }
                                             });
                                             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -208,6 +229,10 @@ public class HistoryScreen extends AppCompatActivity {
                                         @Override
                                         public void failure(RetrofitError retrofitError) {
                                             Log.d("TESTING MP3 API", "FAIL");
+                                            gHistoryList.get(position).setHistoryState("not_playing");
+                                            ensureMediaPlayerDeath();
+                                            historyAdapter.notifyDataSetChanged();
+                                            Toast.makeText(HistoryScreen.this, "Recording failed to load", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     historyAdapter.notifyDataSetChanged();

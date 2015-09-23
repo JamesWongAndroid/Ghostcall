@@ -1,11 +1,15 @@
 package com.tapfury.ghostcall;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -53,6 +57,8 @@ public class HistoryAdapter extends BaseAdapter {
             holder.historyDate = (TextView) view.findViewById(R.id.historyDate);
             holder.historyTime = (TextView) view.findViewById(R.id.historyTime);
             holder.historyStatus = (ImageView) view.findViewById(R.id.historyStatusImage);
+            holder.loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+            holder.progressBar = (ProgressBar) view.findViewById(R.id.spinProgressBar);
             view.setTag(holder);
         } else {
             view = convertView;
@@ -64,6 +70,7 @@ public class HistoryAdapter extends BaseAdapter {
         holder.historyDescription.setText(historyObject.getHistoryDescription());
         holder.historyDate.setText(historyObject.getHistoryDate());
         holder.historyTime.setText(historyObject.getHistoryTime());
+        holder.progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
         if (historyObject.getHistoryType() != null) {
             if(historyObject.getHistoryType().equals("call")) {
@@ -87,8 +94,15 @@ public class HistoryAdapter extends BaseAdapter {
 
         if (historyObject.getHistoryState().equals("playing")) {
             holder.historyStatus.setImageResource(R.drawable.audio_stop);
+            holder.loadingPanel.setVisibility(View.GONE);
+            holder.historyStatus.setVisibility(View.VISIBLE);
+        } else if (historyObject.getHistoryState().equals("loading")) {
+              holder.historyStatus.setVisibility(View.GONE);
+            holder.loadingPanel.setVisibility(View.VISIBLE);
         } else if (historyObject.getHistoryState().equals("not_playing")) {
             holder.historyStatus.setImageResource(R.drawable.audio_play);
+            holder.historyStatus.setVisibility(View.VISIBLE);
+            holder.loadingPanel.setVisibility(View.GONE);
         }
 
         return view;
@@ -97,5 +111,7 @@ public class HistoryAdapter extends BaseAdapter {
     private class ViewHolder {
         public TextView historyNumber, historyDescription, historyDate, historyTime;
         public ImageView historyStatus;
+        public RelativeLayout loadingPanel;
+        public ProgressBar progressBar;
     }
 }

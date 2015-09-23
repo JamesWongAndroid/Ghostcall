@@ -2,6 +2,8 @@ package com.tapfury.ghostcall;
 
 import android.app.Application;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -13,5 +15,6 @@ public class CalligraphyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/helveticaneue_light.ttf").build());
+        JodaTimeAndroid.init(this);
     }
 }

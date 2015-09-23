@@ -26,7 +26,7 @@ public class InternetDialog {
         alertBox.show();
     }
 
-    private boolean haveNetworkConnection(final Activity activity) {
+    public static boolean haveNetworkConnection(final Activity activity) {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 

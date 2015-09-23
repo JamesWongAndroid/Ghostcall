@@ -90,7 +90,12 @@ public class VerificationScreen extends AppCompatActivity {
                     Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(codePhoneInput.getText().toString(), "US");
                     if (phoneUtil.isValidNumberForRegion(usaNumber, "US")) {
                         ePhoneNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
-                        new LoginCredentialsTask().execute();
+                        if (InternetDialog.haveNetworkConnection(VerificationScreen.this)) {
+                            new LoginCredentialsTask().execute();
+                        } else {
+                            spinnerLayout.setVisibility(View.INVISIBLE);
+                            InternetDialog.showInternetDialog(VerificationScreen.this);
+                        }
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid Number", Toast.LENGTH_SHORT).show();
                         spinnerLayout.setVisibility(View.INVISIBLE);
