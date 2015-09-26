@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context="com.tapfury.ghostcall.HistorySettingsScreen">
+    tools:context="com.kickbackapps.ghostcall.HistorySettingsScreen">
 
     <LinearLayout
         android:layout_width="match_parent"

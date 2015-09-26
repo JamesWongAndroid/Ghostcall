@@ -21,6 +21,16 @@
         android:layout_above="@+id/composeHolder"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="Open Contacts"
+        android:background="@color/titleblue"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:id="@+id/smsContactsButton"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,21 +88,20 @@
 
                 <ImageView
                     android:id="@+id/compose_button_bar_1"
-                    android:layout_width="14dp"
-                    android:layout_height="2dp"
+                    android:layout_width="20dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:rotation="225"
-                    android:translationY="@dimen/negative_button_transition"
-                    android:src="@color/white" />
+                    android:scaleX="-1"
+                    android:src="@drawable/ic_send_white_18dp" />
 
-                <ImageView
-                    android:id="@+id/compose_button_bar_2"
-                    android:layout_width="14dp"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:rotation="-225"
-                    android:translationY="@dimen/button_transition"
-                    android:src="@color/white" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/compose_button_bar_2"-->
+                    <!--android:layout_width="14dp"-->
+                    <!--android:layout_height="2dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:rotation="-225"-->
+                    <!--android:translationY="@dimen/button_transition"-->
+                    <!--android:src="@color/white" />-->
 
             </FrameLayout>
 

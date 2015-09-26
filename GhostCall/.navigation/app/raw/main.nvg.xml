@@ -6,7 +6,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.VerificationScreen"/>
+        className = "com.kickbackapps.ghostcall.VerificationScreen"/>
       <point      
         x = "3076"      
         y = "1060"/>
@@ -14,7 +14,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.MenuState"      
-        className = "com.tapfury.ghostcall.VerificationScreen"/>
+        className = "com.kickbackapps.ghostcall.VerificationScreen"/>
       <point      
         x = "4925"      
         y = "849"/>
@@ -22,7 +22,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.StartScreen"/>
+        className = "com.kickbackapps.ghostcall.StartScreen"/>
       <point      
         x = "1746"      
         y = "70"/>
@@ -30,7 +30,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.MenuState"      
-        className = "com.tapfury.ghostcall.StartScreen"/>
+        className = "com.kickbackapps.ghostcall.StartScreen"/>
       <point      
         x = "1768"      
         y = "104"/>
@@ -38,7 +38,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.CallScreen"/>
+        className = "com.kickbackapps.ghostcall.CallScreen"/>
       <point      
         x = "2813"      
         y = "3835"/>
@@ -46,7 +46,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.GetGhostNumberScreen"/>
+        className = "com.kickbackapps.ghostcall.GetGhostNumberScreen"/>
       <point      
         x = "4209"      
         y = "3827"/>
@@ -54,7 +54,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.TourScreen"/>
+        className = "com.kickbackapps.ghostcall.TourScreen"/>
       <point      
         x = "506"      
         y = "62"/>
@@ -62,7 +62,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.MenuState"      
-        className = "com.tapfury.ghostcall.TourScreen"/>
+        className = "com.kickbackapps.ghostcall.TourScreen"/>
       <point      
         x = "2788"      
         y = "108"/>
@@ -70,7 +70,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.SelectPackageScreen"/>
+        className = "com.kickbackapps.ghostcall.SelectPackageScreen"/>
       <point      
         x = "6602"      
         y = "3071"/>
@@ -78,7 +78,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.HistorySettingsScreen"/>
+        className = "com.kickbackapps.ghostcall.HistorySettingsScreen"/>
       <point      
         x = "1223"      
         y = "4404"/>
@@ -86,7 +86,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.HistoryScreen"/>
+        className = "com.kickbackapps.ghostcall.HistoryScreen"/>
       <point      
         x = "296"      
         y = "2338"/>
@@ -94,7 +94,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.CallHistoryScreen"/>
+        className = "com.kickbackapps.ghostcall.CallHistoryScreen"/>
       <point      
         x = "424"      
         y = "868"/>
@@ -102,7 +102,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.MenuState"      
-        className = "com.tapfury.ghostcall.CodeVerificationScreen"/>
+        className = "com.kickbackapps.ghostcall.CodeVerificationScreen"/>
       <point      
         x = "1768"      
         y = "1480"/>
@@ -110,7 +110,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.CodeVerificationScreen"/>
+        className = "com.kickbackapps.ghostcall.CodeVerificationScreen"/>
       <point      
         x = "4606"      
         y = "1067"/>
@@ -118,7 +118,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.tapfury.ghostcall.HomeScreen"/>
+        className = "com.kickbackapps.ghostcall.HomeScreen"/>
       <point      
         x = "6851"      
         y = "0"/>

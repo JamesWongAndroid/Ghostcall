@@ -1,6 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="com.tapfury.ghostcall.CallScreen">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:tools="http://schemas.android.com/tools" tools:context="com.kickbackapps.ghostcall.CallScreen">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/sip_menu_item" android:title="Make Calls Using Wifi"
+            android:orderInCategory="100" app:showAsAction="never" />
+        <item android:id="@+id/call_menu_item" android:title="Make Calls Using Sim Card"
+            android:orderInCategory="110" app:showAsAction="never"
+            />
+    </group>
 </menu>
