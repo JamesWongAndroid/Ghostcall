@@ -259,12 +259,22 @@ public class HistoryScreen extends AppCompatActivity {
                     } else {
                         Intent intent = new Intent(HistoryScreen.this, CallScreen.class);
                         intent.putExtra("callName", extras.getString("ghostName"));
-                        StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryNumber());
-                        formatNumber.delete(0, 1);
-                        formatNumber.replace(3, 5, "-");
-                        intent.putExtra("toNumber", formatNumber.toString());
-                        intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
-                        startActivity(intent);
+                        if (historyObject.getHistoryDescription().equals("in")) {
+                            StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryOutNumber());
+                            formatNumber.delete(0, 1);
+                            formatNumber.replace(3, 5, "-");
+                            intent.putExtra("toNumber", formatNumber.toString());
+                            intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                            startActivity(intent);
+                        } else {
+                            StringBuilder formatNumber = new StringBuilder(historyObject.getHistoryNumber());
+                            formatNumber.delete(0, 1);
+                            formatNumber.replace(3, 5, "-");
+                            intent.putExtra("toNumber", formatNumber.toString());
+                            intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
+                            startActivity(intent);
+                        }
+
                     }
                 } else if (historyObject.getHistoryType().equals("message")) {
                     Intent intent = new Intent(HistoryScreen.this, SMSActivity.class);

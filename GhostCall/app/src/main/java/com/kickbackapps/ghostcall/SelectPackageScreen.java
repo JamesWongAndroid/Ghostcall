@@ -149,7 +149,7 @@ public class SelectPackageScreen extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
                                         String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Credits Purchase Error") +
-                                                "&body=" + Uri.encode(retrofitError.getMessage() + " \n Token ID: " + info.getToken() + "\n orderID: " + info.getOrderId());
+                                                "&body=" + Uri.encode(retrofitError.getMessage() + " \n \n Token ID: " + info.getToken() + "\n \n orderID: " + info.getOrderId());
                                         Uri uri = Uri.parse(uriText);
                                         sendEmail.setData(uri);
                                         startActivity(Intent.createChooser(sendEmail, "Send mail..."));

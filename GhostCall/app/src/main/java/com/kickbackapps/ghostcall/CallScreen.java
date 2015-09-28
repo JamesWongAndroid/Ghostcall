@@ -929,7 +929,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 showDialpad();
                 rippleBackground.stopRippleAnimation();
                 rippleBackground.setVisibility(View.GONE);
-                Toast.makeText(CallScreen.this, error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(CallScreen.this, "An error occured", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -1046,7 +1046,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                     } catch (SipException e) {
                         Log.d("Sip error call", e.getMessage());
-                        Toast.makeText(CallScreen.this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CallScreen.this, "An error has occured", Toast.LENGTH_SHORT).show();
                     }
 
                     }
