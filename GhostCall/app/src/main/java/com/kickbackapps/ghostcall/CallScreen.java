@@ -154,7 +154,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         callMethod = settings.getString(Constants.CALL_METHOD, "");
         methodCheck = settings.getString(Constants.CALL_METHOD_CHECK, "");
 
-        new registerStartSIP().execute();
+        if (sipManager.isVoipSupported(CallScreen.this)) {
+            new registerStartSIP().execute();
+        }
+
 
         requestInterceptor = new RequestInterceptor() {
             @Override
@@ -771,7 +774,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         if (methodCheck.equals("")) {
-            if (sipManager != null) {
                 if (sipManager.isVoipSupported(CallScreen.this)) {
                     menu.getItem(0).setChecked(true);
                     editor.putString(Constants.CALL_METHOD, "sip");
@@ -781,7 +783,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     editor.putString(Constants.CALL_METHOD, "gateway");
                     editor.apply();
                 }
-            }
         } else {
             if (methodCheck.equals("sipCheck")) {
                 menu.getItem(0).setChecked(true);
@@ -797,7 +798,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sip_menu_item:
-                if (sipManager != null) {
                    if (sipManager.isVoipSupported(CallScreen.this)) {
                        if (!item.isChecked()) {
                            item.setChecked(true);
@@ -811,7 +811,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                        Toast.makeText(CallScreen.this, "Sorry, your phone does not support SIP calling.", Toast.LENGTH_SHORT).show();
                            item.setChecked(false);
                    }
-                }
                 break;
             case R.id.call_menu_item:
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);

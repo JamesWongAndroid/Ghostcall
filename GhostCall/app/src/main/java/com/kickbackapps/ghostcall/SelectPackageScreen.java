@@ -1,10 +1,13 @@
 package com.kickbackapps.ghostcall;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -137,8 +140,28 @@ public class SelectPackageScreen extends AppCompatActivity {
                             }
 
                             @Override
-                            public void failure(RetrofitError retrofitError) {
-                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
+                            public void failure(final RetrofitError retrofitError) {
+                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                alertBox.setTitle("Purchase error");
+                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Credits Purchase Error") +
+                                                "&body=" + Uri.encode(retrofitError.getMessage() + " \n Token ID: " + info.getToken() + "\n orderID: " + info.getOrderId());
+                                        Uri uri = Uri.parse(uriText);
+                                        sendEmail.setData(uri);
+                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    }
+                                });
+                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alertBox.show();
                             }
                         });
                     } else if (packagesType.equals("new")) {
@@ -151,7 +174,27 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("purchasenewnumber error", retrofitError.getMessage());
-                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
+                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                alertBox.setTitle("Purchase error");
+                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - New Number Purchase Error") +
+                                                "&body=" + Uri.encode( "Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
+                                        Uri uri = Uri.parse(uriText);
+                                        sendEmail.setData(uri);
+                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    }
+                                });
+                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alertBox.show();
                             }
                         });
                     } else if (packagesType.equals("extend")) {
@@ -174,7 +217,27 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("ExtendNumber error", retrofitError.getMessage());
-                                Toast.makeText(getApplicationContext(), retrofitError.getMessage() + " " + info.getToken() + " " + info.getOrderId(), Toast.LENGTH_SHORT).show();
+                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                alertBox.setTitle("Purchase error");
+                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Extend Number Purchase Error") +
+                                                "&body=" + Uri.encode("Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
+                                        Uri uri = Uri.parse(uriText);
+                                        sendEmail.setData(uri);
+                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    }
+                                });
+                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alertBox.show();
                             }
                         });
                     }
