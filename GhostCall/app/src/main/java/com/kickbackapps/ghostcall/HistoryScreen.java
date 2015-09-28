@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
@@ -123,7 +124,7 @@ public class HistoryScreen extends AppCompatActivity {
                 DateTime dateTime = formatter.parseDateTime(extras.getString("ghostExpiration"));
                 DateTime now = new DateTime();
                 LocalDate today = now.toLocalDate();
-                DateTime startOfToday = today.toDateTimeAtStartOfDay(now.getZone());
+                DateTime startOfToday = today.toDateTimeAtCurrentTime(now.getZone());
                 Days day = Days.daysBetween(startOfToday, dateTime);
                 int difference = day.getDays();
                 if (difference > 1) {
@@ -135,8 +136,10 @@ public class HistoryScreen extends AppCompatActivity {
                     difference = hours.getHours();
                     if (difference > 1) {
                         expireTimer.setText("expires in " + Integer.toString(difference) + " hours");
-                    } else {
-                        expireTimer.setText("expires in " + Integer.toString(difference) + " hour");
+                    } else if (difference == 0){
+                        Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
+                        difference = minutes.getMinutes();
+                        expireTimer.setText("expires in " + Integer.toString(difference) + " minutes");
                     }
                 }
 

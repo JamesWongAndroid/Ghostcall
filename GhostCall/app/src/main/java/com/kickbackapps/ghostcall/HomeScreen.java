@@ -121,13 +121,13 @@ public class HomeScreen extends AppCompatActivity {
                         DateTime dateTime = formatter.parseDateTime(gNumberList.get(i).getExpirationDate());
                         DateTime now = new DateTime();
                         LocalDate today = now.toLocalDate();
-                        DateTime startOfToday = today.toDateTimeAtStartOfDay(now.getZone());
+                        DateTime startOfToday = today.toDateTimeAtCurrentTime(now.getZone());
                         Days day = Days.daysBetween(startOfToday, dateTime);
                         int difference = day.getDays();
-                        if (difference == 0) {
+                        if (difference <= 0) {
                             Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
                             difference = minutes.getMinutes();
-                            if (difference < 0) {
+                            if (difference <= 0) {
                                 gNumberList.remove(i);
                             }
                         }
@@ -380,6 +380,28 @@ public class HomeScreen extends AppCompatActivity {
                 nDatabaseAdapter.close();
 
                 if (!gNumberList.isEmpty()) {
+                    if (gNumberList.size() != 0) {
+                        for (int i = 0; i < gNumberList.size(); i++ ) {
+                            try {
+                                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                DateTime dateTime = formatter.parseDateTime(gNumberList.get(i).getExpirationDate());
+                                DateTime now = new DateTime();
+                                LocalDate today = now.toLocalDate();
+                                DateTime startOfToday = today.toDateTimeAtCurrentTime(now.getZone());
+                                Days day = Days.daysBetween(startOfToday, dateTime);
+                                int difference = day.getDays();
+                                if (difference <= 0) {
+                                    Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
+                                    difference = minutes.getMinutes();
+                                    if (difference <= 0) {
+                                        gNumberList.remove(i);
+                                    }
+                                }
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
                     if (gNumberList.size() != 1) {
                         gNumberAdapter.getData().clear();
                         gNumberAdapter.getData().addAll(gNumberList);
