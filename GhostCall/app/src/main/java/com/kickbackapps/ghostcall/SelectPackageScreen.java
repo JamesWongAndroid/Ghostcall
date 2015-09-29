@@ -135,66 +135,107 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void success(Response response, Response response2) {
 
-                                Toast.makeText(getApplicationContext(), "Purchase complete!", Toast.LENGTH_SHORT).show();
-                                userInfo.getUserData();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!isFinishing()) {
+                                            final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                            alertBox.setTitle("Congratulations");
+                                            alertBox.setMessage("You have more credits to send text and make calls now");
+                                            alertBox.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    finish();
+                                                }
+                                            });
+                                            alertBox.show();
+                                        }
+                                    }
+                                });
                             }
 
                             @Override
                             public void failure(final RetrofitError retrofitError) {
-                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
-                                alertBox.setTitle("Purchase error");
-                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
-                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
-                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Credits Purchase Error") +
-                                                "&body=" + Uri.encode(retrofitError.getMessage() + " \n \n Token ID: " + info.getToken() + "\n \n orderID: " + info.getOrderId());
-                                        Uri uri = Uri.parse(uriText);
-                                        sendEmail.setData(uri);
-                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    public void run() {
+                                        final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                        alertBox.setTitle("Purchase error");
+                                        alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                        alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                                String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Credits Purchase Error") +
+                                                        "&body=" + Uri.encode(retrofitError.getMessage() + " \n \n Token ID: " + info.getToken() + "\n \n orderID: " + info.getOrderId());
+                                                Uri uri = Uri.parse(uriText);
+                                                sendEmail.setData(uri);
+                                                startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                            }
+                                        });
+                                        alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        alertBox.show();
                                     }
                                 });
-                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                alertBox.show();
                             }
                         });
                     } else if (packagesType.equals("new")) {
                         service.purchaseNewNumber("number", productID, nickName, areaCode, info.getToken(), info.getOrderId(), new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
-                                Toast.makeText(getApplicationContext(), "Purchase complete!", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                        alertBox.setTitle("Congratulations");
+                                        alertBox.setMessage("Your new number has been provisioned.");
+                                        alertBox.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        });
+                                        alertBox.show();
+                                    }
+                                });
+
                             }
 
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("purchasenewnumber error", retrofitError.getMessage());
-                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
-                                alertBox.setTitle("Purchase error");
-                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
-                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
-                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - New Number Purchase Error") +
-                                                "&body=" + Uri.encode( "Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
-                                        Uri uri = Uri.parse(uriText);
-                                        sendEmail.setData(uri);
-                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    public void run() {
+                                        final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                        alertBox.setTitle("Purchase error");
+                                        alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                        alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                                String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - New Number Purchase Error") +
+                                                        "&body=" + Uri.encode( "Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
+                                                Uri uri = Uri.parse(uriText);
+                                                sendEmail.setData(uri);
+                                                startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                            }
+                                        });
+                                        alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        alertBox.show();
                                     }
                                 });
-                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                alertBox.show();
+
                             }
                         });
                     } else if (packagesType.equals("extend")) {
@@ -206,6 +247,23 @@ public class SelectPackageScreen extends AppCompatActivity {
                                         nDatabaseAdapter.open();
                                         nDatabaseAdapter.updateNumberTimestamp(extendObject.getExpireOn(), ghostID);
                                         nDatabaseAdapter.close();
+
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                                alertBox.setTitle("Congratulations");
+                                                alertBox.setMessage("Your number has been extended.");
+                                                alertBox.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        finish();
+                                                    }
+                                                });
+                                                alertBox.show();
+                                            }
+                                        });
+
                                     } catch (SQLException e) {
                                         Log.d("ExtendNumber error", e.getMessage());
                                     }
@@ -217,27 +275,32 @@ public class SelectPackageScreen extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError retrofitError) {
                                 Log.d("ExtendNumber error", retrofitError.getMessage());
-                                final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
-                                alertBox.setTitle("Purchase error");
-                                alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
-                                alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
-                                        String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Extend Number Purchase Error") +
-                                                "&body=" + Uri.encode("Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
-                                        Uri uri = Uri.parse(uriText);
-                                        sendEmail.setData(uri);
-                                        startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                    public void run() {
+                                        final AlertDialog.Builder alertBox = new AlertDialog.Builder(SelectPackageScreen.this);
+                                        alertBox.setTitle("Purchase error");
+                                        alertBox.setMessage("An error occurred during your purchase. Please contact support to get it resolved. We apologize for the inconvenience");
+                                        alertBox.setPositiveButton("Contact Us", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent sendEmail = new Intent(Intent.ACTION_SENDTO);
+                                                String uriText = "mailto:" + Uri.encode("support@prankdial.com") + "?subject=" + Uri.encode("GhostCall - Extend Number Purchase Error") +
+                                                        "&body=" + Uri.encode("Token ID: " + info.getToken() + "orderID: " + info.getOrderId());
+                                                Uri uri = Uri.parse(uriText);
+                                                sendEmail.setData(uri);
+                                                startActivity(Intent.createChooser(sendEmail, "Send mail..."));
+                                            }
+                                        });
+                                        alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        alertBox.show();
                                     }
                                 });
-                                alertBox.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                alertBox.show();
                             }
                         });
                     }
@@ -300,7 +363,6 @@ public class SelectPackageScreen extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 productID = ghostPackageList.get(position).getPackageID();
                 skuID = ghostPackageList.get(position).getPackageAndroidID();
-       //        skuID = "android.test.purchased";
                 mHelper.launchPurchaseFlow(SelectPackageScreen.this, skuID, 10001, mPurchaseFinishedListener, "mytestpurchase");
             }
         });

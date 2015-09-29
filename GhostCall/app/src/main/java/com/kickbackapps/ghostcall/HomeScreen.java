@@ -186,7 +186,6 @@ public class HomeScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @Override

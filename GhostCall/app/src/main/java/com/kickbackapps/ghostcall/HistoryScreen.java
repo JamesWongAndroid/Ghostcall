@@ -168,10 +168,11 @@ public class HistoryScreen extends AppCompatActivity {
                 toPurchaseScreen.putExtra(Constants.PACKAGE_TYPE, "extend");
                 toPurchaseScreen.putExtra("GhostID", extras.getString("ghostIDExtra"));
                 startActivity(toPurchaseScreen);
+                finish();
             }
         });
 
-        ghostDatabaseAdapter = new GhostCallDatabaseAdapter(HistoryScreen.this);
+        ghostDatabaseAdapter = new GhostCallDatabaseAdapter(getApplicationContext());
         try {
             ghostDatabaseAdapter.open();
             gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"));
@@ -213,7 +214,7 @@ public class HistoryScreen extends AppCompatActivity {
 
                                             try {
                                            //     mediaPlayer.setDataSource(getApplicationContext(), url, headers);
-                                                mediaPlayer.setDataSource(HistoryScreen.this, url);
+                                                mediaPlayer.setDataSource(getApplicationContext(), url);
                                                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                                                 mediaPlayer.prepareAsync();
                                             } catch (IOException e) {
@@ -247,7 +248,7 @@ public class HistoryScreen extends AppCompatActivity {
                                             gHistoryList.get(position).setHistoryState("not_playing");
                                             ensureMediaPlayerDeath();
                                             historyAdapter.notifyDataSetChanged();
-                                            Toast.makeText(HistoryScreen.this, "Recording failed to load", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "Recording failed to load", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     historyAdapter.notifyDataSetChanged();
@@ -406,7 +407,7 @@ public class HistoryScreen extends AppCompatActivity {
 
                 if (response != null) {
                     try {
-                        GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(HistoryScreen.this);
+                        GhostCallDatabaseAdapter numberAdapter = new GhostCallDatabaseAdapter(getApplicationContext());
                         numberAdapter.open();
                         JSONArray jsonArray = new JSONArray(response);
                         progress_status = 10;

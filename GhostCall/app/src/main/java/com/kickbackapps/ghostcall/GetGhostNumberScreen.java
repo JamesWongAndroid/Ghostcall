@@ -16,6 +16,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class GetGhostNumberScreen extends AppCompatActivity {
     GhostCallAPIInterface service;
     RelativeLayout spinnerLayout;
     CircleProgressBar progressSpinner;
+    ImageView purchaseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,9 @@ public class GetGhostNumberScreen extends AppCompatActivity {
 
         nickNameField = (EditText) findViewById(R.id.nicknameEditText);
         areaCodeField = (EditText) findViewById(R.id.areaCodeEditText);
+
+        purchaseButton = (ImageView) findViewById(R.id.purchaseButton);
+        purchaseButton.setVisibility(View.GONE);
 
         Button continueButton = (Button) findViewById(R.id.continueButton);
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +162,7 @@ public class GetGhostNumberScreen extends AppCompatActivity {
                         toGetNumberScreen.putExtra(Constants.PACKAGE_TYPE, "new");
                         toGetNumberScreen.putExtra("areacode", areaCode);
                         startActivity(toGetNumberScreen);
+                        finish();
                     }
                 } else if (areaCodeObject.getCategory() != null) {
                     if (areaCodeObject.getCategory().equals("area_code_not_available")) {
