@@ -141,11 +141,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="eab32f443ab1c4e2c5265cc77b77ae655fa03935" />
-
-        <activity
-            android:name=".TestActuv"
-            android:label="@string/title_activity_test_actuv" >
-        </activity>
     </application>
 
 </manifest>

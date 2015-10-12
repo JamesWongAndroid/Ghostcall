@@ -158,7 +158,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             new registerStartSIP().execute();
         }
 
-
         requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
