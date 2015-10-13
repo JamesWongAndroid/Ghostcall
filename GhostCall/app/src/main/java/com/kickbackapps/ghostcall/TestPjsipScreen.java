@@ -142,7 +142,6 @@ public class TestPjsipScreen extends AppCompatActivity {
                 System.out.print(e.getMessage());
                 return;
             }
-
         }
 
         private void ensureMediaPlayerDeath() {
