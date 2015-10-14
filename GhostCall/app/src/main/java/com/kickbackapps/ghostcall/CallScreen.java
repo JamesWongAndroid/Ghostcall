@@ -310,7 +310,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                                 @Override
                                 public void failure(RetrofitError retrofitError) {
-                                    Toast.makeText(getApplicationContext(), "Error Calling", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Call did not connect - Please connect to the Internet and try again", Toast.LENGTH_SHORT).show();
                                     rippleBackground.stopRippleAnimation();
                                     dialpadHolder.setVisibility(View.VISIBLE);
                                     rippleBackground.setVisibility(View.GONE);
