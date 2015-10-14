@@ -627,13 +627,18 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 numberBox.append("0");
                 break;
             case R.id.recordHolder:
-                if (isRecording) {
-                    isRecording = false;
-                    recordImage.setImageResource(R.drawable.record_off);
+                if (!numberName.getText().toString().equals("Own Number")) {
+                    if (isRecording) {
+                        isRecording = false;
+                        recordImage.setImageResource(R.drawable.record_off);
+                    } else {
+                        isRecording = true;
+                        recordImage.setImageResource(R.drawable.record_on);
+                    }
                 } else {
-                    isRecording = true;
-                    recordImage.setImageResource(R.drawable.record_on);
+                    Toast.makeText(getApplicationContext(), "Call can not be recorded with own number", Toast.LENGTH_SHORT).show();
                 }
+
                 break;
             case R.id.vcHolder:
                 if (isChangingVoice) {
