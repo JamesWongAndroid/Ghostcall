@@ -828,7 +828,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.call_menu_item:
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
+                if (telephonyManager.getSimState() != TelephonyManager.SIM_STATE_READY) {
                     Toast.makeText(CallScreen.this, "No sim card detected", Toast.LENGTH_SHORT).show();
                         item.setChecked(false);
                 } else {
@@ -996,14 +996,15 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 CallInfo ci = getInfo();
                 if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
                     this.delete();
-                } else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING || ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
-                    ensureMediaPlayerDeath();
-                    mediaPlayer = MediaPlayer.create(CallScreen.this, R.raw.ring);
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
-                } else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                    ensureMediaPlayerDeath();
                 }
+//                else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING || ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+//                    ensureMediaPlayerDeath();
+//                    mediaPlayer = MediaPlayer.create(CallScreen.this, R.raw.ring);
+//                    mediaPlayer.setLooping(true);
+//                    mediaPlayer.start();
+//                } else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+//                    ensureMediaPlayerDeath();
+//                }
             } catch (Exception e) {
                 System.out.print(e.getMessage());
                 return;
