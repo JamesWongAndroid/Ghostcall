@@ -1,6 +1,8 @@
 package com.kickbackapps.ghostcall;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -228,19 +230,52 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentCallStatus.equals("connected")) {
-                    spinnerLayout.setVisibility(View.VISIBLE);
-                    service.hangUpCall(resourceID, new Callback<Response>() {
-                        @Override
-                        public void success(Response response, Response response2) {
+                if (currentCallStatus.equals("connected") || currentCallStatus.equals("connecting") || currentCallStatus.equals("initiated"))  {
+                    if (currentCallStatus.equals("connected")) {
+                        final AlertDialog.Builder alertBox = new AlertDialog.Builder(CallScreen.this);
+                        alertBox.setTitle("Hang up call?");
+                        alertBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (currentCallStatus.equals("connected")) {
+                                    spinnerLayout.setVisibility(View.VISIBLE);
+                                    service.hangUpCall(resourceID, new Callback<Response>() {
+                                        @Override
+                                        public void success(Response response, Response response2) {
 
-                        }
+                                        }
 
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
+                                        @Override
+                                        public void failure(RetrofitError retrofitError) {
 
-                        }
-                    });
+                                        }
+                                    });
+                                } else {
+                                    dialog.cancel();
+                                }
+                            }
+                        });
+                        alertBox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alertBox.show();
+                    } else {
+                        spinnerLayout.setVisibility(View.VISIBLE);
+                        service.hangUpCall(resourceID, new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+
+                            }
+                        });
+                    }
                 } else {
                     removeAllViews();
                     showDialpad();
@@ -292,6 +327,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                     if (callMethod.equals("sip")) {
                                         try {
                                             new makePJSIPCall().execute(toCallNumber);
+                                            numberName.setText("Calling " + numberBox.getText().toString());
                                         } catch (Exception e) {
                                             Log.d("TEST PJSIP ERROR", e.getMessage());
                                         }
@@ -310,7 +346,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                                 @Override
                                 public void failure(RetrofitError retrofitError) {
-                                    Toast.makeText(getApplicationContext(), "Call did not connect - Please connect to the Internet and try again", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Call could not connect to server - Please try again", Toast.LENGTH_SHORT).show();
                                     rippleBackground.stopRippleAnimation();
                                     dialpadHolder.setVisibility(View.VISIBLE);
                                     rippleBackground.setVisibility(View.GONE);
@@ -535,8 +571,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             toNumber = callStatus.getTo();
                             numberName.setText(toNumber);
                             initiatedLimit = 0;
-                            scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-                            scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                            if (scheduledThreadPoolExecutor == null) {
+                                scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                                scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                            }
                         }
                     }
                 }
@@ -1072,8 +1110,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                     if (currentCallStatus.equals("initiated")) {
                         initiatedLimit++;
+                        closeButton.setVisibility(View.VISIBLE);
+                        closeButton.setText("Hang Up");
                         Log.d("initiated limit", Integer.toString(initiatedLimit));
-                        if (initiatedLimit > 5) {
+                        if (initiatedLimit > 8) {
                             scheduledFuture.cancel(true);
                             scheduledThreadPoolExecutor.shutdownNow();
                             removeAllViews();
@@ -1096,10 +1136,16 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         closeButton.setVisibility(View.VISIBLE);
                         closeButton.setText("Hang Up");
                         effectsGrid.setVisibility(View.VISIBLE);
+                        if (!numberBox.getText().equals("")) {
+                            numberName.setText("Talking to " + numberBox.getText().toString());
+                        }
+
                     }
 
                     if (currentCallStatus.equals("connecting")) {
                        makeCallButton.setVisibility(View.GONE);
+                        closeButton.setVisibility(View.VISIBLE);
+                        closeButton.setText("Hang Up");
                         bgHolder.setClickable(false);
                         vcHolder.setClickable(false);
                         effectsHolder.setClickable(false);
