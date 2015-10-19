@@ -151,6 +151,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     AccountInfo info;
     MyCall call;
     String host = "sip:sip.ghostcall.in";
+    AudioManager audioManager;
+    boolean isSpeakerOn = false;
+    Button toggleSpeakerPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +169,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         settings = getSharedPreferences(GHOST_PREF, 0);
         editor = settings.edit();
@@ -287,6 +292,22 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     changeTextColor();
                 }
 
+            }
+        });
+
+        toggleSpeakerPhone = (Button) findViewById(R.id.speakerToggleButton);
+        toggleSpeakerPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isSpeakerOn) {
+                    isSpeakerOn = true;
+                    audioManager.setSpeakerphoneOn(isSpeakerOn);
+                    toggleSpeakerPhone.setText("Turn Speaker Off");
+                } else if (isSpeakerOn) {
+                    isSpeakerOn = false;
+                    audioManager.setSpeakerphoneOn(isSpeakerOn);
+                    toggleSpeakerPhone.setText("Turn Speaker On");
+                }
             }
         });
 
@@ -796,6 +817,10 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onDestroy() {
 
+        if (isSpeakerOn) {
+            audioManager.setSpeakerphoneOn(false);
+        }
+
         try {
             if (!ep.libIsThreadRegistered()) {
                 ep.libRegisterThread("destroy");
@@ -896,6 +921,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         bgGrid.setVisibility(View.GONE);
         effectsGrid.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
+        toggleSpeakerPhone.setVisibility(View.GONE);
         bgIcon.setImageResource(R.drawable.bg_off);
         vcIcon.setImageResource(R.drawable.vc_off);
         effectsIcon.setImageResource(R.drawable.effects_off);
@@ -1112,6 +1138,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         initiatedLimit++;
                         closeButton.setVisibility(View.VISIBLE);
                         closeButton.setText("Hang Up");
+                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
                         Log.d("initiated limit", Integer.toString(initiatedLimit));
                         if (initiatedLimit > 8) {
                             scheduledFuture.cancel(true);
@@ -1133,6 +1160,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         rippleBackground.stopRippleAnimation();
                         rippleBackground.setVisibility(View.GONE);
                         removeAllViews();
+                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.VISIBLE);
                         closeButton.setText("Hang Up");
                         effectsGrid.setVisibility(View.VISIBLE);
@@ -1144,6 +1172,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                     if (currentCallStatus.equals("connecting")) {
                        makeCallButton.setVisibility(View.GONE);
+                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.VISIBLE);
                         closeButton.setText("Hang Up");
                         bgHolder.setClickable(false);

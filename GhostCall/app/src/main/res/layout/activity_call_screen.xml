@@ -616,6 +616,19 @@
         />
 
     <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textAllCaps="false"
+        android:id="@+id/speakerToggleButton"
+        android:layout_above="@id/makeCallButton"
+        android:background="@color/titleblue"
+        android:text="Turn Speaker On"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        />
+
+    <Button
         fontPath="fonts/helveticaneue_light.ttf"
         android:layout_width="match_parent"
         android:layout_height="60dp"

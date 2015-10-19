@@ -74,6 +74,7 @@ public class HistoryScreen extends AppCompatActivity {
     private static final String GHOST_PREF = "GhostPrefFile";
     private String lastUpdatedTimestamp;
     SharedPreferences.Editor editor;
+    private AudioManager audioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,8 @@ public class HistoryScreen extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.titleblue));
         }
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         settings = getSharedPreferences(GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
@@ -214,6 +217,7 @@ public class HistoryScreen extends AppCompatActivity {
 
                                             try {
                                            //     mediaPlayer.setDataSource(getApplicationContext(), url, headers);
+                                                mediaPlayer.reset();
                                                 mediaPlayer.setDataSource(getApplicationContext(), url);
                                                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                                                 mediaPlayer.prepareAsync();
@@ -227,6 +231,12 @@ public class HistoryScreen extends AppCompatActivity {
                                             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                                 @Override
                                                 public void onPrepared(MediaPlayer mp) {
+                                                    Log.d("wired headset", Boolean.toString(audioManager.isWiredHeadsetOn()));
+                                                    if (!audioManager.isWiredHeadsetOn()) {
+                                                        audioManager.setSpeakerphoneOn(true);
+                                                    } else {
+                                                        audioManager.setSpeakerphoneOn(false);
+                                                    }
                                                     mp.start();
                                                     gHistoryList.get(position).setHistoryState("playing");
                                                     historyAdapter.notifyDataSetChanged();
@@ -321,8 +331,15 @@ public class HistoryScreen extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        audioManager.setSpeakerphoneOn(false);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        audioManager.setSpeakerphoneOn(false);
         for (int i = 0; i < gHistoryList.size(); i++) {
                 if (gHistoryList.get(i).getHistoryRecord().equals("1")) {
                     gHistoryList.get(i).setHistoryState("not_playing");
