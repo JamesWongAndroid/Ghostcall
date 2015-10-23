@@ -59,7 +59,7 @@ public class GetUserInfo {
 
                 @Override
                 public void failure(RetrofitError retrofitError) {
-                    userRemainingText.setText("");
+                    userRemainingText.setText("No Connection");
                 }
             });
 

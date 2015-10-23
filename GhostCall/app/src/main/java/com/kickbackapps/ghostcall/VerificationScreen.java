@@ -175,7 +175,8 @@ public class VerificationScreen extends AppCompatActivity {
                     .appendQueryParameter("phone_number", ePhoneNumber)
                     .appendQueryParameter("device_id", deviceID)
                     .appendQueryParameter("platform", "android")
-                    .appendQueryParameter("platform_version", buildNumber);
+                    .appendQueryParameter("platform_version", buildNumber)
+                    .appendQueryParameter("app_version", "1.0.1");
             if (sentToken) {
                 String GCMToken = settings.getString("GCMToken", "");
                 builderString.appendQueryParameter("device_token", GCMToken);

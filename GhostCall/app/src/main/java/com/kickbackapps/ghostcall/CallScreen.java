@@ -595,10 +595,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             isViewingEffects = true;
                             effectsGrid.setVisibility(View.VISIBLE);
                             closeButton.setVisibility(View.VISIBLE);
+                            toggleSpeakerPhone.setVisibility(View.VISIBLE);
                             effectsIcon.setImageResource(R.drawable.effects_on);
                             resourceID = callStatus.getResourceId();
                             toNumber = callStatus.getTo();
-                            numberName.setText(toNumber);
+                            numberName.setText("Talking to " + toNumber);
                             initiatedLimit = 0;
                             if (scheduledThreadPoolExecutor == null) {
                                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
