@@ -325,7 +325,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         rippleBackground.setVisibility(View.VISIBLE);
                         rippleBackground.startRippleAnimation();
                         dialpadHolder.setVisibility(View.GONE);
-                        makeCallButton.setVisibility(View.GONE);
+                        makeCallButton.setText("Connecting Call...");
+                        makeCallButton.setClickable(false);
+                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
                         toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
 
@@ -372,14 +374,20 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                     dialpadHolder.setVisibility(View.VISIBLE);
                                     rippleBackground.setVisibility(View.GONE);
                                     makeCallButton.setVisibility(View.VISIBLE);
+                                    makeCallButton.setText("Send Call");
+                                    makeCallButton.setClickable(true);
+                                    toggleSpeakerPhone.setVisibility(View.GONE);
                                 }
                             });
                         } else {
                             InternetDialog.showInternetDialog(CallScreen.this);
                             rippleBackground.stopRippleAnimation();
+                            toggleSpeakerPhone.setVisibility(View.GONE);
                             dialpadHolder.setVisibility(View.VISIBLE);
                             rippleBackground.setVisibility(View.GONE);
                             makeCallButton.setVisibility(View.VISIBLE);
+                            makeCallButton.setText("Send Call");
+                            makeCallButton.setClickable(true);
                         }
 
 
@@ -935,6 +943,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     private void showDialpad() {
         dialpadHolder.setVisibility(View.VISIBLE);
         makeCallButton.setVisibility(View.VISIBLE);
+        makeCallButton.setText("Send Call");
+        makeCallButton.setClickable(true);
     }
 
     private boolean haveNetworkConnection() {
@@ -1146,6 +1156,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             removeAllViews();
                             closeButton.setText("Close");
                             showDialpad();
+                            if (extras != null) {
+                                if (extras.getString("callName") != null) {
+                                    numberName.setText(extras.getString("callName"));
+                                }
+                            }
                             bgHolder.setClickable(true);
                             vcHolder.setClickable(true);
                             effectsHolder.setClickable(true);

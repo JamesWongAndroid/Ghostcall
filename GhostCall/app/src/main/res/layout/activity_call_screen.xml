@@ -620,7 +620,6 @@
         android:layout_height="60dp"
         android:textAllCaps="false"
         android:id="@+id/speakerToggleButton"
-        android:layout_above="@id/makeCallButton"
         android:background="@color/titleblue"
         android:text="Turn Speaker On"
         android:textSize="20sp"

@@ -1,7 +1,9 @@
 package com.kickbackapps.ghostcall;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,6 +45,7 @@ import java.net.URL;
 public class VerificationScreen extends AppCompatActivity {
 
     private EditText codePhoneInput;
+    private TextView termsOfService;
     private String deviceID;
     private String buildNumber;
     private String ePhoneNumber;
@@ -79,6 +83,23 @@ public class VerificationScreen extends AppCompatActivity {
         spinnerLayout = (RelativeLayout) findViewById(R.id.spinnerLayout);
         progressSpinner = (CircleProgressBar) findViewById(R.id.progressBar);
         progressSpinner.setColorSchemeResources(android.R.color.holo_blue_dark);
+
+        termsOfService = (TextView) findViewById(R.id.termsOfService);
+        termsOfService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertBox = new AlertDialog.Builder(VerificationScreen.this);
+                alertBox.setTitle("Terms of Service");
+                alertBox.setMessage(R.string.terms_message);
+                alertBox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertBox.show();
+            }
+        });
 
 
         findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {

@@ -63,6 +63,35 @@
         android:layout_alignRight="@+id/phoneCodeField"
         android:layout_alignEnd="@+id/phoneCodeField" />
 
+    <TextView
+        android:id="@+id/agree_to_terms_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:textAlignment="center"
+        android:paddingTop="5dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/agree_to_terms"
+        android:layout_alignLeft="@+id/phoneCodeField"
+        android:layout_alignStart="@+id/phoneCodeField"
+        android:layout_below="@id/textView3"
+        />
+
+    <TextView
+        android:id="@+id/termsOfService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:textAlignment="center"
+        android:paddingTop="5dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/terms_of_service"
+        android:layout_toRightOf="@id/agree_to_terms_view"
+        android:layout_below="@id/textView3"
+        />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="60dp"

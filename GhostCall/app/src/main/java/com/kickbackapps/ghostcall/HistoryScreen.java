@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -66,6 +67,7 @@ public class HistoryScreen extends AppCompatActivity {
     ArrayList<HistoryObject> gHistoryList;
     MediaPlayer mediaPlayer;
     private boolean isPlaying = false;
+    private boolean isLoading = false;
     private String apiKey;
     private SharedPreferences settings;
     RequestInterceptor requestInterceptor;
@@ -75,6 +77,8 @@ public class HistoryScreen extends AppCompatActivity {
     private String lastUpdatedTimestamp;
     SharedPreferences.Editor editor;
     private AudioManager audioManager;
+    private int historyMax;
+    private int currentAmount = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,7 +182,7 @@ public class HistoryScreen extends AppCompatActivity {
         ghostDatabaseAdapter = new GhostCallDatabaseAdapter(getApplicationContext());
         try {
             ghostDatabaseAdapter.open();
-            gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"));
+            gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"), currentAmount);
             historyAdapter = new HistoryAdapter(this, gHistoryList);
             historyList.setAdapter(historyAdapter);
             ghostDatabaseAdapter.close();
@@ -326,6 +330,54 @@ public class HistoryScreen extends AppCompatActivity {
                 intent.putExtra("callName", extras.getString("ghostName"));
                 intent.putExtra("ghostIDExtra", extras.getString("ghostIDExtra"));
                 startActivity(intent);
+            }
+        });
+
+        historyList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if (lastInScreen == totalItemCount) {
+                    if (!isLoading) {
+                        isLoading = true;
+                        if (gHistoryList != null) {
+                            if (currentAmount <= gHistoryList.size()) {
+                                Log.d("max amount:", Integer.toString(gHistoryList.size()));
+                                Log.d("current amount:", Integer.toString(currentAmount));
+                                currentAmount += 10;
+                                Log.d("current amount:", Integer.toString(currentAmount));
+                                try {
+                                    ghostDatabaseAdapter.open();
+                                    gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"), currentAmount);
+                                    ghostDatabaseAdapter.close();
+
+                                    if (!gHistoryList.isEmpty()) {
+                                        if (gHistoryList.size() != 1) {
+                                            historyAdapter.getData().clear();
+                                            historyAdapter.getData().addAll(gHistoryList);
+                                            historyAdapter.notifyDataSetChanged();
+                                        } else {
+                                            historyAdapter.getData().clear();
+                                            historyAdapter.getData().addAll(gHistoryList);
+                                            historyAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                    isLoading = false;
+                                    Log.d("max amount:", Integer.toString(gHistoryList.size()));
+                                } catch (Exception e) {
+                                    isLoading = false;
+                                    Log.d("error in history screen", e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         });
     }
@@ -544,7 +596,7 @@ public class HistoryScreen extends AppCompatActivity {
             super.onPostExecute(aVoid);
             try {
                 ghostDatabaseAdapter.open();
-                gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"));
+                gHistoryList = ghostDatabaseAdapter.getCallHistory(extras.getString("ghostIDExtra"), currentAmount);
                 ghostDatabaseAdapter.close();
 
                 if (!gHistoryList.isEmpty()) {

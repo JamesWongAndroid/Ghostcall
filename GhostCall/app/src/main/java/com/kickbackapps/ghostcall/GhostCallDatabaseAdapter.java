@@ -272,13 +272,14 @@ public class GhostCallDatabaseAdapter {
         return smsList;
     }
 
-    public ArrayList<HistoryObject> getCallHistory(String numberID) {
+    public ArrayList<HistoryObject> getCallHistory(String numberID, int amount) {
         ArrayList<HistoryObject> historyList = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.CALLS_ID + ", " + MySQLiteGhostCallHelper.CALLS_TO + ", " + MySQLiteGhostCallHelper.CALLS_FROM + ", " + MySQLiteGhostCallHelper.CALLS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_DIRECTION
                 + ", " + MySQLiteGhostCallHelper.CALLS_CREATED_AT + ", " + MySQLiteGhostCallHelper.CALLS_TYPE + ", " + MySQLiteGhostCallHelper.CALLS_RECORD + " FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " WHERE number_id = " + numberID + " UNION " + "SELECT " + MySQLiteGhostCallHelper.VOICEMAILS_ID + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TO + ", " + MySQLiteGhostCallHelper.VOICEMAILS_FROM + ", " + MySQLiteGhostCallHelper.VOICEMAILS_UPDATED_AT + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + ", " + MySQLiteGhostCallHelper.VOICEMAILS_CREATED_AT
                 + ", " + MySQLiteGhostCallHelper.VOICEMAILS_TYPE + ", " + MySQLiteGhostCallHelper.VOICEMAILS_DURATION + " FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " WHERE number_id = " + numberID + " UNION SELECT " + MySQLiteGhostCallHelper.MESSAGES_ID + ", " + MySQLiteGhostCallHelper.MESSAGES_TO + ", " + MySQLiteGhostCallHelper.MESSAGES_FROM + ", " + MySQLiteGhostCallHelper.MESSAGES_UPDATED_AT + ", " + MySQLiteGhostCallHelper.MESSAGES_TEXT
-                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + ", " + MySQLiteGhostCallHelper.MESSAGES_STATUS + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE number_id = " + numberID + " ORDER BY updated_at DESC", null);
+                + ", " + MySQLiteGhostCallHelper.MESSAGES_CREATED_AT +  ", " + MySQLiteGhostCallHelper.MESSAGES_TYPE + ", " + MySQLiteGhostCallHelper.MESSAGES_STATUS + " FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES + " WHERE number_id = " + numberID + " ORDER BY updated_at DESC LIMIT " + Integer.toString(amount), null);
         cursor.moveToFirst();
+
         while (!cursor.isAfterLast()) {
             HistoryObject historyObject = new HistoryObject();
             StringBuilder formatNumber = new StringBuilder(cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.CALLS_TO)));
