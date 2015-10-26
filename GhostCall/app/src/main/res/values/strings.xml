@@ -28,7 +28,7 @@
     <string name="title_activity_history_settings_screen">GhostCall</string>
     <string name="loading">Loading</string>
     <string name="agree_to_terms"> \n By verifying your number, you agree to our </string>
-    <string name="terms_of_service"> \n <u>Terms of Service</u></string>
+    <string name="terms_of_service"> \n \n <u>Terms of Service</u></string>
     <string name="terms_message">The following sets forth the terms of use (the "Terms") for the website located at www.Ghost Call.com (the "Site") and all services provided via the Site, including but not limited to (the "Services" and together with the Site "Ghost Call"). \n\n By using Ghost Call , you are consenting to these Terms. Ghost Call , LLC (the "Company") may modify, alter or update these Terms at any time without prior notice, and your subsequent use of Ghost Call shall constitute your consent to the modification, alteration or update.
         \n\n
         <b>Use of Ghost Call</b>

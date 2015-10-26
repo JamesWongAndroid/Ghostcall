@@ -154,6 +154,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     AudioManager audioManager;
     boolean isSpeakerOn = false;
     Button toggleSpeakerPhone;
+    String credits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +193,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
                 .setRequestInterceptor(requestInterceptor).setClient(new OkClient(client)).build();
         service = restAdapter.create(GhostCallAPIInterface.class);
+
+        GetUserInfo userInfo = new GetUserInfo(this);
+        userInfo.getUserDataForCall();
 
         numberName = (TextView) findViewById(R.id.remainingText);
         numberBox  = (EditText) findViewById(R.id.callEditText);
@@ -316,84 +320,110 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             @Override
             public void onClick(View v) {
 
+                credits = settings.getString("userMins", "0");
+
                 voiceChangerNumber = Integer.toString(voiceChangeBar.getProgress());
                 PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                 try {
-                    Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(numberBox.getText().toString(), "US");
-                    if (phoneUtil.isValidNumberForRegion(usaNumber, "US")) {
 
-                        rippleBackground.setVisibility(View.VISIBLE);
-                        rippleBackground.startRippleAnimation();
-                        dialpadHolder.setVisibility(View.GONE);
-                        makeCallButton.setText("Connecting Call...");
-                        makeCallButton.setClickable(false);
-                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
-                        toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+                    if (!credits.equals("0")) {
+                        Phonenumber.PhoneNumber usaNumber = phoneUtil.parse(numberBox.getText().toString(), "US");
+                        if (phoneUtil.isValidNumberForRegion(usaNumber, "US")) {
 
-
-                        if (callMethod.equals("")) {
-                            callMethod = "sip";
-                        } else {
-                            callMethod = settings.getString(Constants.CALL_METHOD, "");
-                        }
+                            rippleBackground.setVisibility(View.VISIBLE);
+                            rippleBackground.startRippleAnimation();
+                            dialpadHolder.setVisibility(View.GONE);
+                            makeCallButton.setText("Connecting Call...");
+                            makeCallButton.setClickable(false);
+                            toggleSpeakerPhone.setVisibility(View.VISIBLE);
+                            toNumber = phoneUtil.format(usaNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
 
-                        if (haveNetworkConnection()) {
-                            service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, Boolean.toString(isRecording), verified, callMethod, new Callback<CallData>() {
-                                @Override
-                                public void success(CallData callData, Response response) {
-                                    toCallNumber = callData.getDial();
-                                    resourceID = callData.getResourceId();
-                                    String removePlus = toNumber.replace("+", "sip:");
-                                    String sipCallAddress = removePlus + "@sip.ghostcall.in";
+                            if (callMethod.equals("")) {
+                                callMethod = "sip";
+                            } else {
+                                callMethod = settings.getString(Constants.CALL_METHOD, "");
+                            }
 
-                                    if (callMethod.equals("sip")) {
-                                        try {
-                                            new makePJSIPCall().execute(toCallNumber);
-                                            numberName.setText("Calling " + numberBox.getText().toString());
-                                        } catch (Exception e) {
-                                            Log.d("TEST PJSIP ERROR", e.getMessage());
-                                        }
-                                    } else {
+
+                            if (haveNetworkConnection()) {
+                                service.makeCall(toNumber, numberID, backgroundID, voiceChangerNumber, Boolean.toString(isRecording), verified, callMethod, new Callback<CallData>() {
+                                    @Override
+                                    public void success(CallData callData, Response response) {
+                                        toCallNumber = callData.getDial();
                                         resourceID = callData.getResourceId();
-                                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                        callIntent.setData(Uri.parse("tel:" + toCallNumber));
-                                        startActivity(callIntent);
-                                        Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
-                                        Log.d("STARTED CALL", "started call");
-                                        initiatedLimit = 0;
-                                        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-                                       scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                                        String removePlus = toNumber.replace("+", "sip:");
+                                        String sipCallAddress = removePlus + "@sip.ghostcall.in";
+
+                                        if (callMethod.equals("sip")) {
+                                            try {
+                                                new makePJSIPCall().execute(toCallNumber);
+                                                numberName.setText("Calling " + numberBox.getText().toString());
+                                            } catch (Exception e) {
+                                                Log.d("TEST PJSIP ERROR", e.getMessage());
+                                            }
+                                        } else {
+                                            resourceID = callData.getResourceId();
+                                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                            callIntent.setData(Uri.parse("tel:" + toCallNumber));
+                                            startActivity(callIntent);
+                                            Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
+                                            Log.d("STARTED CALL", "started call");
+                                            initiatedLimit = 0;
+                                            scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                                            scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void failure(RetrofitError retrofitError) {
-                                    Toast.makeText(getApplicationContext(), "Call could not connect to server - Please try again", Toast.LENGTH_SHORT).show();
-                                    rippleBackground.stopRippleAnimation();
-                                    dialpadHolder.setVisibility(View.VISIBLE);
-                                    rippleBackground.setVisibility(View.GONE);
-                                    makeCallButton.setVisibility(View.VISIBLE);
-                                    makeCallButton.setText("Send Call");
-                                    makeCallButton.setClickable(true);
-                                    toggleSpeakerPhone.setVisibility(View.GONE);
-                                }
-                            });
+                                    @Override
+                                    public void failure(RetrofitError retrofitError) {
+                                        Toast.makeText(getApplicationContext(), "Call could not connect to server - Please try again", Toast.LENGTH_SHORT).show();
+                                        rippleBackground.stopRippleAnimation();
+                                        dialpadHolder.setVisibility(View.VISIBLE);
+                                        rippleBackground.setVisibility(View.GONE);
+                                        makeCallButton.setVisibility(View.VISIBLE);
+                                        makeCallButton.setText("Send Call");
+                                        makeCallButton.setClickable(true);
+                                        toggleSpeakerPhone.setVisibility(View.GONE);
+                                    }
+                                });
+                            } else {
+                                InternetDialog.showInternetDialog(CallScreen.this);
+                                rippleBackground.stopRippleAnimation();
+                                toggleSpeakerPhone.setVisibility(View.GONE);
+                                dialpadHolder.setVisibility(View.VISIBLE);
+                                rippleBackground.setVisibility(View.GONE);
+                                makeCallButton.setVisibility(View.VISIBLE);
+                                makeCallButton.setText("Send Call");
+                                makeCallButton.setClickable(true);
+                            }
+
+
                         } else {
-                            InternetDialog.showInternetDialog(CallScreen.this);
-                            rippleBackground.stopRippleAnimation();
-                            toggleSpeakerPhone.setVisibility(View.GONE);
-                            dialpadHolder.setVisibility(View.VISIBLE);
-                            rippleBackground.setVisibility(View.GONE);
-                            makeCallButton.setVisibility(View.VISIBLE);
-                            makeCallButton.setText("Send Call");
-                            makeCallButton.setClickable(true);
+                            Toast.makeText(getApplicationContext(), "Invalid Number", Toast.LENGTH_SHORT).show();
                         }
-
-
                     } else {
-                        Toast.makeText(getApplicationContext(), "Invalid Number", Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder alertBox = new AlertDialog.Builder(CallScreen.this);
+                        alertBox.setTitle("Insufficient Credits");
+                        alertBox.setMessage("Not enough credits available to make this call");
+                        alertBox.setPositiveButton("Got It", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alertBox.setNegativeButton("Buy Credits", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent getCredits = new Intent(CallScreen.this, SelectPackageScreen.class);
+                                getCredits.putExtra(Constants.PACKAGE_TYPE, "credits");
+                                startActivity(getCredits);
+                                finish();
+                            }
+                        });
+                        alertBox.show();
                     }
+
                 } catch (NumberParseException e) {
                     Toast.makeText(getApplicationContext(), "Invalid Number", Toast.LENGTH_SHORT).show();
                 }
@@ -1210,11 +1240,16 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         recordButton.setClickable(true);
                         Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
 
+                        GetUserInfo userInfo = new GetUserInfo(CallScreen.this);
+                        userInfo.getUserDataForCall();
+
                         if (extras != null) {
                             if (extras.getString("callName") != null) {
                                 numberName.setText(extras.getString("callName"));
                             }
                         }
+
+
                     }
 
                 }

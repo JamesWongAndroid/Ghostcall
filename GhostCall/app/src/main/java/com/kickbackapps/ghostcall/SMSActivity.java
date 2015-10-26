@@ -304,13 +304,6 @@ public class SMSActivity extends AppCompatActivity {
             }
         });
 
-
-//        sendBarOne = (ImageView) findViewById(R.id.compose_button_bar_1);
-//        sendBarTwo = (ImageView) findViewById(R.id.compose_button_bar_2);
-//        float translation = dpToPx(this, 14) / 3;
-//        sendBarTwo.setTranslationY(translation);
-//        sendBarOne.setTranslationY(-translation);
-
         incomingSmsBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

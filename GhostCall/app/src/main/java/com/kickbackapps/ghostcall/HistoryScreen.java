@@ -146,7 +146,14 @@ public class HistoryScreen extends AppCompatActivity {
                     } else if (difference == 0){
                         Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);
                         difference = minutes.getMinutes();
-                        expireTimer.setText("expires in " + Integer.toString(difference) + " minutes");
+                        if (difference == 1 ) {
+                            expireTimer.setText("expires in " + Integer.toString(difference) + " minute");
+                        } else if (difference <= 0) {
+                            expireTimer.setText("This number has expired");
+                        } else {
+                            expireTimer.setText("expires in " + Integer.toString(difference) + " minutes");
+                        }
+
                     }
                 }
 

@@ -73,9 +73,10 @@
         android:paddingTop="5dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/agree_to_terms"
-        android:layout_alignLeft="@+id/phoneCodeField"
-        android:layout_alignStart="@+id/phoneCodeField"
         android:layout_below="@id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+
         />
 
     <TextView
@@ -88,8 +89,8 @@
         android:paddingTop="5dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/terms_of_service"
-        android:layout_toRightOf="@id/agree_to_terms_view"
         android:layout_below="@id/textView3"
+        android:layout_centerHorizontal="true"
         />
 
     <Button

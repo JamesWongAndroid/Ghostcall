@@ -64,4 +64,39 @@ public class GetUserInfo {
             });
 
     }
+
+    public void getUserDataForCall() {
+
+        apiKey = settings.getString("api_key", "");
+        userInfo = new UserData();
+        userRemainingText = (TextView) activity.findViewById(R.id.remainingText);
+
+        RequestInterceptor requestInterceptor = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                request.addHeader("X-api-key", apiKey);
+            }
+        };
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://www.ghostcall.in/api")
+                .setRequestInterceptor(requestInterceptor).build();
+        GhostCallAPIInterface service = restAdapter.create(GhostCallAPIInterface.class);
+
+        service.getUserData(new Callback<UserData>() {
+            @Override
+            public void success(UserData userData, Response response) {
+                userInfo.setBalance(userData.getBalance());
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("userSMS", userData.getBalance().getSms());
+                editor.putString("userMins", userData.getBalance().getMinutes());
+                editor.apply();
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                userRemainingText.setText("No Connection");
+            }
+        });
+
+    }
 }
