@@ -94,7 +94,7 @@ public class GetUserInfo {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                userRemainingText.setText("No Connection");
+
             }
         });
 
