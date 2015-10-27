@@ -356,7 +356,9 @@ public class SMSActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-                onBackPressed();
+            Intent backToStart = new Intent(SMSActivity.this, HomeScreen.class);
+            startActivity(backToStart);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -410,6 +412,14 @@ public class SMSActivity extends AppCompatActivity {
                 Toast.makeText(SMSActivity.this, "Invalid Number", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backtoStart = new Intent(SMSActivity.this, HomeScreen.class);
+        startActivity(backtoStart);
+        finish();
     }
 
     private String retrieveContactNumber() {
