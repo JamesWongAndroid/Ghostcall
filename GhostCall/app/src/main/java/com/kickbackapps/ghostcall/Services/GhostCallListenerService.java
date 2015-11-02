@@ -39,16 +39,19 @@ public class GhostCallListenerService extends GcmListenerService {
     Uri.Builder builderString;
     InputStream inStream = null;
     private SharedPreferences settings;
-    private String apiKey, lastUpdatedTimestamp;
+    private String apiKey, lastUpdatedTimestamp, callTitle;
     String numberID = "";
+    String fromNumber;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
 
         String notificationType = "";
         String smsTitle = "";
-        String fromNumber = "";
+        fromNumber = "";
         String smsMessage = "";
+
+        callTitle = "";
 
         settings = getSharedPreferences(Constants.GHOST_PREF, 0);
         apiKey = settings.getString("api_key", "");
@@ -168,9 +171,19 @@ public class GhostCallListenerService extends GcmListenerService {
             Log.d("GhostCallListenService", e.toString());
         }
 
-        if (data.getString("message") != null) {
-            notificationType = data.getString("message");
+        if (data.getString("type") != null) {
+            notificationType = data.getString("type");
+            if (data.getString("title") != null) {
+                callTitle = data.getString("title");
+            }
             Log.d("notificationType", notificationType);
+        }
+
+
+        if (!notificationType.equals("sms")) {
+            fromNumber = data.getString("caller_id");
+            numberID = data.getString("number_id");
+            sendCallNotification(notificationType);
         } else {
             if (data.getString("body") != null) {
                 smsMessage = data.getString("body");
@@ -187,12 +200,6 @@ public class GhostCallListenerService extends GcmListenerService {
                 }
 
             }
-        }
-
-
-        if (!notificationType.equals("")) {
-            sendCallNotification(notificationType);
-        } else if (!fromNumber.equals("")) {
             Intent newSMSincoming = new Intent("newIncomingSMS");
             LocalBroadcastManager.getInstance(this).sendBroadcast(newSMSincoming);
             sendTextNotification(smsMessage, fromNumber);
@@ -202,15 +209,17 @@ public class GhostCallListenerService extends GcmListenerService {
     }
 
     private void sendCallNotification(String notificationType) {
-        if (notificationType.equals("Incoming call")) {
+        if (notificationType.equals("incoming_call")) {
             Intent intent = new Intent(this, CallScreen.class);
+            intent.putExtra("toNumberBox", fromNumber);
+            intent.putExtra("ghostIDExtra", numberID);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.gc_notif)
                     .setContentTitle("GhostCall")
-                    .setContentText(notificationType)
+                    .setContentText(callTitle)
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
                     .setColor(R.color.titleblue)
@@ -225,9 +234,10 @@ public class GhostCallListenerService extends GcmListenerService {
     private void sendTextNotification(String smsMessage, String fromNumber) {
             Intent intent = new Intent(this, SMSActivity.class);
             if (!fromNumber.equals("")) {
-                fromNumber = fromNumber.replaceAll("[^0-9]", "");
-                fromNumber = fromNumber.replaceFirst("1", "");
-                StringBuilder formatNumber = new StringBuilder(fromNumber);
+                String fromNumberConverted;
+                fromNumberConverted = fromNumber.replaceAll("[^0-9]", "");
+                fromNumberConverted = fromNumberConverted.replaceFirst("1", "");
+                StringBuilder formatNumber = new StringBuilder(fromNumberConverted);
                 formatNumber.insert(3, '-');
                 formatNumber.insert(7, '-');
                 intent.putExtra("toNumber", formatNumber.toString());

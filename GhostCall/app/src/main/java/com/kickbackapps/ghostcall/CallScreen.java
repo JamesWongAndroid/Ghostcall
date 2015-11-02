@@ -155,6 +155,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     boolean isSpeakerOn = false;
     Button toggleSpeakerPhone;
     String credits;
+    String toNumberBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +220,12 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             if (toNumber != null) {
                 numberBox.append(extras.getString("toNumber"));
             }
+
+            toNumberBox = extras.getString("toNumberBox");
+            if (toNumberBox != null) {
+                numberBox.setText(toNumberBox);
+            }
+
 
         }
 
@@ -633,7 +640,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             initiatedLimit = 0;
                             if (scheduledThreadPoolExecutor == null) {
                                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-                                scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+                                scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
                             }
                         }
                     }
@@ -1053,37 +1060,41 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         protected Void doInBackground(Void... voids) {
 
 
-            try {
-                ep = new Endpoint();
-                ep.libCreate();
-                EpConfig epConfig = new EpConfig();
-                ep.libInit(epConfig);
-                TransportConfig sipTpConfig = new TransportConfig();
-                sipTpConfig.setPort(5060);
-                ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
-                ep.libStart();
-
-                AccountConfig acfg = new AccountConfig();
-                acfg.setIdUri("sip:" + sipUsername);
-                acfg.getRegConfig().setRegistrarUri(host);
-                AuthCredInfo cred = new AuthCredInfo("plain", "*", sipUsername, 0, sipPassword);
-                acfg.getSipConfig().getAuthCreds().add(cred);
-                acc = new Account();
-                acc.create(acfg);
-                Thread.sleep(1000);
-
+            if (ep != null) {
                 try {
-                    info = acc.getInfo();
-                    Log.d("is reg active: ", Boolean.toString(info.getRegIsActive()));
-                    Log.d("reg status: ", info.getRegStatusText());
+
+                    ep = new Endpoint();
+                    ep.libCreate();
+                    EpConfig epConfig = new EpConfig();
+                    ep.libInit(epConfig);
+                    TransportConfig sipTpConfig = new TransportConfig();
+                    sipTpConfig.setPort(5060);
+                    ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
+                    ep.libStart();
+
+                    AccountConfig acfg = new AccountConfig();
+                    acfg.setIdUri("sip:" + sipUsername);
+                    acfg.getRegConfig().setRegistrarUri(host);
+                    AuthCredInfo cred = new AuthCredInfo("plain", "*", sipUsername, 0, sipPassword);
+                    acfg.getSipConfig().getAuthCreds().add(cred);
+                    acc = new Account();
+                    acc.create(acfg);
+                    Thread.sleep(1000);
+
+                    try {
+                        info = acc.getInfo();
+                        Log.d("is reg active: ", Boolean.toString(info.getRegIsActive()));
+                        Log.d("reg status: ", info.getRegStatusText());
+
+                    } catch (Exception e) {
+                        System.out.print(e.getMessage());
+                    }
 
                 } catch (Exception e) {
-                    System.out.print(e.getMessage());
+
                 }
-
-            } catch (Exception e) {
-
             }
+
             return null;
         }
 
@@ -1246,6 +1257,22 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         if (extras != null) {
                             if (extras.getString("callName") != null) {
                                 numberName.setText(extras.getString("callName"));
+                            }  else {
+                                if (extras.getString("ghostIDExtra") != null) {
+                                    GhostCallDatabaseAdapter adapter = new GhostCallDatabaseAdapter(getApplicationContext());
+                                    try {
+
+                                        if (extras.getString("ghostIDExtra") != null) {
+                                            adapter.open();
+                                            numberName.setText(adapter.getNumberName(extras.getString("ghostIDExtra")));
+                                            adapter.close();
+                                        }
+
+                                    } catch (SQLException e) {
+
+                                    }
+
+                                }
                             }
                         }
 

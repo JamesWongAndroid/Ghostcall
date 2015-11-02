@@ -141,7 +141,7 @@ public class HistoryScreen extends AppCompatActivity {
                 } else if (difference == 0) {
                     Hours hours = Hours.hoursBetween(startOfToday, dateTime);
                     difference = hours.getHours();
-                    if (difference > 1) {
+                    if (difference >= 1) {
                         expireTimer.setText("expires in " + Integer.toString(difference) + " hours");
                     } else if (difference == 0){
                         Minutes minutes = Minutes.minutesBetween(startOfToday, dateTime);

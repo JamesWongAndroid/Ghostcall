@@ -88,6 +88,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_activity_call_screen"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity

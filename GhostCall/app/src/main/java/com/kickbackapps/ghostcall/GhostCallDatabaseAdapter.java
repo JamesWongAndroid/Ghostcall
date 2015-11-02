@@ -380,6 +380,14 @@ public class GhostCallDatabaseAdapter {
         return exists;
     }
 
+    public String getNumberName(String id) {
+        Cursor cursor = database.rawQuery("SELECT " + MySQLiteGhostCallHelper.NUMBERS_NAME + " FROM " + MySQLiteGhostCallHelper.TABLE_NUMBERS + " WHERE id = " + id, null);
+        cursor.moveToFirst();
+        String numberName = cursor.getString(cursor.getColumnIndex(MySQLiteGhostCallHelper.NUMBERS_NAME));
+        cursor.close();
+        return numberName;
+    }
+
     public String getLatestTimestamp() {
         Cursor cursor = database.rawQuery("SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_CALLS + " UNION SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_MESSAGES +
                 " UNION SELECT updated_at FROM " + MySQLiteGhostCallHelper.TABLE_VOICEMAILS + " ORDER BY updated_at DESC", null);
