@@ -62,9 +62,11 @@ import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnCallMediaStateParam;
 import org.pjsip.pjsua2.OnCallStateParam;
+import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
+import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
@@ -156,6 +158,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     Button toggleSpeakerPhone;
     String credits;
     String toNumberBox;
+    boolean incomingSipCall = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,10 +229,11 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 numberBox.setText(toNumberBox);
             }
 
+            incomingSipCall = extras.getBoolean("incomingSipCall");
 
         }
 
-        new registerPJSIP().execute();
+    //    new registerPJSIP().execute();
 
         dialpadHolder = (RelativeLayout) findViewById(R.id.dialpadLayout);
         spinnerLayout = (RelativeLayout) findViewById(R.id.spinnerLayout);
@@ -621,6 +625,25 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
+        if (incomingSipCall) {
+            incomingSipCall = false;
+            if (MyPJSIP.call != null) {
+                new answerPJSIPCall().execute();
+            } else {
+                final AlertDialog.Builder missedCallBox = new AlertDialog.Builder(CallScreen.this);
+                missedCallBox.setTitle("Missed Call");
+                missedCallBox.setMessage("Sorry, you missed the call.");
+                missedCallBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                           dialog.cancel();
+                        incomingSipCall = false;
+                    }
+                });
+                missedCallBox.show();
+            }
+
+        }
         service.getCallStatus(null, new Callback<CallStatus>() {
             @Override
             public void success(CallStatus callStatus, Response response) {
@@ -1031,23 +1054,50 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         protected Void doInBackground(String... params) {
 
             try {
-                if (!ep.libIsThreadRegistered()) {
-                    ep.libRegisterThread("makeCall");
+                if (!MyPJSIP.ep.libIsThreadRegistered()) {
+                    MyPJSIP.ep.libRegisterThread("makeCall");
                 }
             } catch (Exception e) {
 
             }
 
             String toSipAccount = params[0];
-            call = new MyCall(acc, -1);
-            CallOpParam prm = new CallOpParam(true);
+//            call = new MyCall(MyPJSIP.acc, -1);
+//            CallOpParam prm = new CallOpParam(true);
 
             try {
-                call.makeCall(toSipAccount, prm);
+//                call.makeCall(toSipAccount, prm);
+                MyPJSIP.makeCall(toSipAccount);
                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
                 scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
             } catch (Exception e) {
                 Log.d("TEST PJSIP ERROR", e.getMessage());
+            }
+
+            return null;
+        }
+    }
+
+    public class answerPJSIPCall extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                if (!MyPJSIP.ep.libIsThreadRegistered()) {
+                    MyPJSIP.ep.libRegisterThread("incomingCall");
+                }
+            } catch (Exception e) {
+
+            }
+
+            try {
+                MyPJSIP.answerCall();
+                scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+                scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
+
+            } catch (Exception e) {
+
             }
 
             return null;
@@ -1059,8 +1109,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         @Override
         protected Void doInBackground(Void... voids) {
 
-
-            if (ep != null) {
                 try {
 
                     ep = new Endpoint();
@@ -1077,7 +1125,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                     acfg.getRegConfig().setRegistrarUri(host);
                     AuthCredInfo cred = new AuthCredInfo("plain", "*", sipUsername, 0, sipPassword);
                     acfg.getSipConfig().getAuthCreds().add(cred);
-                    acc = new Account();
+                    acc = new MyAccount();
                     acc.create(acfg);
                     Thread.sleep(1000);
 
@@ -1093,7 +1141,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 } catch (Exception e) {
 
                 }
-            }
 
             return null;
         }
@@ -1102,6 +1149,23 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
+        }
+    }
+
+    public class MyAccount extends Account {
+
+        @Override
+        public void onIncomingCall(OnIncomingCallParam prm) {
+            super.onIncomingCall(prm);
+            Log.d("THERE'S A INCOMING CALL", "ANSWER ME!");
+            call = new MyCall(acc, prm.getCallId());
+            CallOpParam prmi = new CallOpParam(true);
+            try {
+                prmi.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+                call.answer(prmi);
+            } catch (Exception e) {
+                Log.d("TEST PJSIP ERROR", e.getMessage());
+            }
         }
     }
 
@@ -1118,25 +1182,9 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                 if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
                     this.delete();
                 }
-//                else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING || ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
-//                    ensureMediaPlayerDeath();
-//                    mediaPlayer = MediaPlayer.create(CallScreen.this, R.raw.ring);
-//                    mediaPlayer.setLooping(true);
-//                    mediaPlayer.start();
-//                } else if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-//                    ensureMediaPlayerDeath();
-//                }
             } catch (Exception e) {
                 System.out.print(e.getMessage());
                 return;
-            }
-        }
-
-        private void ensureMediaPlayerDeath() {
-            if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
             }
         }
 

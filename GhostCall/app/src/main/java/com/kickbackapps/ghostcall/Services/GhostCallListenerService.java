@@ -210,16 +210,18 @@ public class GhostCallListenerService extends GcmListenerService {
 
     private void sendCallNotification(String notificationType) {
         if (notificationType.equals("incoming_call")) {
+
             Intent intent = new Intent(this, CallScreen.class);
             intent.putExtra("toNumberBox", fromNumber);
             intent.putExtra("ghostIDExtra", numberID);
+            intent.putExtra("incomingSipCall", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.gc_notif)
-                    .setContentTitle("GhostCall")
-                    .setContentText(callTitle)
+                    .setContentTitle(callTitle)
+                    .setContentText("GhostCall - Click to answer")
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
                     .setColor(R.color.titleblue)
