@@ -173,8 +173,8 @@ public class GhostCallListenerService extends GcmListenerService {
 
         if (data.getString("type") != null) {
             notificationType = data.getString("type");
-            if (data.getString("title") != null) {
-                callTitle = data.getString("title");
+            if (data.getString("caller_id") != null) {
+                callTitle = data.getString("caller_id");
             }
             Log.d("notificationType", notificationType);
         }
@@ -221,7 +221,7 @@ public class GhostCallListenerService extends GcmListenerService {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.gc_notif)
                     .setContentTitle(callTitle)
-                    .setContentText("GhostCall - Click to answer")
+                    .setContentText("Incoming call - Click to answer")
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
                     .setColor(R.color.titleblue)
