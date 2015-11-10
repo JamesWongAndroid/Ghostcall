@@ -230,39 +230,42 @@ public class HistoryScreen extends AppCompatActivity {
 
                                             try {
                                            //     mediaPlayer.setDataSource(getApplicationContext(), url, headers);
-                                                mediaPlayer.reset();
-                                                mediaPlayer.setDataSource(getApplicationContext(), url);
-                                                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                                                mediaPlayer.prepareAsync();
+                                                if (mediaPlayer != null) {
+                                                    mediaPlayer.reset();
+                                                    mediaPlayer.setDataSource(getApplicationContext(), url);
+                                                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                                    mediaPlayer.prepareAsync();
+                                                }
                                             } catch (IOException e) {
                                                 Toast.makeText(getApplicationContext(), "Fail to load recording", Toast.LENGTH_SHORT).show();
                                                 gHistoryList.get(position).setHistoryState("not_playing");
                                                 ensureMediaPlayerDeath();
                                                 historyAdapter.notifyDataSetChanged();
                                             }
-
-                                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                                @Override
-                                                public void onPrepared(MediaPlayer mp) {
-                                                    Log.d("wired headset", Boolean.toString(audioManager.isWiredHeadsetOn()));
-                                                    if (!audioManager.isWiredHeadsetOn()) {
-                                                        audioManager.setSpeakerphoneOn(true);
-                                                    } else {
-                                                        audioManager.setSpeakerphoneOn(false);
+                                            if (mediaPlayer != null) {
+                                                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                                    @Override
+                                                    public void onPrepared(MediaPlayer mp) {
+                                                        Log.d("wired headset", Boolean.toString(audioManager.isWiredHeadsetOn()));
+                                                        if (!audioManager.isWiredHeadsetOn()) {
+                                                            audioManager.setSpeakerphoneOn(true);
+                                                        } else {
+                                                            audioManager.setSpeakerphoneOn(false);
+                                                        }
+                                                        mp.start();
+                                                        gHistoryList.get(position).setHistoryState("playing");
+                                                        historyAdapter.notifyDataSetChanged();
                                                     }
-                                                    mp.start();
-                                                    gHistoryList.get(position).setHistoryState("playing");
-                                                    historyAdapter.notifyDataSetChanged();
-                                                }
-                                            });
-                                            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                                @Override
-                                                public void onCompletion(MediaPlayer mp) {
-                                                    gHistoryList.get(position).setHistoryState("not_playing");
-                                                    ensureMediaPlayerDeath();
-                                                    historyAdapter.notifyDataSetChanged();
-                                                }
-                                            });
+                                                });
+                                                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                    @Override
+                                                    public void onCompletion(MediaPlayer mp) {
+                                                        gHistoryList.get(position).setHistoryState("not_playing");
+                                                        ensureMediaPlayerDeath();
+                                                        historyAdapter.notifyDataSetChanged();
+                                                    }
+                                                });
+                                            }
                                         }
 
                                         @Override
