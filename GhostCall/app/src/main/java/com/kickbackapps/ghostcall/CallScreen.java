@@ -159,6 +159,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     String credits;
     String toNumberBox;
     boolean incomingSipCall = false;
+    int callStatusFailedLimit = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -381,6 +382,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                                             Toast.makeText(getApplicationContext(), "Making Call", Toast.LENGTH_SHORT).show();
                                             Log.d("STARTED CALL", "started call");
                                             initiatedLimit = 0;
+                                            callStatusFailedLimit = 0;
                                             scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
                                             scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
                                         }
@@ -1068,6 +1070,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             try {
 //                call.makeCall(toSipAccount, prm);
                 MyPJSIP.makeCall(toSipAccount);
+                callStatusFailedLimit = 0;
                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
                 scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
             } catch (Exception e) {
@@ -1093,6 +1096,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
             try {
                 MyPJSIP.answerCall();
+                callStatusFailedLimit = 0;
                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
                 scheduledFuture = scheduledThreadPoolExecutor.scheduleAtFixedRate(new CheckCallStatus(), 0, 5, TimeUnit.SECONDS);
 
@@ -1331,12 +1335,69 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                 @Override
                 public void failure(RetrofitError retrofitError) {
-                    rippleBackground.stopRippleAnimation();
-                    rippleBackground.setVisibility(View.GONE);
-                    removeAllViews();
-                    showDialpad();
-                    bgHolder.setClickable(true);
-                    vcHolder.setClickable(true);
+                    callStatusFailedLimit++;
+                    Log.d("call status fail", Integer.toString(callStatusFailedLimit));
+                    if (callStatusFailedLimit > 5) {
+
+                        try {
+                            if (!MyPJSIP.ep.libIsThreadRegistered()) {
+                                MyPJSIP.ep.libRegisterThread("failCall");
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                        MyPJSIP.ep.hangupAllCalls();
+                        callStatusFailedLimit = 0;
+                        scheduledFuture.cancel(true);
+                        scheduledThreadPoolExecutor.shutdownNow();
+
+                        AlertDialog.Builder errorBox = new AlertDialog.Builder(CallScreen.this);
+                        errorBox.setTitle("Call Disconnected");
+                        errorBox.setMessage("Your call has been disconnected");
+                        errorBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        errorBox.show();
+
+                        removeAllViews();
+                        closeButton.setText("Close");
+                        showDialpad();
+                        bgHolder.setClickable(true);
+                        vcHolder.setClickable(true);
+                        effectsHolder.setClickable(true);
+                        recordButton.setClickable(true);
+                        Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
+
+                        GetUserInfo userInfo = new GetUserInfo(CallScreen.this);
+                        userInfo.getUserDataForCall();
+
+                        if (extras != null) {
+                            if (extras.getString("callName") != null) {
+                                numberName.setText(extras.getString("callName"));
+                            }  else {
+                                if (extras.getString("ghostIDExtra") != null) {
+                                    GhostCallDatabaseAdapter adapter = new GhostCallDatabaseAdapter(getApplicationContext());
+                                    try {
+
+                                        if (extras.getString("ghostIDExtra") != null) {
+                                            adapter.open();
+                                            numberName.setText(adapter.getNumberName(extras.getString("ghostIDExtra")));
+                                            adapter.close();
+                                        }
+
+                                    } catch (SQLException e) {
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
