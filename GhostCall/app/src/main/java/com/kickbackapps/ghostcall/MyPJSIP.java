@@ -15,6 +15,7 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.Media;
+import org.pjsip.pjsua2.MediaConfig;
 import org.pjsip.pjsua2.OnCallMediaStateParam;
 import org.pjsip.pjsua2.OnCallStateParam;
 import org.pjsip.pjsua2.OnIncomingCallParam;
@@ -47,6 +48,8 @@ public class MyPJSIP {
         try {
             ep.libCreate();
             EpConfig epConfig = new EpConfig();
+            MediaConfig med_cfg = epConfig.getMedConfig();
+            med_cfg.setNoVad(true);
             ep.libInit(epConfig);
             sipTpConfig.setPort(5060);
             ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
@@ -100,6 +103,7 @@ public class MyPJSIP {
             try {
                 CallInfo ci = getInfo();
                 if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                    Log.d("testing call state", Boolean.toString(call.isActive()));
                     this.delete();
                     call = null;
                 }

@@ -234,8 +234,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
         }
 
-    //    new registerPJSIP().execute();
-
         dialpadHolder = (RelativeLayout) findViewById(R.id.dialpadLayout);
         spinnerLayout = (RelativeLayout) findViewById(R.id.spinnerLayout);
         progressSpinner = (CircleProgressBar) findViewById(R.id.progressBar);
@@ -527,9 +525,14 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         Log.d("sending effects", "effects id = " + effectsList.get(position).getEffectsID() + " resourceID = " + resourceID);
                     }
 
+
                     try {
                         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                         mediaPlayer.setDataSource(effectsList.get(position).getEffectsURL());
+                        if (currentCallStatus.equals("connected")) {
+                            float mute = 0;
+                            mediaPlayer.setVolume(mute, mute);
+                        }
                         mediaPlayer.prepareAsync();
                     } catch (IOException e) {
                         Toast.makeText(getApplicationContext(), "Fail to load sound", Toast.LENGTH_SHORT).show();
@@ -627,11 +630,21 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
+
         if (incomingSipCall) {
             incomingSipCall = false;
             if (MyPJSIP.call != null) {
                 new answerPJSIPCall().execute();
+                removeAllViews();
+                isViewingEffects = true;
+                effectsGrid.setVisibility(View.VISIBLE);
+                closeButton.setVisibility(View.VISIBLE);
+                closeButton.setText("Hang Up");
+                toggleSpeakerPhone.setVisibility(View.VISIBLE);
+                effectsIcon.setImageResource(R.drawable.effects_on);
+                Log.d("This is answering", "yes");
             } else {
+                Log.d("This is answering", "no");
                 final AlertDialog.Builder missedCallBox = new AlertDialog.Builder(CallScreen.this);
                 missedCallBox.setTitle("Missed Call");
                 missedCallBox.setMessage("Sorry, you missed the call.");
@@ -891,23 +904,24 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         if (isSpeakerOn) {
             audioManager.setSpeakerphoneOn(false);
         }
+        ensureMediaPlayerDeath();
 
-        try {
-            if (!ep.libIsThreadRegistered()) {
-                ep.libRegisterThread("destroy");
-            }
-        } catch (Exception e) {
-
-        }
-
-        try {
-            acc.delete();
-            ep.libDestroy();
-            ep.delete();
-
-        } catch (Exception e) {
-
-        }
+//        try {
+//            if (!ep.libIsThreadRegistered()) {
+//                ep.libRegisterThread("destroy");
+//            }
+//        } catch (Exception e) {
+//
+//        }
+//
+//        try {
+//            acc.delete();
+//            ep.libDestroy();
+//            ep.delete();
+//
+//        } catch (Exception e) {
+//
+//        }
         super.onDestroy();
     }
 
@@ -1108,6 +1122,52 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (currentCallStatus.equals("connected")) {
+            AlertDialog.Builder closeBox = new AlertDialog.Builder(CallScreen.this);
+            closeBox.setTitle("Leave Call?");
+            closeBox.setMessage("Your call will be disconnected");
+            closeBox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            closeBox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (currentCallStatus.equals("connected")) {
+                        spinnerLayout.setVisibility(View.VISIBLE);
+                        service.hangUpCall(resourceID, new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+                                Intent toHomeScreen = new Intent(CallScreen.this, HomeScreen.class);
+                                startActivity(toHomeScreen);
+                                finish();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Intent toHomeScreen = new Intent(CallScreen.this, HomeScreen.class);
+                                startActivity(toHomeScreen);
+                                finish();
+                            }
+                        });
+                    } else {
+                        dialog.cancel();
+                    }
+                }
+            });
+
+            closeBox.show();
+        } else {
+            Intent toHomeScreen = new Intent(CallScreen.this, HomeScreen.class);
+            startActivity(toHomeScreen);
+            finish();
+        }
+    }
+
     public class registerPJSIP extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -1231,105 +1291,109 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             service.getCallStatus(resourceID, new Callback<CallStatus>() {
                 @Override
                 public void success(CallStatus callStatus, Response response) {
-                    Log.d("GHOSTCALL CALL STATUS", callStatus.getStatus());
-                    currentCallStatus = callStatus.getStatus();
-                    bgHolder.setClickable(false);
-                    vcHolder.setClickable(false);
-                    effectsHolder.setClickable(false);
-                    recordButton.setClickable(false);
-
-                    if (currentCallStatus.equals("initiated")) {
-                        initiatedLimit++;
-                        closeButton.setVisibility(View.VISIBLE);
-                        closeButton.setText("Hang Up");
-                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
-                        Log.d("initiated limit", Integer.toString(initiatedLimit));
-                        if (initiatedLimit > 8) {
-                            scheduledFuture.cancel(true);
-                            scheduledThreadPoolExecutor.shutdownNow();
-                            removeAllViews();
-                            closeButton.setText("Close");
-                            showDialpad();
-                            if (extras != null) {
-                                if (extras.getString("callName") != null) {
-                                    numberName.setText(extras.getString("callName"));
-                                }
-                            }
-                            bgHolder.setClickable(true);
-                            vcHolder.setClickable(true);
-                            effectsHolder.setClickable(true);
-                            recordButton.setClickable(true);
-                            Toast.makeText(CallScreen.this, "Call took too long to connect", Toast.LENGTH_SHORT).show();
-                            Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
-                        }
-                    }
-
-
-                    if (currentCallStatus.equals("connected")) {
-                        rippleBackground.stopRippleAnimation();
-                        rippleBackground.setVisibility(View.GONE);
-                        removeAllViews();
-                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
-                        closeButton.setVisibility(View.VISIBLE);
-                        closeButton.setText("Hang Up");
-                        effectsGrid.setVisibility(View.VISIBLE);
-                        if (!numberBox.getText().equals("")) {
-                            numberName.setText("Talking to " + numberBox.getText().toString());
-                        }
-
-                    }
-
-                    if (currentCallStatus.equals("connecting")) {
-                       makeCallButton.setVisibility(View.GONE);
-                        toggleSpeakerPhone.setVisibility(View.VISIBLE);
-                        closeButton.setVisibility(View.VISIBLE);
-                        closeButton.setText("Hang Up");
+                    if (callStatus != null) {
+                        Log.d("GHOSTCALL CALL STATUS", callStatus.getStatus());
+                        currentCallStatus = callStatus.getStatus();
                         bgHolder.setClickable(false);
                         vcHolder.setClickable(false);
                         effectsHolder.setClickable(false);
                         recordButton.setClickable(false);
-                    }
 
-                    if (currentCallStatus.equals("hangup")) {
-                        scheduledFuture.cancel(true);
-                        scheduledThreadPoolExecutor.shutdownNow();
-
-                        removeAllViews();
-                        closeButton.setText("Close");
-                        showDialpad();
-                        bgHolder.setClickable(true);
-                        vcHolder.setClickable(true);
-                        effectsHolder.setClickable(true);
-                        recordButton.setClickable(true);
-                        Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
-
-                        GetUserInfo userInfo = new GetUserInfo(CallScreen.this);
-                        userInfo.getUserDataForCall();
-
-                        if (extras != null) {
-                            if (extras.getString("callName") != null) {
-                                numberName.setText(extras.getString("callName"));
-                            }  else {
-                                if (extras.getString("ghostIDExtra") != null) {
-                                    GhostCallDatabaseAdapter adapter = new GhostCallDatabaseAdapter(getApplicationContext());
-                                    try {
-
-                                        if (extras.getString("ghostIDExtra") != null) {
-                                            adapter.open();
-                                            numberName.setText(adapter.getNumberName(extras.getString("ghostIDExtra")));
-                                            adapter.close();
-                                        }
-
-                                    } catch (SQLException e) {
-
+                        if (currentCallStatus.equals("initiated")) {
+                            initiatedLimit++;
+                            closeButton.setVisibility(View.VISIBLE);
+                            closeButton.setText("Hang Up");
+                            toggleSpeakerPhone.setVisibility(View.VISIBLE);
+                            Log.d("initiated limit", Integer.toString(initiatedLimit));
+                            if (initiatedLimit > 8) {
+                                initiatedLimit = 0;
+                                scheduledFuture.cancel(true);
+                                scheduledThreadPoolExecutor.shutdownNow();
+                                removeAllViews();
+                                closeButton.setText("Close");
+                                showDialpad();
+                                if (extras != null) {
+                                    if (extras.getString("callName") != null) {
+                                        numberName.setText(extras.getString("callName"));
                                     }
-
                                 }
+                                bgHolder.setClickable(true);
+                                vcHolder.setClickable(true);
+                                effectsHolder.setClickable(true);
+                                recordButton.setClickable(true);
+                                Toast.makeText(CallScreen.this, "Call took too long to connect", Toast.LENGTH_SHORT).show();
+                                Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
                             }
                         }
 
 
+                        if (currentCallStatus.equals("connected")) {
+                            rippleBackground.stopRippleAnimation();
+                            rippleBackground.setVisibility(View.GONE);
+                            removeAllViews();
+                            toggleSpeakerPhone.setVisibility(View.VISIBLE);
+                            closeButton.setVisibility(View.VISIBLE);
+                            closeButton.setText("Hang Up");
+                            effectsGrid.setVisibility(View.VISIBLE);
+                            if (!numberBox.getText().equals("")) {
+                                numberName.setText("Talking to " + numberBox.getText().toString());
+                            }
+
+                        }
+
+                        if (currentCallStatus.equals("connecting")) {
+                            makeCallButton.setVisibility(View.GONE);
+                            toggleSpeakerPhone.setVisibility(View.VISIBLE);
+                            closeButton.setVisibility(View.VISIBLE);
+                            closeButton.setText("Hang Up");
+                            bgHolder.setClickable(false);
+                            vcHolder.setClickable(false);
+                            effectsHolder.setClickable(false);
+                            recordButton.setClickable(false);
+                        }
+
+                        if (currentCallStatus.equals("hangup")) {
+                            scheduledFuture.cancel(true);
+                            scheduledThreadPoolExecutor.shutdownNow();
+
+                            removeAllViews();
+                            closeButton.setText("Close");
+                            showDialpad();
+                            bgHolder.setClickable(true);
+                            vcHolder.setClickable(true);
+                            effectsHolder.setClickable(true);
+                            recordButton.setClickable(true);
+                            Log.d("SCHEDULED GOT SHUT DOWN", "SHUT DOWN");
+
+                            GetUserInfo userInfo = new GetUserInfo(CallScreen.this);
+                            userInfo.getUserDataForCall();
+
+                            if (extras != null) {
+                                if (extras.getString("callName") != null) {
+                                    numberName.setText(extras.getString("callName"));
+                                }  else {
+                                    if (extras.getString("ghostIDExtra") != null) {
+                                        GhostCallDatabaseAdapter adapter = new GhostCallDatabaseAdapter(getApplicationContext());
+                                        try {
+
+                                            if (extras.getString("ghostIDExtra") != null) {
+                                                adapter.open();
+                                                numberName.setText(adapter.getNumberName(extras.getString("ghostIDExtra")));
+                                                adapter.close();
+                                            }
+
+                                        } catch (SQLException e) {
+
+                                        }
+
+                                    }
+                                }
+                            }
+
+
+                        }
                     }
+
 
                 }
 

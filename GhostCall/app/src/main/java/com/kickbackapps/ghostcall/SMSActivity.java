@@ -179,7 +179,7 @@ public class SMSActivity extends AppCompatActivity {
                             nDatabaseAdapter.close();
 
                             if (!smsObjectArrayList.isEmpty()) {
-
+                                smsObjectArrayList = removeDuplicates(smsObjectArrayList);
                                 smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
                                 messagesList.setAdapter(smsAdapter);
                             }
@@ -214,7 +214,7 @@ public class SMSActivity extends AppCompatActivity {
                     nDatabaseAdapter.close();
 
                     if (!smsObjectArrayList.isEmpty()) {
-
+                        smsObjectArrayList = removeDuplicates(smsObjectArrayList);
                         smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
                         messagesList.setAdapter(smsAdapter);
                     }
@@ -323,6 +323,7 @@ public class SMSActivity extends AppCompatActivity {
                                 smsAdapter.notifyDataSetChanged();
                                 messagesList.setSelection(smsAdapter.getCount() - 1);
                             } else {
+                                smsObjectArrayList = removeDuplicates(smsObjectArrayList);
                                 smsAdapter.getData().clear();
                                 smsAdapter.getData().addAll(smsObjectArrayList);
                                 smsAdapter.notifyDataSetChanged();
@@ -404,6 +405,7 @@ public class SMSActivity extends AppCompatActivity {
                     nDatabaseAdapter.close();
 
                     if (!smsObjectArrayList.isEmpty()) {
+                        smsObjectArrayList = removeDuplicates(smsObjectArrayList);
                         smsAdapter = new SmsAdapter(SMSActivity.this, smsObjectArrayList);
                         messagesList.setAdapter(smsAdapter);
                     }
@@ -457,6 +459,21 @@ public class SMSActivity extends AppCompatActivity {
             cursorPhone.close();
             return "";
         }
+    }
+
+    public ArrayList<SmsObject> removeDuplicates(ArrayList<SmsObject> smsList) {
+        for (int i = 0; i < smsList.size(); i++) {
+            if (i != 0) {
+                int previousValue = i - 1;
+                SmsObject previousSmsObject = smsList.get(previousValue);
+                SmsObject currentSmsObject = smsList.get(i);
+                if (previousSmsObject.getMessageDate().equals(currentSmsObject.getMessageDate()) &&
+                        (previousSmsObject.getMessageText().equals(currentSmsObject.getMessageText()))) {
+                    smsList.remove(i);
+                }
+            }
+        }
+        return smsList;
     }
 
     public class getNumbersTask extends AsyncTask<Void, Integer, Void> {
@@ -641,6 +658,17 @@ public class SMSActivity extends AppCompatActivity {
                         messagesList.setSelection(smsAdapter.getCount() - 1);
                         canSendAgain = true;
                     } else {
+                        for (int i = 0; i < smsObjectArrayList.size(); i++) {
+                            if (i != 0) {
+                                int previousValue = i - 1;
+                                SmsObject previousSmsObject = smsObjectArrayList.get(previousValue);
+                                SmsObject currentSmsObject = smsObjectArrayList.get(i);
+                                if (previousSmsObject.getMessageDate().equals(currentSmsObject.getMessageDate()) &&
+                                        (previousSmsObject.getMessageText().equals(currentSmsObject.getMessageText()))) {
+                                    smsObjectArrayList.remove(i);
+                                }
+                            }
+                        }
                         smsAdapter.getData().clear();
                         smsAdapter.getData().addAll(smsObjectArrayList);
                         smsAdapter.notifyDataSetChanged();

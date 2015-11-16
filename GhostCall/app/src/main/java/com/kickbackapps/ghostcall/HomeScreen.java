@@ -82,12 +82,7 @@ public class HomeScreen extends AppCompatActivity {
         String userName = settings.getString(Constants.SIP_NAME, "");
         String password = settings.getString(Constants.SIP_PASSWORD, "");
 
-
-
-        if (pjsipObject == null) {
-            pjsipObject = new MyPJSIP();
-            pjsipObject.init(userName, password);
-        }
+        startService(new Intent(this, MyPJSIPService.class));
 
         userRemainingText.setText(userSMS + " sms / " + userMins + " mins left");
 

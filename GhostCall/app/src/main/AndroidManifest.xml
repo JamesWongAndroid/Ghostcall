@@ -87,8 +87,8 @@
             android:name=".CallScreen"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_activity_call_screen"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
@@ -99,11 +99,10 @@
         <activity
             android:name=".SMSActivity"
             android:label="@string/title_activity_history_settings_screen"
+            android:launchMode="singleTask"
             android:parentActivityName=".HomeScreen"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTask"
-            >
+            android:windowSoftInputMode="adjustPan" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -145,6 +144,12 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="eab32f443ab1c4e2c5265cc77b77ae655fa03935" />
+
+        <service
+            android:name=".MyPJSIPService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
