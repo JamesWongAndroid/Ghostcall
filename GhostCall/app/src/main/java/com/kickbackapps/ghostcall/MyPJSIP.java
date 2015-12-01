@@ -38,14 +38,17 @@ public class MyPJSIP {
 
     public static Endpoint ep = new Endpoint();
     TransportConfig sipTpConfig = new TransportConfig();
-    String host = "sip:sip.ghostcall.in";
+    public static String host = "sip:sip.ghostcall.in";
     public static MyCall call;
     public static MyAccount acc;
-    AccountInfo info;
+    public static AccountInfo info;
     public static OnIncomingCallParam incomingCallParam;
 
     public void init(String userName, String password) {
         try {
+            if (ep == null) {
+                ep = new Endpoint();
+            }
             ep.libCreate();
             EpConfig epConfig = new EpConfig();
             MediaConfig med_cfg = epConfig.getMedConfig();
@@ -80,7 +83,23 @@ public class MyPJSIP {
 
     }
 
-    public class MyAccount extends Account {
+    public static void endPJSIP() {
+        if (ep != null) {
+            try {
+                if (acc != null) {
+                    acc.delete();
+                }
+                ep.libDestroy();
+                ep.delete();
+                ep = null;
+            } catch (Exception e) {
+
+            }
+
+        }
+    }
+
+    public static class MyAccount extends Account {
 
         @Override
         public void onIncomingCall(OnIncomingCallParam prm) {

@@ -1082,7 +1082,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 //            CallOpParam prm = new CallOpParam(true);
 
             try {
-//                call.makeCall(toSipAccount, prm);
                 MyPJSIP.makeCall(toSipAccount);
                 callStatusFailedLimit = 0;
                 scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
@@ -1284,7 +1283,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
     public class CheckCallStatus implements Runnable {
 
-
         @Override
         public void run() {
 
@@ -1301,6 +1299,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
                         if (currentCallStatus.equals("initiated")) {
                             initiatedLimit++;
+                            makeCallButton.setVisibility(View.INVISIBLE);
                             closeButton.setVisibility(View.VISIBLE);
                             closeButton.setText("Hang Up");
                             toggleSpeakerPhone.setVisibility(View.VISIBLE);
@@ -1328,6 +1327,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
 
                         if (currentCallStatus.equals("connected")) {
+                            callStatusFailedLimit = 0;
                             rippleBackground.stopRippleAnimation();
                             rippleBackground.setVisibility(View.GONE);
                             removeAllViews();
@@ -1342,6 +1342,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                         }
 
                         if (currentCallStatus.equals("connecting")) {
+                            callStatusFailedLimit = 0;
                             makeCallButton.setVisibility(View.GONE);
                             toggleSpeakerPhone.setVisibility(View.VISIBLE);
                             closeButton.setVisibility(View.VISIBLE);
@@ -1426,7 +1427,13 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
                             }
                         });
 
-                        errorBox.show();
+
+                        try {
+                            errorBox.show();
+                        } catch (Exception e) {
+                            Log.d("errorBox exception", e.getMessage());
+                        }
+
 
                         removeAllViews();
                         closeButton.setText("Close");

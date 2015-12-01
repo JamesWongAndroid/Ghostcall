@@ -30,6 +30,15 @@ public class MyPJSIPService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (pjsipObject != null) {
+            MyPJSIP.endPJSIP();
+        }
+
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
