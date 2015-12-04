@@ -48,26 +48,20 @@ import com.squareup.okhttp.OkHttpClient;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.pjsip.pjsua2.Account;
-import org.pjsip.pjsua2.AccountConfig;
-import org.pjsip.pjsua2.AccountInfo;
 import org.pjsip.pjsua2.AudioMedia;
-import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.Call;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallMediaInfoVector;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Endpoint;
-import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnCallMediaStateParam;
 import org.pjsip.pjsua2.OnCallStateParam;
 import org.pjsip.pjsua2.OnIncomingCallParam;
-import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
-import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import java.io.IOException;
@@ -150,9 +144,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
     int initiatedLimit = 0;
     Account acc;
     Endpoint ep;
-    AccountInfo info;
     MyCall call;
-    String host = "sip:sip.ghostcall.in";
     AudioManager audioManager;
     boolean isSpeakerOn = false;
     Button toggleSpeakerPhone;
@@ -689,7 +681,7 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
             @Override
             public void failure(RetrofitError retrofitError) {
-
+                Log.d("Call Status failed:", retrofitError.getMessage());
             }
         });
     }
@@ -905,23 +897,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             audioManager.setSpeakerphoneOn(false);
         }
         ensureMediaPlayerDeath();
-
-//        try {
-//            if (!ep.libIsThreadRegistered()) {
-//                ep.libRegisterThread("destroy");
-//            }
-//        } catch (Exception e) {
-//
-//        }
-//
-//        try {
-//            acc.delete();
-//            ep.libDestroy();
-//            ep.delete();
-//
-//        } catch (Exception e) {
-//
-//        }
         super.onDestroy();
     }
 
@@ -1164,54 +1139,6 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
             Intent toHomeScreen = new Intent(CallScreen.this, HomeScreen.class);
             startActivity(toHomeScreen);
             finish();
-        }
-    }
-
-    public class registerPJSIP extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-                try {
-
-                    ep = new Endpoint();
-                    ep.libCreate();
-                    EpConfig epConfig = new EpConfig();
-                    ep.libInit(epConfig);
-                    TransportConfig sipTpConfig = new TransportConfig();
-                    sipTpConfig.setPort(5060);
-                    ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
-                    ep.libStart();
-
-                    AccountConfig acfg = new AccountConfig();
-                    acfg.setIdUri("sip:" + sipUsername);
-                    acfg.getRegConfig().setRegistrarUri(host);
-                    AuthCredInfo cred = new AuthCredInfo("plain", "*", sipUsername, 0, sipPassword);
-                    acfg.getSipConfig().getAuthCreds().add(cred);
-                    acc = new MyAccount();
-                    acc.create(acfg);
-                    Thread.sleep(1000);
-
-                    try {
-                        info = acc.getInfo();
-                        Log.d("is reg active: ", Boolean.toString(info.getRegIsActive()));
-                        Log.d("reg status: ", info.getRegStatusText());
-
-                    } catch (Exception e) {
-                        System.out.print(e.getMessage());
-                    }
-
-                } catch (Exception e) {
-
-                }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
         }
     }
 

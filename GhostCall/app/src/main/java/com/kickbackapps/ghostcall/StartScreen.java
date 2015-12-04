@@ -88,7 +88,6 @@ public class StartScreen extends Activity {
         sipPassword = settings.getString(Constants.SIP_PASSWORD, "");
 
         startRelativeLayout = (RelativeLayout) findViewById(R.id.startRelativeLayout);
-        startRelativeLayout.setBackgroundResource(R.drawable.ghost_call_bg);
 
         if (apiKey.equals("") || verified == false) {
 

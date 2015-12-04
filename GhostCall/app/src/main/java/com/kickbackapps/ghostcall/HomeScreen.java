@@ -1,5 +1,6 @@
 package com.kickbackapps.ghostcall;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,7 +59,6 @@ public class HomeScreen extends AppCompatActivity {
     ArrayList<GhostNumbers> gNumberList;
     SharedPreferences.Editor editor;
     SharedPreferences settings;
-    public static MyPJSIP pjsipObject = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +79,6 @@ public class HomeScreen extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(GHOST_PREF, 0);
         String userSMS = settings.getString("userSMS", "0");
         String userMins = settings.getString("userMins", "0");
-        String userName = settings.getString(Constants.SIP_NAME, "");
-        String password = settings.getString(Constants.SIP_PASSWORD, "");
 
         startService(new Intent(this, MyPJSIPService.class));
 
@@ -202,7 +200,6 @@ public class HomeScreen extends AppCompatActivity {
         if (InternetDialog.haveNetworkConnection(HomeScreen.this)) {
             new getNumbersTask().execute();
         }
-
     }
 
     @Override

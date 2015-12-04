@@ -64,7 +64,7 @@ import retrofit.client.Response;
  */
 public class SMSActivity extends AppCompatActivity {
 
-    ImageView sendTextButton, sendBarOne, sendBarTwo;
+    ImageView sendTextButton;
     ListView messagesList;
     FrameLayout composeButton;
     RelativeLayout composeLayout;
@@ -265,37 +265,41 @@ public class SMSActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (InternetDialog.haveNetworkConnection(SMSActivity.this)) {
-                    if (!smsLimit.equals("0")) {
-                        if (canSendAgain) {
-                            sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
-                            final String sendText = composeEditText.getText().toString();
-                            composeEditText.setText("");
+                    if (smsLimit != null) {
+                        if (!smsLimit.equals("0")) {
+                            if (canSendAgain) {
+                                sendTextButton.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP);
+                                final String sendText = composeEditText.getText().toString();
+                                composeEditText.setText("");
 
-                            tempNew.setMessageText(sendText);
-                            tempNew.setMessageDirection("out");
-                            tempNew.setMessageDate("sending...");
-                            smsAdapter.getData().add(tempNew);
-                            smsAdapter.notifyDataSetChanged();
-                            messagesList.setSelection(smsAdapter.getCount() - 1);
+                                tempNew.setMessageText(sendText);
+                                tempNew.setMessageDirection("out");
+                                tempNew.setMessageDate("sending...");
+                                smsAdapter.getData().add(tempNew);
+                                smsAdapter.notifyDataSetChanged();
+                                messagesList.setSelection(smsAdapter.getCount() - 1);
 
-                            composeButton.setClickable(false);
-                            canSendAgain = false;
-                            service.sendText(toNumber, ghostNumberID, sendText, new Callback<Response>() {
-                                @Override
-                                public void success(Response response, Response response2) {
-                                    new getNumbersTask().execute();
+                                composeButton.setClickable(false);
+                                canSendAgain = false;
+                                service.sendText(toNumber, ghostNumberID, sendText, new Callback<Response>() {
+                                    @Override
+                                    public void success(Response response, Response response2) {
+                                        new getNumbersTask().execute();
 
-                                }
+                                    }
 
-                                @Override
-                                public void failure(RetrofitError retrofitError) {
-                                    tempNew.setMessageDate("failed to send");
-                                    canSendAgain = true;
-                                }
-                            });
+                                    @Override
+                                    public void failure(RetrofitError retrofitError) {
+                                        tempNew.setMessageDate("failed to send");
+                                        canSendAgain = true;
+                                    }
+                                });
+                            }
+                        } else {
+                            Toast.makeText(SMSActivity.this, "Out of Credits", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(SMSActivity.this, "Out of Credits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SMSActivity.this, "There was an error sending your text.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     InternetDialog.showInternetDialog(SMSActivity.this);

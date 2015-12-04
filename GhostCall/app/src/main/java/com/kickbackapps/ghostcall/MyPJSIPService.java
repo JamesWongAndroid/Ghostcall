@@ -35,7 +35,6 @@ public class MyPJSIPService extends Service {
         if (pjsipObject != null) {
             MyPJSIP.endPJSIP();
         }
-
     }
 
     @Override

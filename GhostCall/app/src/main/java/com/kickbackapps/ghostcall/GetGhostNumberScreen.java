@@ -25,7 +25,6 @@ import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class GetGhostNumberScreen extends AppCompatActivity {
@@ -142,7 +141,7 @@ public class GetGhostNumberScreen extends AppCompatActivity {
 
             try {
                 areaCodeObject = service.getAreaCodeStatus(areaCode);
-            } catch (RetrofitError e) {
+            } catch (Exception e) {
                 Log.d("GhostCall-Retrofit", e.getMessage());
             }
 
