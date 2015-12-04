@@ -681,7 +681,8 @@ public class CallScreen extends AppCompatActivity implements View.OnClickListene
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                Log.d("Call Status failed:", retrofitError.getMessage());
+                String error = (retrofitError.getMessage() == null) ? "Call status error" : retrofitError.getMessage();
+                Log.d("Call Status failed:", error);
             }
         });
     }
