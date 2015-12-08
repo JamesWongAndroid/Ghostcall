@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.kickbackapps.ghostcall.PJSIP.MyPJSIPService;
+
 public class NetworkReceiver extends BroadcastReceiver {
 
     private static boolean firstConnect = true;
