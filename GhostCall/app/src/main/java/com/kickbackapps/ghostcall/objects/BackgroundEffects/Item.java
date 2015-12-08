@@ -1,18 +1,18 @@
-package com.kickbackapps.ghostcall.ApiObjects.SoundEffects;
+package com.kickbackapps.ghostcall.objects.BackgroundEffects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Ynott on 7/22/15.
+ * Created by Ynott on 7/23/15.
  */
 public class Item {
 
     @Expose
     private String id;
-    @SerializedName("effect_id")
+    @SerializedName("background_id")
     @Expose
-    private String effectId;
+    private String backgroundId;
     @Expose
     private String name;
     @SerializedName("audio_name")
@@ -60,19 +60,19 @@ public class Item {
     /**
      *
      * @return
-     * The effectId
+     * The backgroundId
      */
-    public String getEffectId() {
-        return effectId;
+    public String getBackgroundId() {
+        return backgroundId;
     }
 
     /**
      *
-     * @param effectId
-     * The effect_id
+     * @param backgroundId
+     * The background_id
      */
-    public void setEffectId(String effectId) {
-        this.effectId = effectId;
+    public void setBackgroundId(String backgroundId) {
+        this.backgroundId = backgroundId;
     }
 
     /**

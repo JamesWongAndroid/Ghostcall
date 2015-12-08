@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     android:id="@+id/rootView"
-    tools:context="com.kickbackapps.ghostcall.Ui.GetGhostNumberScreen">
+    tools:context="com.kickbackapps.ghostcall.ui.GetGhostNumberScreen">
 
     <TextView
         android:text="Get a Ghost Number"

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,13 +21,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kickbackapps.ghostcall.ApiObjects.GhostPackage;
-import com.kickbackapps.ghostcall.ApiObjects.Numbers.ExtendObject;
+import com.kickbackapps.ghostcall.objects.GhostPackage;
+import com.kickbackapps.ghostcall.objects.Numbers.ExtendObject;
 import com.kickbackapps.ghostcall.Constants;
 import com.kickbackapps.ghostcall.GetUserInfo;
 import com.kickbackapps.ghostcall.GhostCallAPIInterface;
 import com.kickbackapps.ghostcall.GhostCallDatabaseAdapter;
-import com.kickbackapps.ghostcall.Adapters.PackageAdapter;
+import com.kickbackapps.ghostcall.adapters.PackageAdapter;
 import com.kickbackapps.ghostcall.R;
 import com.kickbackapps.ghostcall.util.IabHelper;
 import com.kickbackapps.ghostcall.util.IabResult;

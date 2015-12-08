@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

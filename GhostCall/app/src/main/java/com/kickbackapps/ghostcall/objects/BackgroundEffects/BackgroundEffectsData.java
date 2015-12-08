@@ -1,26 +1,49 @@
-package com.kickbackapps.ghostcall.ApiObjects;
+package com.kickbackapps.ghostcall.objects.BackgroundEffects;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Ynott on 7/22/15.
- */
-public class CreditPackagesData {
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Created by Ynott on 7/23/15.
+ */
+public class BackgroundEffectsData {
+
+    @Expose
     private String id;
+    @Expose
     private String name;
-    private String description;
+    @Expose
+    private String type;
+    @Expose
     private String cost;
-    private String credits;
     @SerializedName("ios_product_id")
+    @Expose
     private String iosProductId;
     @SerializedName("android_product_id")
+    @Expose
     private String androidProductId;
+    @SerializedName("image_active")
+    @Expose
+    private String imageActive;
+    @SerializedName("image_on")
+    @Expose
+    private String imageOn;
+    @SerializedName("image_off")
+    @Expose
+    private String imageOff;
     @SerializedName("created_at")
+    @Expose
     private String createdAt;
     @SerializedName("updated_at")
+    @Expose
     private String updatedAt;
-    private String deleted;
+    @Expose
+    private String status;
+    @Expose
+    private List<Item> items = new ArrayList<Item>();
 
     /**
      *
@@ -61,19 +84,19 @@ public class CreditPackagesData {
     /**
      *
      * @return
-     * The description
+     * The type
      */
-    public String getDescription() {
-        return description;
+    public String getType() {
+        return type;
     }
 
     /**
      *
-     * @param description
-     * The description
+     * @param type
+     * The type
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
@@ -92,24 +115,6 @@ public class CreditPackagesData {
      */
     public void setCost(String cost) {
         this.cost = cost;
-    }
-
-    /**
-     *
-     * @return
-     * The credits
-     */
-    public String getCredits() {
-        return credits;
-    }
-
-    /**
-     *
-     * @param credits
-     * The credits
-     */
-    public void setCredits(String credits) {
-        this.credits = credits;
     }
 
     /**
@@ -151,6 +156,60 @@ public class CreditPackagesData {
     /**
      *
      * @return
+     * The imageActive
+     */
+    public String getImageActive() {
+        return imageActive;
+    }
+
+    /**
+     *
+     * @param imageActive
+     * The image_active
+     */
+    public void setImageActive(String imageActive) {
+        this.imageActive = imageActive;
+    }
+
+    /**
+     *
+     * @return
+     * The imageOn
+     */
+    public String getImageOn() {
+        return imageOn;
+    }
+
+    /**
+     *
+     * @param imageOn
+     * The image_on
+     */
+    public void setImageOn(String imageOn) {
+        this.imageOn = imageOn;
+    }
+
+    /**
+     *
+     * @return
+     * The imageOff
+     */
+    public String getImageOff() {
+        return imageOff;
+    }
+
+    /**
+     *
+     * @param imageOff
+     * The image_off
+     */
+    public void setImageOff(String imageOff) {
+        this.imageOff = imageOff;
+    }
+
+    /**
+     *
+     * @return
      * The createdAt
      */
     public String getCreatedAt() {
@@ -187,18 +246,37 @@ public class CreditPackagesData {
     /**
      *
      * @return
-     * The deleted
+     * The status
      */
-    public String getDeleted() {
-        return deleted;
+    public String getStatus() {
+        return status;
     }
 
     /**
      *
-     * @param deleted
-     * The deleted
+     * @param status
+     * The status
      */
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
+    public void setStatus(String status) {
+        this.status = status;
     }
+
+    /**
+     *
+     * @return
+     * The items
+     */
+    public List<Item> getItems() {
+        return items;
+    }
+
+    /**
+     *
+     * @param items
+     * The items
+     */
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
 }

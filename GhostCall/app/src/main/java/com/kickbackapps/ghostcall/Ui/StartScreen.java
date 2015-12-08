@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,15 +19,15 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects.BackgroundEffectsData;
-import com.kickbackapps.ghostcall.ApiObjects.CreditPackagesData;
-import com.kickbackapps.ghostcall.ApiObjects.NumberPackagesData;
-import com.kickbackapps.ghostcall.ApiObjects.SoundEffects.SoundEffectsData;
+import com.kickbackapps.ghostcall.objects.BackgroundEffects.BackgroundEffectsData;
+import com.kickbackapps.ghostcall.objects.CreditPackagesData;
+import com.kickbackapps.ghostcall.objects.NumberPackagesData;
+import com.kickbackapps.ghostcall.objects.SoundEffects.SoundEffectsData;
 import com.kickbackapps.ghostcall.Constants;
 import com.kickbackapps.ghostcall.GhostCallAPIInterface;
 import com.kickbackapps.ghostcall.GhostCallDatabaseAdapter;
 import com.kickbackapps.ghostcall.R;
-import com.kickbackapps.ghostcall.User.UserData;
+import com.kickbackapps.ghostcall.user.UserData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -379,7 +379,7 @@ public class StartScreen extends Activity {
                         List<SoundEffectsData> soundEffectsDataList = service.getsoundEffectsList();
                         if (!soundEffectsDataList.isEmpty()) {
                             for (int i = 0; i < soundEffectsDataList.size(); i++) {
-                                List<com.kickbackapps.ghostcall.ApiObjects.SoundEffects.Item> effectItems = soundEffectsDataList.get(i).getItems();
+                                List<com.kickbackapps.ghostcall.objects.SoundEffects.Item> effectItems = soundEffectsDataList.get(i).getItems();
                                 for (int j = 0; j < effectItems.size(); j++) {
                                     numberAdapter.createSoundEffect(effectItems.get(j).getId(), effectItems.get(j).getEffectId(), effectItems.get(j).getName(),
                                             effectItems.get(j).getAudioName(), effectItems.get(j).getVolume(), effectItems.get(j).getImageActive(), effectItems.get(j).getImageOn(),
@@ -397,7 +397,7 @@ public class StartScreen extends Activity {
                         List<BackgroundEffectsData> backgroundEffectsDataList = service.getBackgroundEffectsList();
                         if (!backgroundEffectsDataList.isEmpty()) {
                             for (int i = 0; i < backgroundEffectsDataList.size(); i++) {
-                                List<com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects.Item> backgroundItems = backgroundEffectsDataList.get(i).getItems();
+                                List<com.kickbackapps.ghostcall.objects.BackgroundEffects.Item> backgroundItems = backgroundEffectsDataList.get(i).getItems();
                                 for (int j = 0; j < backgroundItems.size(); j++) {
                                     numberAdapter.createBackgroundEffects(backgroundItems.get(j).getId(), backgroundItems.get(j).getBackgroundId(), backgroundItems.get(j).getName(),
                                             backgroundItems.get(j).getAudioName(), backgroundItems.get(j).getVolume(), backgroundItems.get(j).getAudioUrl());

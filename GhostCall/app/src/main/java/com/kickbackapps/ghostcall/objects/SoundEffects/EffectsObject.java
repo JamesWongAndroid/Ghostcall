@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.SoundEffects;
+package com.kickbackapps.ghostcall.objects.SoundEffects;
 
 /**
  * Created by Ynott on 8/11/15.

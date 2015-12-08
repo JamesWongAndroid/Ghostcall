@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.Numbers;
+package com.kickbackapps.ghostcall.objects.Numbers;
 
 import com.google.gson.annotations.Expose;
 

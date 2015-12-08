@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -33,7 +33,7 @@ import com.kickbackapps.ghostcall.InternetDialog;
 import com.kickbackapps.ghostcall.PhoneNumberTextWatcher;
 import com.kickbackapps.ghostcall.R;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
-import com.kickbackapps.ghostcall.Services.RegistrationIntentService;
+import com.kickbackapps.ghostcall.services.RegistrationIntentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;

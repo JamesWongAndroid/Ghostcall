@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.SoundEffects;
+package com.kickbackapps.ghostcall.objects.SoundEffects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Adapters;
+package com.kickbackapps.ghostcall.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kickbackapps.ghostcall.ApiObjects.SoundEffects.EffectsObject;
+import com.kickbackapps.ghostcall.objects.SoundEffects.EffectsObject;
 import com.kickbackapps.ghostcall.R;
 
 import java.util.List;

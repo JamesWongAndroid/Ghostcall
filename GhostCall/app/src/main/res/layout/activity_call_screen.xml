@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context="com.kickbackapps.ghostcall.Ui.CallScreen">
+    tools:context="com.kickbackapps.ghostcall.ui.CallScreen">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Services;
+package com.kickbackapps.ghostcall.services;
 
 import android.content.Intent;
 

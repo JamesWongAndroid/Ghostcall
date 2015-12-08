@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects;
+package com.kickbackapps.ghostcall.objects;
 
 public class GhostPackage {
 

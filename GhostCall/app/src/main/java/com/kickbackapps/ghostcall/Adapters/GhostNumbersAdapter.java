@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Adapters;
+package com.kickbackapps.ghostcall.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kickbackapps.ghostcall.ApiObjects.GhostNumbers;
+import com.kickbackapps.ghostcall.objects.GhostNumbers;
 import com.kickbackapps.ghostcall.R;
-import com.kickbackapps.ghostcall.Ui.SMSActivity;
-import com.kickbackapps.ghostcall.Ui.CallScreen;
+import com.kickbackapps.ghostcall.ui.SMSActivity;
+import com.kickbackapps.ghostcall.ui.CallScreen;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.User;
+package com.kickbackapps.ghostcall.user;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

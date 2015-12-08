@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.widget.TextView;
 
-import com.kickbackapps.ghostcall.User.UserData;
+import com.kickbackapps.ghostcall.user.UserData;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;

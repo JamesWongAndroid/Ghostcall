@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -44,9 +44,9 @@ import com.kickbackapps.ghostcall.GhostCallDatabaseAdapter;
 import com.kickbackapps.ghostcall.InternetDialog;
 import com.kickbackapps.ghostcall.PhoneNumberTextWatcher;
 import com.kickbackapps.ghostcall.R;
-import com.kickbackapps.ghostcall.Adapters.SmsAdapter;
-import com.kickbackapps.ghostcall.ApiObjects.SmsObject;
-import com.kickbackapps.ghostcall.User.UserData;
+import com.kickbackapps.ghostcall.adapters.SmsAdapter;
+import com.kickbackapps.ghostcall.objects.SmsObject;
+import com.kickbackapps.ghostcall.user.UserData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

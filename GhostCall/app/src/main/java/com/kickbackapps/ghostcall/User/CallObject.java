@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.User;
+package com.kickbackapps.ghostcall.user;
 
 /**
  * Created by Ynott on 7/30/15.

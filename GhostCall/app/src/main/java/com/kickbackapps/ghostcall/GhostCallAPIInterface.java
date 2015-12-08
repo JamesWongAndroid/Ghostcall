@@ -1,15 +1,15 @@
 package com.kickbackapps.ghostcall;
 
-import com.kickbackapps.ghostcall.ApiObjects.AreaCodeObject;
-import com.kickbackapps.ghostcall.ApiObjects.CallData;
-import com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects.BackgroundEffectsData;
-import com.kickbackapps.ghostcall.ApiObjects.CreditPackagesData;
-import com.kickbackapps.ghostcall.ApiObjects.NumberPackagesData;
-import com.kickbackapps.ghostcall.ApiObjects.Numbers.ExtendObject;
-import com.kickbackapps.ghostcall.ApiObjects.Numbers.Message;
-import com.kickbackapps.ghostcall.ApiObjects.SoundEffects.SoundEffectsData;
-import com.kickbackapps.ghostcall.User.CallStatus;
-import com.kickbackapps.ghostcall.User.UserData;
+import com.kickbackapps.ghostcall.objects.AreaCodeObject;
+import com.kickbackapps.ghostcall.objects.CallData;
+import com.kickbackapps.ghostcall.objects.BackgroundEffects.BackgroundEffectsData;
+import com.kickbackapps.ghostcall.objects.CreditPackagesData;
+import com.kickbackapps.ghostcall.objects.NumberPackagesData;
+import com.kickbackapps.ghostcall.objects.Numbers.ExtendObject;
+import com.kickbackapps.ghostcall.objects.Numbers.Message;
+import com.kickbackapps.ghostcall.objects.SoundEffects.SoundEffectsData;
+import com.kickbackapps.ghostcall.user.CallStatus;
+import com.kickbackapps.ghostcall.user.UserData;
 
 import java.util.List;
 

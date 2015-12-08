@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects;
+package com.kickbackapps.ghostcall.objects.BackgroundEffects;
 
 /**
  * Created by Ynott on 8/7/15.

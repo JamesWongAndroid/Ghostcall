@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.Numbers;
+package com.kickbackapps.ghostcall.objects.Numbers;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Ynott on 7/23/15.
  */
-public class Voicemail {
+public class Call {
 
     @Expose
     private String id;
@@ -16,20 +16,26 @@ public class Voicemail {
     @SerializedName("number_id")
     @Expose
     private String numberId;
-    @SerializedName("call_id")
-    @Expose
-    private String callId;
     @Expose
     private String to;
     @Expose
     private String from;
+    @Expose
+    private String direction;
+    @Expose
+    private String status;
+    @Expose
+    private String pitch;
+    @SerializedName("background_item_id")
+    @Expose
+    private String backgroundItemId;
     @Expose
     private String duration;
     @SerializedName("resource_id")
     @Expose
     private String resourceId;
     @Expose
-    private String text;
+    private String record;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -94,24 +100,6 @@ public class Voicemail {
     /**
      *
      * @return
-     * The callId
-     */
-    public String getCallId() {
-        return callId;
-    }
-
-    /**
-     *
-     * @param callId
-     * The call_id
-     */
-    public void setCallId(String callId) {
-        this.callId = callId;
-    }
-
-    /**
-     *
-     * @return
      * The to
      */
     public String getTo() {
@@ -143,6 +131,78 @@ public class Voicemail {
      */
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    /**
+     *
+     * @return
+     * The direction
+     */
+    public String getDirection() {
+        return direction;
+    }
+
+    /**
+     *
+     * @param direction
+     * The direction
+     */
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    /**
+     *
+     * @return
+     * The status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     *
+     * @param status
+     * The status
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     *
+     * @return
+     * The pitch
+     */
+    public String getPitch() {
+        return pitch;
+    }
+
+    /**
+     *
+     * @param pitch
+     * The pitch
+     */
+    public void setPitch(String pitch) {
+        this.pitch = pitch;
+    }
+
+    /**
+     *
+     * @return
+     * The backgroundItemId
+     */
+    public String getBackgroundItemId() {
+        return backgroundItemId;
+    }
+
+    /**
+     *
+     * @param backgroundItemId
+     * The background_item_id
+     */
+    public void setBackgroundItemId(String backgroundItemId) {
+        this.backgroundItemId = backgroundItemId;
     }
 
     /**
@@ -184,19 +244,19 @@ public class Voicemail {
     /**
      *
      * @return
-     * The text
+     * The record
      */
-    public String getText() {
-        return text;
+    public String getRecord() {
+        return record;
     }
 
     /**
      *
-     * @param text
-     * The text
+     * @param record
+     * The record
      */
-    public void setText(String text) {
-        this.text = text;
+    public void setRecord(String record) {
+        this.record = record;
     }
 
     /**

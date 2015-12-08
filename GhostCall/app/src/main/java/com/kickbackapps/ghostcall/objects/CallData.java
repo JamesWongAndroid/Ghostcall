@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects;
+package com.kickbackapps.ghostcall.objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

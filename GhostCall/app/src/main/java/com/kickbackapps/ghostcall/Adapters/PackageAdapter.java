@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Adapters;
+package com.kickbackapps.ghostcall.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.kickbackapps.ghostcall.ApiObjects.GhostPackage;
+import com.kickbackapps.ghostcall.objects.GhostPackage;
 import com.kickbackapps.ghostcall.R;
 
 import java.util.List;

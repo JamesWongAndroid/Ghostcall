@@ -5,12 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects.BackgroundObject;
-import com.kickbackapps.ghostcall.ApiObjects.GhostNumbers;
-import com.kickbackapps.ghostcall.ApiObjects.GhostPackage;
-import com.kickbackapps.ghostcall.ApiObjects.HistoryObject;
-import com.kickbackapps.ghostcall.ApiObjects.SmsObject;
-import com.kickbackapps.ghostcall.ApiObjects.SoundEffects.EffectsObject;
+import com.kickbackapps.ghostcall.objects.BackgroundEffects.BackgroundObject;
+import com.kickbackapps.ghostcall.objects.GhostNumbers;
+import com.kickbackapps.ghostcall.objects.GhostPackage;
+import com.kickbackapps.ghostcall.objects.HistoryObject;
+import com.kickbackapps.ghostcall.objects.SmsObject;
+import com.kickbackapps.ghostcall.objects.SoundEffects.EffectsObject;
 
 import java.sql.SQLException;
 import java.text.ParseException;

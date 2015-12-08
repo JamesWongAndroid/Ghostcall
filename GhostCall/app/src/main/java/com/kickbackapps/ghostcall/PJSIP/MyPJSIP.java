@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.PJSIP;
+package com.kickbackapps.ghostcall.pjsip;
 
 import android.util.Log;
 

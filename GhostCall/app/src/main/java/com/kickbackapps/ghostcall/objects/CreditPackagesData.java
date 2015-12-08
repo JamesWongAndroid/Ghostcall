@@ -1,49 +1,26 @@
-package com.kickbackapps.ghostcall.ApiObjects.BackgroundEffects;
+package com.kickbackapps.ghostcall.objects;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Created by Ynott on 7/23/15.
+ * Created by Ynott on 7/22/15.
  */
-public class BackgroundEffectsData {
+public class CreditPackagesData {
 
-    @Expose
     private String id;
-    @Expose
     private String name;
-    @Expose
-    private String type;
-    @Expose
+    private String description;
     private String cost;
+    private String credits;
     @SerializedName("ios_product_id")
-    @Expose
     private String iosProductId;
     @SerializedName("android_product_id")
-    @Expose
     private String androidProductId;
-    @SerializedName("image_active")
-    @Expose
-    private String imageActive;
-    @SerializedName("image_on")
-    @Expose
-    private String imageOn;
-    @SerializedName("image_off")
-    @Expose
-    private String imageOff;
     @SerializedName("created_at")
-    @Expose
     private String createdAt;
     @SerializedName("updated_at")
-    @Expose
     private String updatedAt;
-    @Expose
-    private String status;
-    @Expose
-    private List<Item> items = new ArrayList<Item>();
+    private String deleted;
 
     /**
      *
@@ -84,19 +61,19 @@ public class BackgroundEffectsData {
     /**
      *
      * @return
-     * The type
+     * The description
      */
-    public String getType() {
-        return type;
+    public String getDescription() {
+        return description;
     }
 
     /**
      *
-     * @param type
-     * The type
+     * @param description
+     * The description
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -115,6 +92,24 @@ public class BackgroundEffectsData {
      */
     public void setCost(String cost) {
         this.cost = cost;
+    }
+
+    /**
+     *
+     * @return
+     * The credits
+     */
+    public String getCredits() {
+        return credits;
+    }
+
+    /**
+     *
+     * @param credits
+     * The credits
+     */
+    public void setCredits(String credits) {
+        this.credits = credits;
     }
 
     /**
@@ -156,60 +151,6 @@ public class BackgroundEffectsData {
     /**
      *
      * @return
-     * The imageActive
-     */
-    public String getImageActive() {
-        return imageActive;
-    }
-
-    /**
-     *
-     * @param imageActive
-     * The image_active
-     */
-    public void setImageActive(String imageActive) {
-        this.imageActive = imageActive;
-    }
-
-    /**
-     *
-     * @return
-     * The imageOn
-     */
-    public String getImageOn() {
-        return imageOn;
-    }
-
-    /**
-     *
-     * @param imageOn
-     * The image_on
-     */
-    public void setImageOn(String imageOn) {
-        this.imageOn = imageOn;
-    }
-
-    /**
-     *
-     * @return
-     * The imageOff
-     */
-    public String getImageOff() {
-        return imageOff;
-    }
-
-    /**
-     *
-     * @param imageOff
-     * The image_off
-     */
-    public void setImageOff(String imageOff) {
-        this.imageOff = imageOff;
-    }
-
-    /**
-     *
-     * @return
      * The createdAt
      */
     public String getCreatedAt() {
@@ -246,37 +187,18 @@ public class BackgroundEffectsData {
     /**
      *
      * @return
-     * The status
+     * The deleted
      */
-    public String getStatus() {
-        return status;
+    public String getDeleted() {
+        return deleted;
     }
 
     /**
      *
-     * @param status
-     * The status
+     * @param deleted
+     * The deleted
      */
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
     }
-
-    /**
-     *
-     * @return
-     * The items
-     */
-    public List<Item> getItems() {
-        return items;
-    }
-
-    /**
-     *
-     * @param items
-     * The items
-     */
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
-
 }

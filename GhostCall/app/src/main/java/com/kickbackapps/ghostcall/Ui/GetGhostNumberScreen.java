@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kickbackapps.ghostcall.ApiObjects.AreaCodeObject;
+import com.kickbackapps.ghostcall.objects.AreaCodeObject;
 import com.kickbackapps.ghostcall.Constants;
 import com.kickbackapps.ghostcall.GetUserInfo;
 import com.kickbackapps.ghostcall.GhostCallAPIInterface;

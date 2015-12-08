@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Adapters;
+package com.kickbackapps.ghostcall.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.kickbackapps.ghostcall.ApiObjects.HistoryObject;
+import com.kickbackapps.ghostcall.objects.HistoryObject;
 import com.kickbackapps.ghostcall.R;
 
 import java.util.List;

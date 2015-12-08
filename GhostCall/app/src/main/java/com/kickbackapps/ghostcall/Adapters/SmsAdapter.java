@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Adapters;
+package com.kickbackapps.ghostcall.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kickbackapps.ghostcall.R;
-import com.kickbackapps.ghostcall.ApiObjects.SmsObject;
+import com.kickbackapps.ghostcall.objects.SmsObject;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects.Numbers;
+package com.kickbackapps.ghostcall.objects.Numbers;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Ynott on 7/23/15.
  */
-public class Message {
+public class Voicemail {
 
     @Expose
     private String id;
@@ -16,14 +16,15 @@ public class Message {
     @SerializedName("number_id")
     @Expose
     private String numberId;
+    @SerializedName("call_id")
+    @Expose
+    private String callId;
     @Expose
     private String to;
     @Expose
     private String from;
     @Expose
-    private String direction;
-    @Expose
-    private String status;
+    private String duration;
     @SerializedName("resource_id")
     @Expose
     private String resourceId;
@@ -35,8 +36,6 @@ public class Message {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    @Expose
-    private String deleted;
 
     /**
      *
@@ -95,6 +94,24 @@ public class Message {
     /**
      *
      * @return
+     * The callId
+     */
+    public String getCallId() {
+        return callId;
+    }
+
+    /**
+     *
+     * @param callId
+     * The call_id
+     */
+    public void setCallId(String callId) {
+        this.callId = callId;
+    }
+
+    /**
+     *
+     * @return
      * The to
      */
     public String getTo() {
@@ -131,37 +148,19 @@ public class Message {
     /**
      *
      * @return
-     * The direction
+     * The duration
      */
-    public String getDirection() {
-        return direction;
+    public String getDuration() {
+        return duration;
     }
 
     /**
      *
-     * @param direction
-     * The direction
+     * @param duration
+     * The duration
      */
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
-
-    /**
-     *
-     * @return
-     * The status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     *
-     * @param status
-     * The status
-     */
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     /**
@@ -234,24 +233,6 @@ public class Message {
      */
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    /**
-     *
-     * @return
-     * The deleted
-     */
-    public String getDeleted() {
-        return deleted;
-    }
-
-    /**
-     *
-     * @param deleted
-     * The deleted
-     */
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
     }
 
 }

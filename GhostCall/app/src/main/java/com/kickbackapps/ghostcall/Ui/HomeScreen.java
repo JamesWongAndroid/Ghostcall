@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Ui;
+package com.kickbackapps.ghostcall.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,13 +23,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kickbackapps.ghostcall.Adapters.GhostNumbersAdapter;
-import com.kickbackapps.ghostcall.ApiObjects.GhostNumbers;
+import com.kickbackapps.ghostcall.adapters.GhostNumbersAdapter;
+import com.kickbackapps.ghostcall.objects.GhostNumbers;
 import com.kickbackapps.ghostcall.Constants;
 import com.kickbackapps.ghostcall.GetUserInfo;
 import com.kickbackapps.ghostcall.GhostCallDatabaseAdapter;
 import com.kickbackapps.ghostcall.InternetDialog;
-import com.kickbackapps.ghostcall.PJSIP.MyPJSIPService;
+import com.kickbackapps.ghostcall.pjsip.MyPJSIPService;
 import com.kickbackapps.ghostcall.R;
 
 import org.joda.time.DateTime;

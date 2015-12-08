@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Ui.StartScreen"
+            android:name=".ui.StartScreen"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -30,43 +30,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Ui.TourScreen"
+            android:name=".ui.TourScreen"
             android:label="@string/title_activity_tour_screen"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Ui.VerificationScreen"
+            android:name=".ui.VerificationScreen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
-            android:name=".Ui.CodeVerificationScreen"
+            android:name=".ui.CodeVerificationScreen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
-            android:name=".Ui.HomeScreen"
+            android:name=".ui.HomeScreen"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Ui.GetGhostNumberScreen"
+            android:name=".ui.GetGhostNumberScreen"
             android:label="@string/title_activity_get_ghost_number_screen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
-            android:name=".Ui.SelectPackageScreen"
+            android:name=".ui.SelectPackageScreen"
             android:label="@string/title_activity_select_package_screen"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Ui.HistoryScreen"
+            android:name=".ui.HistoryScreen"
             android:label="@string/title_activity_history_screen"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Ui.CallScreen"
+            android:name=".ui.CallScreen"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_activity_call_screen"
             android:launchMode="singleTask"
@@ -74,15 +74,15 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name=".Ui.HistorySettingsScreen"
+            android:name=".ui.HistorySettingsScreen"
             android:label="@string/title_activity_history_settings_screen"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Ui.SMSActivity"
+            android:name=".ui.SMSActivity"
             android:label="@string/title_activity_history_settings_screen"
             android:launchMode="singleTask"
-            android:parentActivityName=".Ui.HomeScreen"
+            android:parentActivityName=".ui.HomeScreen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
 
@@ -105,18 +105,18 @@
         </receiver>
 
         <service
-            android:name=".Services.RegistrationIntentService"
+            android:name=".services.RegistrationIntentService"
             android:exported="false" >
         </service>
         <service
-            android:name=".Services.MyInstanceIDListenerService"
+            android:name=".services.MyInstanceIDListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
-            android:name=".Services.GhostCallListenerService"
+            android:name=".services.GhostCallListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -128,7 +128,7 @@
             android:value="eab32f443ab1c4e2c5265cc77b77ae655fa03935" />
 
         <service
-            android:name=".PJSIP.MyPJSIPService"
+            android:name=".pjsip.MyPJSIPService"
             android:enabled="true"
             android:exported="true" >
         </service>

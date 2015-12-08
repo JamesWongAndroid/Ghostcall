@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.ApiObjects;
+package com.kickbackapps.ghostcall.objects;
 
 /**
  * Created by Ynott on 8/24/15.

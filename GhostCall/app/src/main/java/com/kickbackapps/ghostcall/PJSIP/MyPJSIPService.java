@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.PJSIP;
+package com.kickbackapps.ghostcall.pjsip;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 
 import com.kickbackapps.ghostcall.Constants;
-import com.kickbackapps.ghostcall.PJSIP.MyPJSIP;
 
 public class MyPJSIPService extends Service {
     public static MyPJSIP pjsipObject = null;

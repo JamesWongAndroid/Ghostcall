@@ -1,4 +1,4 @@
-package com.kickbackapps.ghostcall.Services;
+package com.kickbackapps.ghostcall.services;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,11 +13,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import com.kickbackapps.ghostcall.Ui.CallScreen;
+import com.kickbackapps.ghostcall.ui.CallScreen;
 import com.kickbackapps.ghostcall.Constants;
 import com.kickbackapps.ghostcall.GhostCallDatabaseAdapter;
 import com.kickbackapps.ghostcall.R;
-import com.kickbackapps.ghostcall.Ui.SMSActivity;
+import com.kickbackapps.ghostcall.ui.SMSActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
