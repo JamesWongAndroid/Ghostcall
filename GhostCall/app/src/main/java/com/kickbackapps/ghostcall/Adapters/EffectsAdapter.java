@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Created by Ynott on 8/11/15.
+ * Listview Adapter for the sound effects for CallScreen
  */
 public class EffectsAdapter extends BaseAdapter {
 

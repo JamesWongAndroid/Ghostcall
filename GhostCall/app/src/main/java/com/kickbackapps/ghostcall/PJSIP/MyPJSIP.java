@@ -44,11 +44,13 @@ public class MyPJSIP {
     public static AccountInfo info;
     public static OnIncomingCallParam incomingCallParam;
 
+    //  Need to instantiate one Endpoint and only one of this class
     public void init(String userName, String password) {
         try {
             if (ep == null) {
                 ep = new Endpoint();
             }
+            //  From the instance you can then initialize and start the library.
             ep.libCreate();
             EpConfig epConfig = new EpConfig();
             MediaConfig med_cfg = epConfig.getMedConfig();
@@ -58,6 +60,7 @@ public class MyPJSIP {
             ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, sipTpConfig);
             ep.libStart();
 
+            // One instance of Account need to be created
             AccountConfig acfg = new AccountConfig();
             acfg.setIdUri("sip:" + userName);
             acfg.getRegConfig().setRegistrarUri(host);
@@ -83,6 +86,7 @@ public class MyPJSIP {
 
     }
 
+    // Once call is finish, release the memory that PJSIP is holding
     public static void endPJSIP() {
         if (ep != null) {
             try {
@@ -93,7 +97,7 @@ public class MyPJSIP {
                 ep.delete();
                 ep = null;
             } catch (Exception e) {
-
+                System.out.print(e.getMessage());
             }
 
         }
@@ -168,7 +172,7 @@ public class MyPJSIP {
         try {
             call.makeCall(toSipAccount, prm);
         } catch (Exception e) {
-            Log.d("TEST PJSIP ERROR", e.getMessage());
+            Log.d("PJSIP ERROR", e.getMessage());
         }
     }
 
@@ -179,7 +183,7 @@ public class MyPJSIP {
                 prmi.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
                 call.answer(prmi);
             } catch (Exception e) {
-                Log.d("TEST PJSIP ERROR", e.getMessage());
+                Log.d("PJSIP ERROR", e.getMessage());
             }
     }
 }
